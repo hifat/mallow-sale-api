@@ -8,6 +8,7 @@ import (
 	"github.com/hifat/cost-calculator-api/config"
 	"github.com/hifat/cost-calculator-api/pkg/initial"
 	"github.com/hifat/goroger-core/logger"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -39,4 +40,10 @@ func MongoConnect(pctx context.Context, cfg *config.Db) *mongo.Client {
 	}
 
 	return client
+}
+
+func MustStrToObjectID(hex string) primitive.ObjectID {
+	objectID, _ := primitive.ObjectIDFromHex(hex)
+
+	return objectID
 }
