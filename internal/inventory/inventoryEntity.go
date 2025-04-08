@@ -16,9 +16,9 @@ type (
 	}
 
 	UsageUnit struct {
-		ID   string `bson:"id,omitempty"`
-		Code string `bson:"code,omitempty"`
-		Name string `bson:"name,omitempty"`
+		entity.Base `bson:"inline"`
+		Code        string `bson:"code,omitempty"`
+		Name        string `bson:"name,omitempty"`
 	}
 )
 
