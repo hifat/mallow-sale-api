@@ -1,7 +1,6 @@
 package recipeHandler
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/hifat/cost-calculator-api/internal/recipe"
@@ -27,7 +26,7 @@ func (h *recipeRest) Create(c core.IHttpCtx) {
 		return
 	}
 
-	res, err := h.recipeSrv.Create(context.Background(), req)
+	res, err := h.recipeSrv.Create(c.Context(), req)
 	if err != nil {
 		c.AbortWithJSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -42,7 +41,7 @@ func (h *recipeRest) Create(c core.IHttpCtx) {
 }
 
 func (h *recipeRest) Find(c core.IHttpCtx) {
-	res, err := h.recipeSrv.Find(context.Background())
+	res, err := h.recipeSrv.Find(c.Context())
 	if err != nil {
 		c.AbortWithJSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -59,7 +58,7 @@ func (h *recipeRest) Find(c core.IHttpCtx) {
 func (h *recipeRest) FindByID(c core.IHttpCtx) {
 	recipeID := c.Param("recipeID")
 
-	res, err := h.recipeSrv.FindByID(context.Background(), recipeID)
+	res, err := h.recipeSrv.FindByID(c.Context(), recipeID)
 	if err != nil {
 		c.AbortWithJSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -85,7 +84,7 @@ func (h *recipeRest) Update(c core.IHttpCtx) {
 		return
 	}
 
-	err := h.recipeSrv.Update(context.Background(), recipeID, req)
+	err := h.recipeSrv.Update(c.Context(), recipeID, req)
 	if err != nil {
 		c.AbortWithJSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
@@ -102,7 +101,7 @@ func (h *recipeRest) Update(c core.IHttpCtx) {
 func (h *recipeRest) Delete(c core.IHttpCtx) {
 	recipeID := c.Param("recipeID")
 
-	err := h.recipeSrv.Delete(context.Background(), recipeID)
+	err := h.recipeSrv.Delete(c.Context(), recipeID)
 	if err != nil {
 		c.AbortWithJSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),

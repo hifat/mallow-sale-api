@@ -12,6 +12,7 @@ import (
 	"github.com/hifat/cost-calculator-api/router"
 	core "github.com/hifat/goroger-core"
 	"github.com/hifat/goroger-core/framework"
+	"github.com/hifat/goroger-core/rules"
 )
 
 func main() {
@@ -44,7 +45,12 @@ func main() {
 		c.Next()
 	})
 
-	r := router.New(engine, cfg, db, initial.Logger)
+	validateRegis, err := rules.Register()
+	if err != nil {
+		panic(err)
+	}
+
+	r := router.New(engine, cfg, db, initial.Logger, validateRegis)
 
 	engine.Get("/health", func(ic core.IHttpCtx) {
 		ic.JSON(200, map[string]any{

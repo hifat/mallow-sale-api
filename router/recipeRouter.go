@@ -5,7 +5,7 @@ import (
 )
 
 func (r *router) RecipeRouter() {
-	handler := recipeDI.Init(r.db, r.logger)
+	handler := recipeDI.Init(r.db, r.logger, r.validator)
 
 	recipe := r.route.Group("/api/recipes")
 	recipe.Get("", handler.RecipeRest.Find)

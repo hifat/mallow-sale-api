@@ -8,7 +8,7 @@ require (
 	github.com/go-playground/validator/v10 v10.25.0
 	github.com/gofiber/fiber/v2 v2.52.6
 	github.com/google/wire v0.6.0
-	github.com/hifat/goroger-core v0.0.0-20250301154903-3b5e84e23adc
+	github.com/hifat/goroger-core v0.0.0-20250418071651-e3997eedcf25
 	github.com/spf13/viper v1.19.0
 	go.mongodb.org/mongo-driver v1.17.2
 	go.uber.org/zap v1.27.0

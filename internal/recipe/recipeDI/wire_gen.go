@@ -7,23 +7,26 @@
 package recipeDI
 
 import (
+	"github.com/go-playground/validator/v10"
 	"github.com/google/wire"
 	"github.com/hifat/cost-calculator-api/internal/recipe/recipeHandler"
 	"github.com/hifat/cost-calculator-api/internal/recipe/recipeRepository"
 	"github.com/hifat/cost-calculator-api/internal/recipe/recipeService"
 	"github.com/hifat/goroger-core/helper"
 	"github.com/hifat/goroger-core/logger"
+	"github.com/hifat/goroger-core/rules"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.uber.org/zap"
 )
 
 // Injectors from wire.go:
 
-func Init(db *mongo.Database, log *zap.Logger) recipeHandler.Handler {
+func Init(db *mongo.Database, log *zap.Logger, validate *validator.Validate) recipeHandler.Handler {
+	coreLogger := logger.New(log)
+	rulesValidator := rules.New(validate)
 	coreHelper := helper.New()
 	iRecipeRepository := recipeRepository.NewMongo(db, coreHelper)
-	coreLogger := logger.New(log)
-	iRecipeService := recipeService.New(iRecipeRepository, coreLogger)
+	iRecipeService := recipeService.New(coreLogger, rulesValidator, iRecipeRepository)
 	recipeRest := recipeHandler.NewRest(iRecipeService)
 	handler := recipeHandler.New(recipeRest)
 	return handler
@@ -33,6 +36,6 @@ func Init(db *mongo.Database, log *zap.Logger) recipeHandler.Handler {
 
 var RepoSet = wire.NewSet(recipeRepository.NewMongo)
 
-var ServiceSet = wire.NewSet(logger.New, recipeService.New)
+var ServiceSet = wire.NewSet(logger.New, rules.New, recipeService.New)
 
 var HandlerSet = wire.NewSet(helper.New, recipeHandler.New, recipeHandler.NewRest)

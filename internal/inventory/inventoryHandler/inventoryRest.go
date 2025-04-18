@@ -1,7 +1,6 @@
 package inventoryHandler
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/hifat/cost-calculator-api/internal/inventory"
@@ -25,7 +24,7 @@ func (h *inventoryRest) Create(c core.IHttpCtx) {
 		})
 	}
 
-	if err := h.inventorySrv.Create(context.Background(), inventoryReq); err != nil {
+	if err := h.inventorySrv.Create(c.Context(), inventoryReq); err != nil {
 		c.AbortWithJSON(http.StatusInternalServerError, map[string]any{
 			"message": err.Error(),
 		})
@@ -39,7 +38,7 @@ func (h *inventoryRest) Create(c core.IHttpCtx) {
 }
 
 func (h *inventoryRest) Find(c core.IHttpCtx) {
-	res, err := h.inventorySrv.Find(context.Background())
+	res, err := h.inventorySrv.Find(c.Context())
 	if err != nil {
 		c.AbortWithJSON(http.StatusInternalServerError, map[string]any{
 			"message": err.Error(),
@@ -56,7 +55,7 @@ func (h *inventoryRest) Find(c core.IHttpCtx) {
 func (h *inventoryRest) FindByID(c core.IHttpCtx) {
 	inventoryID := c.Param("inventoryID")
 
-	res, err := h.inventorySrv.FindByID(context.Background(), inventoryID)
+	res, err := h.inventorySrv.FindByID(c.Context(), inventoryID)
 	if err != nil {
 		c.AbortWithJSON(http.StatusInternalServerError, map[string]any{
 			"message": err.Error(),
@@ -80,7 +79,7 @@ func (h *inventoryRest) Update(c core.IHttpCtx) {
 		})
 	}
 
-	err := h.inventorySrv.Update(context.Background(), inventoryID, req)
+	err := h.inventorySrv.Update(c.Context(), inventoryID, req)
 	if err != nil {
 		c.AbortWithJSON(http.StatusInternalServerError, map[string]any{
 			"message": err.Error(),
@@ -97,7 +96,7 @@ func (h *inventoryRest) Update(c core.IHttpCtx) {
 func (h *inventoryRest) Delete(c core.IHttpCtx) {
 	inventoryID := c.Param("inventoryID")
 
-	err := h.inventorySrv.Delete(context.Background(), inventoryID)
+	err := h.inventorySrv.Delete(c.Context(), inventoryID)
 	if err != nil {
 		c.AbortWithJSON(http.StatusInternalServerError, map[string]any{
 			"message": err.Error(),

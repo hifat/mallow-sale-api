@@ -16,7 +16,7 @@ type (
 	}
 
 	RecipeReq struct {
-		Name        string               `json:"name"`
+		Name        string               `validate:"required" json:"name"`
 		Inventories []RecipeInventoryReq `json:"inventories"`
 	}
 

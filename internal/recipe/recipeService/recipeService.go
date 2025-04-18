@@ -6,6 +6,7 @@ import (
 	"github.com/hifat/cost-calculator-api/internal/recipe"
 	"github.com/hifat/cost-calculator-api/internal/recipe/recipeRepository"
 	core "github.com/hifat/goroger-core"
+	"github.com/hifat/goroger-core/rules"
 )
 
 type IRecipeService interface {
@@ -17,18 +18,24 @@ type IRecipeService interface {
 }
 
 type recipeService struct {
-	recipeRepo recipeRepository.IRecipeRepository
 	logger     core.Logger
+	validator  rules.Validator
+	recipeRepo recipeRepository.IRecipeRepository
 }
 
-func New(recipeRepo recipeRepository.IRecipeRepository, logger core.Logger) IRecipeService {
+func New(logger core.Logger, validator rules.Validator, recipeRepo recipeRepository.IRecipeRepository) IRecipeService {
 	return &recipeService{
-		recipeRepo,
 		logger,
+		validator,
+		recipeRepo,
 	}
 }
 
 func (s *recipeService) Create(ctx context.Context, req recipe.RecipeReq) (*recipe.RecipeRes, error) {
+	if err := s.validator.Validate(req); err != nil {
+		return nil, err
+	}
+
 	recipeID, err := s.recipeRepo.Create(ctx, req)
 	if err != nil {
 		s.logger.Error(err)
