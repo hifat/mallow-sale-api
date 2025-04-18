@@ -53,6 +53,7 @@ func main() {
 	})
 
 	r.InventoryRouter()
+	r.RecipeRouter()
 
 	engine.Listener(fmt.Sprintf("%s:%s", cfg.App.Host, cfg.App.Port))
 }

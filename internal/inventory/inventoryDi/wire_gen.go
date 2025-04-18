@@ -20,7 +20,7 @@ import (
 
 // Injectors from wire.go:
 
-func InitInventory(cfg *config.Config, db *mongo.Database, log *zap.Logger) inventoryHandler.Handler {
+func Init(cfg *config.Config, db *mongo.Database, log *zap.Logger) inventoryHandler.Handler {
 	coreHelper := helper.New()
 	iInventoryRepository := inventoryRepository.NewMongo(db, coreHelper)
 	coreLogger := logger.New(log)

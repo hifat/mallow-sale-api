@@ -2,10 +2,10 @@ package inventoryRepository
 
 import (
 	"context"
-	"time"
 
 	"github.com/hifat/cost-calculator-api/internal/inventory"
 	"github.com/hifat/cost-calculator-api/pkg/database"
+	"github.com/hifat/cost-calculator-api/pkg/utils"
 	core "github.com/hifat/goroger-core"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -24,14 +24,10 @@ func NewMongo(db *mongo.Database, helper core.Helper) IInventoryRepository {
 }
 
 func (r *inventoryMongo) Create(ctx context.Context, req inventory.Inventory) (string, error) {
-	newInventory := inventory.Inventory{}
-	if err := r.helper.Copy(&newInventory, req); err != nil {
-		return "", err
-	}
-	newInventory.SetDateTime()
+	req.SetDateTime()
 
-	_, err := r.db.Collection(newInventory.DocName()).
-		InsertOne(ctx, newInventory)
+	_, err := r.db.Collection(req.DocName()).
+		InsertOne(ctx, req)
 
 	return req.ID, err
 }
@@ -62,21 +58,12 @@ func (r *inventoryMongo) FindByID(ctx context.Context, id string) (*inventory.In
 
 func (r *inventoryMongo) Update(ctx context.Context, id string, req inventory.Inventory) error {
 	_inventory := inventory.Inventory{}
+	req.UpdatedAt = utils.TimeNow()
 	_, err := r.db.Collection(_inventory.DocName()).
 		UpdateOne(ctx, bson.M{
 			"_id": database.MustStrToObjectID(id),
 		}, bson.M{
-			"$set": bson.M{
-				"name":              req.Name,
-				"purchase_price":    req.PurchasePrice,
-				"purchase_quantity": req.PurchaseQuantity,
-				"purchase_unit":     req.PurchaseUnit,
-				"yield_percentage":  req.YieldPercentage,
-				"usage_quantity":    req.UsageQuantity,
-				"usage_unit":        req.UsageUnit,
-				"remark":            req.Remark,
-				"updated_at":        time.Now(),
-			},
+			"$set": req,
 		})
 
 	return err

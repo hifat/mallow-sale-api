@@ -30,7 +30,7 @@ var HandlerSet = wire.NewSet(
 	inventoryHandler.NewRest,
 )
 
-func InitInventory(cfg *config.Config, db *mongo.Database, log *zap.Logger) inventoryHandler.Handler {
+func Init(cfg *config.Config, db *mongo.Database, log *zap.Logger) inventoryHandler.Handler {
 	wire.Build(
 		RepoSet,
 		ServiceSet,
