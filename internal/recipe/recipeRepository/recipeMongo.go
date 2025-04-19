@@ -4,8 +4,10 @@ import (
 	"context"
 
 	"github.com/hifat/cost-calculator-api/internal/recipe"
+	"github.com/hifat/cost-calculator-api/internal/usageUnit"
 	"github.com/hifat/cost-calculator-api/pkg/database"
 	core "github.com/hifat/goroger-core"
+	"github.com/jinzhu/copier"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -31,8 +33,16 @@ func (r *recipeMongo) Create(ctx context.Context, req recipe.RecipeReq) (id stri
 
 	newRecipe.SetDateTime()
 
+	for i := range newRecipe.Inventories {
+		newRecipe.Inventories[i].SetDateTime()
+		newRecipe.Inventories[i].SetID()
+		newRecipe.Inventories[i].UsageUnit = &usageUnit.UsageUnitEmbed{
+			Code: req.Inventories[i].UsageUnitCode,
+		}
+	}
+
 	result, err := r.db.Collection(newRecipe.DocName()).
-		InsertOne(ctx, req)
+		InsertOne(ctx, newRecipe)
 	if err != nil {
 		return "", err
 	}
@@ -69,16 +79,54 @@ func (r *recipeMongo) Find(ctx context.Context) ([]recipe.RecipeRes, error) {
 
 func (r *recipeMongo) FindByID(ctx context.Context, id string) (*recipe.RecipeRes, error) {
 	_recipe := recipe.Recipe{}
-	err := r.db.Collection(_recipe.DocName()).
-		FindOne(ctx, bson.M{
-			"_id": database.MustStrToObjectID(id),
-		}).Decode(&_recipe)
+
+	pipeline := mongo.Pipeline{
+		{
+			{
+				Key: "$match", Value: bson.M{
+					"_id": database.MustStrToObjectID(id),
+				},
+			},
+		},
+		{
+			{
+				Key: "$lookup", Value: bson.M{
+					"from":         "inventories",
+					"localField":   "inventories.inventoryID",
+					"foreignField": "_id",
+					"as":           "inventoryDetails",
+				},
+			},
+		},
+		{
+			{
+				Key: "$lookup", Value: bson.M{
+					"from":         "usage_units",
+					"localField":   "inventories.usageUnitCode",
+					"foreignField": "code",
+					"as":           "usageUnitDetails",
+				},
+			},
+		},
+	}
+
+	cursor, err := r.db.Collection(_recipe.DocName()).Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
+	defer cursor.Close(ctx)
+
+	var results []recipe.Recipe
+	if err = cursor.All(ctx, &results); err != nil {
+		return nil, err
+	}
+
+	if len(results) == 0 {
+		return nil, mongo.ErrNoDocuments
+	}
 
 	res := new(recipe.RecipeRes)
-	if err := r.helper.Copy(&res, _recipe); err != nil {
+	if err := r.helper.Copy(&res, results[0]); err != nil {
 		return nil, err
 	}
 
@@ -86,13 +134,26 @@ func (r *recipeMongo) FindByID(ctx context.Context, id string) (*recipe.RecipeRe
 }
 
 func (r *recipeMongo) Update(ctx context.Context, id string, req recipe.RecipeReq) error {
-	_recipe := recipe.Recipe{}
-	_recipe.SetDateTime()
-	_, err := r.db.Collection(_recipe.DocName()).
+	editRecipe := recipe.Recipe{}
+	editRecipe.SetDateTime()
+
+	if err := copier.Copy(&editRecipe, req); err != nil {
+		return err
+	}
+
+	for i := range editRecipe.Inventories {
+		editRecipe.Inventories[i].SetUpdatedAt()
+
+		if editRecipe.Inventories[i].ID == "" {
+			editRecipe.Inventories[i].SetID()
+		}
+	}
+
+	_, err := r.db.Collection(editRecipe.DocName()).
 		UpdateOne(ctx, bson.M{
 			"_id": database.MustStrToObjectID(id),
 		}, bson.M{
-			"$set": req,
+			"$set": editRecipe,
 		})
 	if err != nil {
 		return err

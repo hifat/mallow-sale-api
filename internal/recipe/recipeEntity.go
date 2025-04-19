@@ -6,25 +6,23 @@ import (
 	"github.com/hifat/cost-calculator-api/internal/usageUnit"
 )
 
-type (
-	RecipeInventory struct {
-		entity.Base   `bson:"inline"`
-		UsageQuantity float64 `bson:"usage_quantity"`
-		Remark        string  `bson:"remark"`
+type RecipeInventory struct {
+	entity.Base   `bson:"inline"`
+	UsageQuantity float64 `json:"usageQuantity" bson:"usage_quantity"`
+	Remark        string  `json:"remark" bson:"remark"`
 
-		InventoryID string               `bson:"inventory_id"`
-		Inventory   *inventory.Inventory `bson:"inventory"`
+	UsageUnit *usageUnit.UsageUnitEmbed `json:"usageUnit" bson:"usage_unit"`
 
-		UsageUnit *usageUnit.UsageUnitEmbed `bson:"usage_unit"`
-	}
+	InventoryID string               `json:"inventoryID" bson:"inventory_id"`
+	Inventory   *inventory.Inventory `json:"inventory" bson:"inventory,omitempty"`
+}
 
-	Recipe struct {
-		entity.Base `bson:"inline"`
-		Name        string            `bson:"name"`
-		Inventories []RecipeInventory `bson:"inventories"`
-	}
-)
+type Recipe struct {
+	entity.Base `bson:"inline"`
+	Name        string            `json:"name" bson:"name"`
+	Inventories []RecipeInventory `json:"inventories" bson:"inventories"`
+}
 
 func (m *Recipe) DocName() string {
-	return "inventories"
+	return "recipes"
 }

@@ -27,8 +27,8 @@ type (
 		CreatedAt     *time.Time `json:"createdAt"`
 		UpdatedAt     *time.Time `json:"updatedAt"`
 
-		UsageUnit usageUnit.UsageUnitProtoType `json:"usageUnit"`
-		Inventory inventory.InventoryPrototype `json:"inventory"`
+		UsageUnit *usageUnit.UsageUnitProtoType `json:"usageUnit"`
+		Inventory *inventory.InventoryPrototype `json:"inventory"`
 	}
 
 	RecipeRes struct {
