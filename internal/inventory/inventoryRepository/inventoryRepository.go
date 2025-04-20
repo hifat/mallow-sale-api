@@ -7,9 +7,9 @@ import (
 )
 
 type IInventoryRepository interface {
-	Create(ctx context.Context, req inventory.Inventory) (string, error)
+	Create(ctx context.Context, req inventory.InventoryReq) (string, error)
 	Find(ctx context.Context) ([]inventory.Inventory, error)
 	FindByID(ctx context.Context, id string) (*inventory.Inventory, error)
-	Update(ctx context.Context, id string, req inventory.Inventory) error
+	Update(ctx context.Context, id string, req inventory.InventoryReq) error
 	Delete(ctx context.Context, id string) error
 }

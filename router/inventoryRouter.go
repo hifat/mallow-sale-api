@@ -3,7 +3,7 @@ package router
 import inventoryDI "github.com/hifat/cost-calculator-api/internal/inventory/inventoryDi"
 
 func (r *router) InventoryRouter() {
-	handler := inventoryDI.Init(r.cfg, r.db, r.logger)
+	handler := inventoryDI.Init(r.cfg, r.db, r.logger, r.validator)
 
 	inventory := r.route.Group("/api/inventories")
 	inventory.Get("", handler.InventoryRest.Find)

@@ -2,6 +2,7 @@ package recipeRepository
 
 import (
 	"context"
+	"time"
 
 	"github.com/hifat/cost-calculator-api/internal/recipe"
 	"github.com/hifat/cost-calculator-api/internal/usageUnit"
@@ -141,19 +142,40 @@ func (r *recipeMongo) Update(ctx context.Context, id string, req recipe.RecipeRe
 		return err
 	}
 
-	for i := range editRecipe.Inventories {
-		editRecipe.Inventories[i].SetUpdatedAt()
-
+	setInventories := make([]bson.M, 0, len(req.Inventories))
+	for i, inventory := range editRecipe.Inventories {
 		if editRecipe.Inventories[i].ID == "" {
 			editRecipe.Inventories[i].SetID()
 		}
+
+		code, name := "", ""
+		if inventory.UsageUnit != nil {
+			code = inventory.UsageUnit.Code
+			name = inventory.UsageUnit.Name
+		}
+
+		setInventories = append(setInventories, bson.M{
+			"usage_quantity": inventory.UsageQuantity,
+			"remark":         inventory.Remark,
+			"usage_unit": bson.M{
+				"code": code,
+				"name": name,
+			},
+			"inventory_id": inventory.InventoryID,
+		})
+	}
+
+	setRecipe := bson.M{
+		"name":        req.Name,
+		"updated_at":  time.Now(),
+		"inventories": setInventories,
 	}
 
 	_, err := r.db.Collection(editRecipe.DocName()).
 		UpdateOne(ctx, bson.M{
 			"_id": database.MustStrToObjectID(id),
 		}, bson.M{
-			"$set": editRecipe,
+			"$set": setRecipe,
 		})
 	if err != nil {
 		return err

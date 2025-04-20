@@ -2,10 +2,13 @@ package inventoryService
 
 import (
 	"context"
+	"errors"
 
 	"github.com/hifat/cost-calculator-api/internal/inventory"
 	"github.com/hifat/cost-calculator-api/internal/inventory/inventoryRepository"
+	"github.com/hifat/cost-calculator-api/internal/usageUnit/usageUnitRepository"
 	core "github.com/hifat/goroger-core"
+	"github.com/hifat/goroger-core/rules"
 )
 
 type IInventoryService interface {
@@ -17,27 +20,67 @@ type IInventoryService interface {
 }
 
 type inventoryService struct {
-	inventoryRepo inventoryRepository.IInventoryRepository
 	helper        core.Helper
 	logger        core.Logger
+	validator     rules.Validator
+	inventoryRepo inventoryRepository.IInventoryRepository
+	usageUnitRepo usageUnitRepository.IUsageUnitRepository
 }
 
-func New(inventoryRepo inventoryRepository.IInventoryRepository, helper core.Helper, logger core.Logger) IInventoryService {
+func New(helper core.Helper, logger core.Logger, validator rules.Validator, inventoryRepo inventoryRepository.IInventoryRepository, usageUnitRepo usageUnitRepository.IUsageUnitRepository) IInventoryService {
 	return &inventoryService{
-		inventoryRepo,
 		helper,
 		logger,
+		validator,
+		inventoryRepo,
+		usageUnitRepo,
 	}
+}
+
+func (s *inventoryService) mapUsageUnit(ctx context.Context, codes []string) (map[string]string, error) {
+	_usageUnits, err := s.usageUnitRepo.FindInCodes(ctx, codes)
+	if err != nil {
+		s.logger.Error(err)
+		return nil, err
+	}
+
+	unitCodeMap := make(map[string]string)
+	for _, usageUnit := range _usageUnits {
+		unitCodeMap[usageUnit.Code] = usageUnit.Name
+	}
+
+	return unitCodeMap, nil
+}
+
+func (s *inventoryService) validateField(ctx context.Context, req inventory.InventoryReq, unitCodeMap map[string]string) error {
+	if _, ok := unitCodeMap[req.PurchaseUnitCode]; !ok {
+		return errors.New("invalid purchaseUnitCode")
+	}
+
+	return nil
 }
 
 func (s *inventoryService) Create(ctx context.Context, req inventory.InventoryReq) error {
-	newInventory := inventory.Inventory{}
-	if err := s.helper.Copy(&newInventory, req); err != nil {
-		s.logger.Error(err)
+	if err := s.validator.Validate(req); err != nil {
 		return err
 	}
 
-	if _, err := s.inventoryRepo.Create(ctx, newInventory); err != nil {
+	reqUnitCodes := []string{
+		req.PurchaseUnitCode,
+	}
+
+	unitCodeMap, err := s.mapUsageUnit(ctx, reqUnitCodes)
+	if err != nil {
+		return err
+	}
+
+	if err := s.validateField(ctx, req, unitCodeMap); err != nil {
+		return err
+	}
+
+	req.PurchaseUnit.SetAttr(req.PurchaseUnitCode, unitCodeMap[req.PurchaseUnitCode])
+
+	if _, err := s.inventoryRepo.Create(ctx, req); err != nil {
 		s.logger.Error(err)
 		return err
 	}
@@ -78,13 +121,27 @@ func (s *inventoryService) FindByID(ctx context.Context, id string) (*inventory.
 }
 
 func (s *inventoryService) Update(ctx context.Context, id string, req inventory.InventoryReq) error {
-	editInventory := inventory.Inventory{}
-	if err := s.helper.Copy(&editInventory, req); err != nil {
+	if err := s.validator.Validate(req); err != nil {
+		return err
+	}
+
+	reqUnitCodes := []string{
+		req.PurchaseUnitCode,
+	}
+
+	unitCodeMap, err := s.mapUsageUnit(ctx, reqUnitCodes)
+	if err != nil {
 		s.logger.Error(err)
 		return err
 	}
 
-	if err := s.inventoryRepo.Update(ctx, id, editInventory); err != nil {
+	if err := s.validateField(ctx, req, unitCodeMap); err != nil {
+		return err
+	}
+
+	req.PurchaseUnit.SetAttr(req.PurchaseUnitCode, unitCodeMap[req.PurchaseUnitCode])
+
+	if err := s.inventoryRepo.Update(ctx, id, req); err != nil {
 		s.logger.Error(err)
 		return err
 	}

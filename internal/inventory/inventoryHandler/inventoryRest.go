@@ -77,6 +77,8 @@ func (h *inventoryRest) Update(c core.IHttpCtx) {
 		c.AbortWithJSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),
 		})
+
+		return
 	}
 
 	err := h.inventorySrv.Update(c.Context(), inventoryID, req)

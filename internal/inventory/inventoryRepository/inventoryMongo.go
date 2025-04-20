@@ -2,11 +2,12 @@ package inventoryRepository
 
 import (
 	"context"
+	"time"
 
 	"github.com/hifat/cost-calculator-api/internal/inventory"
 	"github.com/hifat/cost-calculator-api/pkg/database"
-	"github.com/hifat/cost-calculator-api/pkg/utils"
 	core "github.com/hifat/goroger-core"
+	"github.com/jinzhu/copier"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -23,13 +24,18 @@ func NewMongo(db *mongo.Database, helper core.Helper) IInventoryRepository {
 	}
 }
 
-func (r *inventoryMongo) Create(ctx context.Context, req inventory.Inventory) (string, error) {
-	req.SetDateTime()
+func (r *inventoryMongo) Create(ctx context.Context, req inventory.InventoryReq) (string, error) {
+	newInventory := inventory.Inventory{}
+	if err := copier.Copy(&newInventory, req); err != nil {
+		return "", err
+	}
 
-	_, err := r.db.Collection(req.DocName()).
-		InsertOne(ctx, req)
+	newInventory.SetDateTime()
 
-	return req.ID, err
+	_, err := r.db.Collection(newInventory.DocName()).
+		InsertOne(ctx, newInventory)
+
+	return newInventory.ID, err
 }
 
 func (r *inventoryMongo) Find(ctx context.Context) ([]inventory.Inventory, error) {
@@ -56,14 +62,22 @@ func (r *inventoryMongo) FindByID(ctx context.Context, id string) (*inventory.In
 	return &_inventory, err
 }
 
-func (r *inventoryMongo) Update(ctx context.Context, id string, req inventory.Inventory) error {
-	_inventory := inventory.Inventory{}
-	req.UpdatedAt = utils.TimeNow()
-	_, err := r.db.Collection(_inventory.DocName()).
-		UpdateOne(ctx, bson.M{
-			"_id": database.MustStrToObjectID(id),
-		}, bson.M{
-			"$set": req,
+func (r *inventoryMongo) Update(ctx context.Context, id string, req inventory.InventoryReq) error {
+	editInventory := inventory.Inventory{}
+	_, err := r.db.Collection(editInventory.DocName()).
+		UpdateByID(ctx, database.MustStrToObjectID(id), bson.M{
+			"$set": bson.M{
+				"name":              req.Name,
+				"purchase_price":    req.PurchasePrice,
+				"purchase_quantity": req.PurchaseQuantity,
+				"purchase_unit": bson.M{
+					"code": req.PurchaseUnit.Code,
+					"name": req.PurchaseUnit.Name,
+				},
+				"yield_percentage": req.YieldPercentage,
+				"remark":           req.Remark,
+				"updated_at":       time.Now(),
+			},
 		})
 
 	return err
