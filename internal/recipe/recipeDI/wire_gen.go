@@ -12,6 +12,8 @@ import (
 	"github.com/hifat/cost-calculator-api/internal/recipe/recipeHandler"
 	"github.com/hifat/cost-calculator-api/internal/recipe/recipeRepository"
 	"github.com/hifat/cost-calculator-api/internal/recipe/recipeService"
+	"github.com/hifat/cost-calculator-api/internal/usageUnit/usageUnitRepository"
+	"github.com/hifat/cost-calculator-api/pkg/utils/serviceUtils"
 	"github.com/hifat/goroger-core/helper"
 	"github.com/hifat/goroger-core/logger"
 	"github.com/hifat/goroger-core/rules"
@@ -24,9 +26,11 @@ import (
 func Init(db *mongo.Database, log *zap.Logger, validate *validator.Validate) recipeHandler.Handler {
 	coreLogger := logger.New(log)
 	rulesValidator := rules.New(validate)
+	iUsageUnitRepository := usageUnitRepository.NewMongo(db)
+	iUsageUnitServiceUtils := usageUnitServiceUtils.New(iUsageUnitRepository)
 	coreHelper := helper.New()
 	iRecipeRepository := recipeRepository.NewMongo(db, coreHelper)
-	iRecipeService := recipeService.New(coreLogger, rulesValidator, iRecipeRepository)
+	iRecipeService := recipeService.New(coreLogger, rulesValidator, iUsageUnitServiceUtils, iRecipeRepository)
 	recipeRest := recipeHandler.NewRest(iRecipeService)
 	handler := recipeHandler.New(recipeRest)
 	return handler
@@ -34,8 +38,8 @@ func Init(db *mongo.Database, log *zap.Logger, validate *validator.Validate) rec
 
 // wire.go:
 
-var RepoSet = wire.NewSet(recipeRepository.NewMongo)
+var RepoSet = wire.NewSet(recipeRepository.NewMongo, usageUnitRepository.NewMongo)
 
-var ServiceSet = wire.NewSet(logger.New, rules.New, recipeService.New)
+var ServiceSet = wire.NewSet(logger.New, rules.New, recipeService.New, usageUnitServiceUtils.New)
 
 var HandlerSet = wire.NewSet(helper.New, recipeHandler.New, recipeHandler.NewRest)

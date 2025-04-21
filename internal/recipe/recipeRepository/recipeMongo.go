@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/hifat/cost-calculator-api/internal/recipe"
-	"github.com/hifat/cost-calculator-api/internal/usageUnit"
 	"github.com/hifat/cost-calculator-api/pkg/database"
 	core "github.com/hifat/goroger-core"
 	"github.com/jinzhu/copier"
@@ -35,11 +34,7 @@ func (r *recipeMongo) Create(ctx context.Context, req recipe.RecipeReq) (id stri
 	newRecipe.SetDateTime()
 
 	for i := range newRecipe.Inventories {
-		newRecipe.Inventories[i].SetDateTime()
-		newRecipe.Inventories[i].SetID()
-		newRecipe.Inventories[i].UsageUnit = &usageUnit.UsageUnitEmbed{
-			Code: req.Inventories[i].UsageUnitCode,
-		}
+		newRecipe.Inventories[i].ID = primitive.NewObjectID().Hex()
 	}
 
 	result, err := r.db.Collection(newRecipe.DocName()).
@@ -80,61 +75,23 @@ func (r *recipeMongo) Find(ctx context.Context) ([]recipe.RecipeRes, error) {
 
 func (r *recipeMongo) FindByID(ctx context.Context, id string) (*recipe.RecipeRes, error) {
 	_recipe := recipe.Recipe{}
-
-	pipeline := mongo.Pipeline{
-		{
-			{
-				Key: "$match", Value: bson.M{
-					"_id": database.MustStrToObjectID(id),
-				},
-			},
-		},
-		{
-			{
-				Key: "$lookup", Value: bson.M{
-					"from":         "inventories",
-					"localField":   "inventories.inventoryID",
-					"foreignField": "_id",
-					"as":           "inventoryDetails",
-				},
-			},
-		},
-		{
-			{
-				Key: "$lookup", Value: bson.M{
-					"from":         "usage_units",
-					"localField":   "inventories.usageUnitCode",
-					"foreignField": "code",
-					"as":           "usageUnitDetails",
-				},
-			},
-		},
-	}
-
-	cursor, err := r.db.Collection(_recipe.DocName()).Aggregate(ctx, pipeline)
+	err := r.db.Collection(_recipe.DocName()).
+		FindOne(ctx, bson.M{
+			"_id": database.MustStrToObjectID(id),
+		}).Decode(&_recipe)
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
-
-	var results []recipe.Recipe
-	if err = cursor.All(ctx, &results); err != nil {
-		return nil, err
-	}
-
-	if len(results) == 0 {
-		return nil, mongo.ErrNoDocuments
-	}
 
 	res := new(recipe.RecipeRes)
-	if err := r.helper.Copy(&res, results[0]); err != nil {
+	if err := r.helper.Copy(&res, _recipe); err != nil {
 		return nil, err
 	}
 
 	return res, nil
 }
 
-func (r *recipeMongo) Update(ctx context.Context, id string, req recipe.RecipeReq) error {
+func (r *recipeMongo) Update(ctx context.Context, id string, req recipe.UpdateRecipeReq) error {
 	editRecipe := recipe.Recipe{}
 	editRecipe.SetDateTime()
 
@@ -143,18 +100,15 @@ func (r *recipeMongo) Update(ctx context.Context, id string, req recipe.RecipeRe
 	}
 
 	setInventories := make([]bson.M, 0, len(req.Inventories))
-	for i, inventory := range editRecipe.Inventories {
-		if editRecipe.Inventories[i].ID == "" {
-			editRecipe.Inventories[i].SetID()
-		}
-
+	for _, inventory := range editRecipe.Inventories {
 		code, name := "", ""
 		if inventory.UsageUnit != nil {
 			code = inventory.UsageUnit.Code
 			name = inventory.UsageUnit.Name
 		}
 
-		setInventories = append(setInventories, bson.M{
+		mapInventory := bson.M{
+			"_id":            primitive.NewObjectID().Hex(),
 			"usage_quantity": inventory.UsageQuantity,
 			"remark":         inventory.Remark,
 			"usage_unit": bson.M{
@@ -162,7 +116,9 @@ func (r *recipeMongo) Update(ctx context.Context, id string, req recipe.RecipeRe
 				"name": name,
 			},
 			"inventory_id": inventory.InventoryID,
-		})
+		}
+
+		setInventories = append(setInventories, mapInventory)
 	}
 
 	setRecipe := bson.M{

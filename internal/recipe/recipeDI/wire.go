@@ -9,6 +9,8 @@ import (
 	"github.com/hifat/cost-calculator-api/internal/recipe/recipeHandler"
 	"github.com/hifat/cost-calculator-api/internal/recipe/recipeRepository"
 	"github.com/hifat/cost-calculator-api/internal/recipe/recipeService"
+	"github.com/hifat/cost-calculator-api/internal/usageUnit/usageUnitRepository"
+	usageUnitServiceUtils "github.com/hifat/cost-calculator-api/pkg/utils/serviceUtils"
 	"github.com/hifat/goroger-core/helper"
 	"github.com/hifat/goroger-core/logger"
 	"github.com/hifat/goroger-core/rules"
@@ -18,12 +20,14 @@ import (
 
 var RepoSet = wire.NewSet(
 	recipeRepository.NewMongo,
+	usageUnitRepository.NewMongo,
 )
 
 var ServiceSet = wire.NewSet(
 	logger.New,
 	rules.New,
 	recipeService.New,
+	usageUnitServiceUtils.New,
 )
 
 var HandlerSet = wire.NewSet(

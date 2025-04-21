@@ -75,7 +75,7 @@ func (h *recipeRest) FindByID(c core.IHttpCtx) {
 func (h *recipeRest) Update(c core.IHttpCtx) {
 	recipeID := c.Param("recipeID")
 
-	req := recipe.RecipeReq{}
+	req := recipe.UpdateRecipeReq{}
 	if err := c.BodyParser(&req); err != nil {
 		c.AbortWithJSON(http.StatusBadRequest, map[string]any{
 			"message": err.Error(),

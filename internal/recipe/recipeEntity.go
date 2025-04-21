@@ -7,7 +7,7 @@ import (
 )
 
 type RecipeInventory struct {
-	entity.Base   `bson:"inline"`
+	ID            string  `json:"id" bson:"_id,omitempty"`
 	UsageQuantity float64 `json:"usageQuantity" bson:"usage_quantity"`
 	Remark        string  `json:"remark" bson:"remark"`
 
