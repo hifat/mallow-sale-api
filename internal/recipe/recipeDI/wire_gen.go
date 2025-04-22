@@ -9,6 +9,7 @@ package recipeDI
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/google/wire"
+	"github.com/hifat/cost-calculator-api/internal/inventory/inventoryRepository"
 	"github.com/hifat/cost-calculator-api/internal/recipe/recipeHandler"
 	"github.com/hifat/cost-calculator-api/internal/recipe/recipeRepository"
 	"github.com/hifat/cost-calculator-api/internal/recipe/recipeService"
@@ -26,11 +27,12 @@ import (
 func Init(db *mongo.Database, log *zap.Logger, validate *validator.Validate) recipeHandler.Handler {
 	coreLogger := logger.New(log)
 	rulesValidator := rules.New(validate)
+	coreHelper := helper.New()
 	iUsageUnitRepository := usageUnitRepository.NewMongo(db)
 	iUsageUnitServiceUtils := usageUnitServiceUtils.New(iUsageUnitRepository)
-	coreHelper := helper.New()
 	iRecipeRepository := recipeRepository.NewMongo(db, coreHelper)
-	iRecipeService := recipeService.New(coreLogger, rulesValidator, iUsageUnitServiceUtils, iRecipeRepository)
+	iInventoryRepository := inventoryRepository.NewMongo(db, coreHelper)
+	iRecipeService := recipeService.New(coreLogger, rulesValidator, coreHelper, iUsageUnitServiceUtils, iRecipeRepository, iInventoryRepository)
 	recipeRest := recipeHandler.NewRest(iRecipeService)
 	handler := recipeHandler.New(recipeRest)
 	return handler
@@ -38,8 +40,8 @@ func Init(db *mongo.Database, log *zap.Logger, validate *validator.Validate) rec
 
 // wire.go:
 
-var RepoSet = wire.NewSet(recipeRepository.NewMongo, usageUnitRepository.NewMongo)
+var RepoSet = wire.NewSet(recipeRepository.NewMongo, usageUnitRepository.NewMongo, inventoryRepository.NewMongo)
 
-var ServiceSet = wire.NewSet(logger.New, rules.New, recipeService.New, usageUnitServiceUtils.New)
+var ServiceSet = wire.NewSet(logger.New, rules.New, helper.New, recipeService.New, usageUnitServiceUtils.New)
 
-var HandlerSet = wire.NewSet(helper.New, recipeHandler.New, recipeHandler.NewRest)
+var HandlerSet = wire.NewSet(recipeHandler.New, recipeHandler.NewRest)

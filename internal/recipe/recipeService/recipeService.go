@@ -3,7 +3,10 @@ package recipeService
 import (
 	"context"
 	"errors"
+	"fmt"
 
+	"github.com/hifat/cost-calculator-api/internal/inventory"
+	"github.com/hifat/cost-calculator-api/internal/inventory/inventoryRepository"
 	"github.com/hifat/cost-calculator-api/internal/recipe"
 	"github.com/hifat/cost-calculator-api/internal/recipe/recipeRepository"
 	usageUnitServiceUtils "github.com/hifat/cost-calculator-api/pkg/utils/serviceUtils"
@@ -22,16 +25,20 @@ type IRecipeService interface {
 type recipeService struct {
 	logger           core.Logger
 	validator        rules.Validator
+	helper           core.Helper
 	usageServiceUtil usageUnitServiceUtils.IUsageUnitServiceUtils
 	recipeRepo       recipeRepository.IRecipeRepository
+	inventoryRepo    inventoryRepository.IInventoryRepository
 }
 
-func New(logger core.Logger, validator rules.Validator, usageServiceUtil usageUnitServiceUtils.IUsageUnitServiceUtils, recipeRepo recipeRepository.IRecipeRepository) IRecipeService {
+func New(logger core.Logger, validator rules.Validator, helper core.Helper, usageServiceUtil usageUnitServiceUtils.IUsageUnitServiceUtils, recipeRepo recipeRepository.IRecipeRepository, inventoryRepo inventoryRepository.IInventoryRepository) IRecipeService {
 	return &recipeService{
 		logger,
 		validator,
+		helper,
 		usageServiceUtil,
 		recipeRepo,
+		inventoryRepo,
 	}
 }
 
@@ -90,6 +97,36 @@ func (s *recipeService) FindByID(ctx context.Context, id string) (*recipe.Recipe
 	if err != nil {
 		s.logger.Error(err)
 		return nil, err
+	}
+
+	inventoryIDs := make([]string, 0, len(res.Inventories))
+	for _, inventory := range res.Inventories {
+		inventoryIDs = append(inventoryIDs, inventory.InventoryID)
+	}
+
+	inventories, err := s.inventoryRepo.FindInID(ctx, inventoryIDs)
+	if err != nil {
+		s.logger.Error(err)
+		return nil, err
+	}
+
+	mapInventory := map[string]inventory.Inventory{}
+	for _, _inventory := range inventories {
+		mapInventory[_inventory.ID] = _inventory
+	}
+
+	for i, _inventory := range res.Inventories {
+		inv, ok := mapInventory[_inventory.InventoryID]
+		if !ok {
+			s.logger.Warn(fmt.Sprintf("not found inventory id: %s", _inventory.InventoryID))
+			continue
+		}
+
+		res.Inventories[i].Inventory = &inventory.InventoryPrototype{}
+		if err := s.helper.Copy(&res.Inventories[i].Inventory, inv); err != nil {
+			s.logger.Error(err)
+			return nil, err
+		}
 	}
 
 	return res, nil

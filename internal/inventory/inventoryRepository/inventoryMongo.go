@@ -9,6 +9,7 @@ import (
 	core "github.com/hifat/goroger-core"
 	"github.com/jinzhu/copier"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -60,6 +61,29 @@ func (r *inventoryMongo) FindByID(ctx context.Context, id string) (*inventory.In
 		}).Decode(&_inventory)
 
 	return &_inventory, err
+}
+
+func (r *inventoryMongo) FindInID(ctx context.Context, ids []string) ([]inventory.Inventory, error) {
+	objectIDs := make([]primitive.ObjectID, 0, len(ids))
+	for _, id := range ids {
+		objectIDs = append(objectIDs, database.MustStrToObjectID(id))
+	}
+
+	_inventory := inventory.Inventory{}
+	cur, err := r.db.Collection(_inventory.DocName()).
+		Find(ctx, bson.M{
+			"_id": bson.M{
+				"$in": objectIDs,
+			},
+		})
+	if err != nil {
+		return nil, err
+	}
+	defer cur.Close(ctx)
+
+	inventories := []inventory.Inventory{}
+
+	return inventories, cur.All(ctx, &inventories)
 }
 
 func (r *inventoryMongo) Update(ctx context.Context, id string, req inventory.InventoryReq) error {

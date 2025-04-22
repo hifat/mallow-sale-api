@@ -38,7 +38,9 @@ type (
 		Remark        string  `json:"remark"`
 
 		UsageUnit *usageUnit.UsageUnitProtoType `json:"usageUnit"`
-		Inventory *inventory.InventoryPrototype `json:"inventory"`
+
+		InventoryID string                        `json:"inventoryID"`
+		Inventory   *inventory.InventoryPrototype `json:"inventory"`
 	}
 
 	RecipeRes struct {

@@ -6,6 +6,7 @@ package recipeDI
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/google/wire"
+	"github.com/hifat/cost-calculator-api/internal/inventory/inventoryRepository"
 	"github.com/hifat/cost-calculator-api/internal/recipe/recipeHandler"
 	"github.com/hifat/cost-calculator-api/internal/recipe/recipeRepository"
 	"github.com/hifat/cost-calculator-api/internal/recipe/recipeService"
@@ -21,17 +22,18 @@ import (
 var RepoSet = wire.NewSet(
 	recipeRepository.NewMongo,
 	usageUnitRepository.NewMongo,
+	inventoryRepository.NewMongo,
 )
 
 var ServiceSet = wire.NewSet(
 	logger.New,
 	rules.New,
+	helper.New,
 	recipeService.New,
 	usageUnitServiceUtils.New,
 )
 
 var HandlerSet = wire.NewSet(
-	helper.New,
 	recipeHandler.New,
 	recipeHandler.NewRest,
 )
