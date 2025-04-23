@@ -19,7 +19,7 @@ type (
 
 	RecipeReq struct {
 		Name        string               `validate:"required" json:"name"`
-		Inventories []RecipeInventoryReq `json:"inventories"`
+		Ingredients []RecipeInventoryReq `validate:"gt=0" json:"ingredients"`
 	}
 
 	UpdateRecipeInventoryReq struct {
@@ -29,7 +29,7 @@ type (
 
 	UpdateRecipeReq struct {
 		Name        string                     `validate:"required" json:"name"`
-		Inventories []UpdateRecipeInventoryReq `json:"inventories"`
+		Ingredients []UpdateRecipeInventoryReq `json:"ingredients"`
 	}
 
 	RecipeInventoryRes struct {
@@ -49,6 +49,6 @@ type (
 		CreatedAt *time.Time `json:"createdAt"`
 		UpdatedAt *time.Time `json:"updatedAt"`
 
-		Inventories []RecipeInventoryRes `json:"inventories"`
+		Ingredients []RecipeInventoryRes `json:"ingredients"`
 	}
 )

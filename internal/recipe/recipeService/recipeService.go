@@ -47,9 +47,9 @@ func (s *recipeService) Create(ctx context.Context, req recipe.RecipeReq) (*reci
 		return nil, err
 	}
 
-	usageUnitCodes := make([]string, 0, len(req.Inventories))
-	for _, inventory := range req.Inventories {
-		usageUnitCodes = append(usageUnitCodes, inventory.UsageUnitCode)
+	usageUnitCodes := make([]string, 0, len(req.Ingredients))
+	for _, ingredient := range req.Ingredients {
+		usageUnitCodes = append(usageUnitCodes, ingredient.UsageUnitCode)
 	}
 
 	mapUsageUnit, err := s.usageServiceUtil.MapUsageUnitName(ctx, usageUnitCodes)
@@ -57,13 +57,13 @@ func (s *recipeService) Create(ctx context.Context, req recipe.RecipeReq) (*reci
 		return nil, err
 	}
 
-	for i, inventory := range req.Inventories {
-		usageUnitName, ok := mapUsageUnit[inventory.UsageUnitCode]
+	for i, ingredient := range req.Ingredients {
+		usageUnitName, ok := mapUsageUnit[ingredient.UsageUnitCode]
 		if !ok {
 			return nil, errors.New("invalid usageUnitName")
 		}
 
-		req.Inventories[i].UsageUnit.SetAttr(inventory.UsageUnitCode, usageUnitName)
+		req.Ingredients[i].UsageUnit.SetAttr(ingredient.UsageUnitCode, usageUnitName)
 	}
 
 	recipeID, err := s.recipeRepo.Create(ctx, req)
@@ -99,8 +99,8 @@ func (s *recipeService) FindByID(ctx context.Context, id string) (*recipe.Recipe
 		return nil, err
 	}
 
-	inventoryIDs := make([]string, 0, len(res.Inventories))
-	for _, inventory := range res.Inventories {
+	inventoryIDs := make([]string, 0, len(res.Ingredients))
+	for _, inventory := range res.Ingredients {
 		inventoryIDs = append(inventoryIDs, inventory.InventoryID)
 	}
 
@@ -115,15 +115,15 @@ func (s *recipeService) FindByID(ctx context.Context, id string) (*recipe.Recipe
 		mapInventory[_inventory.ID] = _inventory
 	}
 
-	for i, _inventory := range res.Inventories {
+	for i, _inventory := range res.Ingredients {
 		inv, ok := mapInventory[_inventory.InventoryID]
 		if !ok {
 			s.logger.Warn(fmt.Sprintf("not found inventory id: %s", _inventory.InventoryID))
 			continue
 		}
 
-		res.Inventories[i].Inventory = &inventory.InventoryPrototype{}
-		if err := s.helper.Copy(&res.Inventories[i].Inventory, inv); err != nil {
+		res.Ingredients[i].Inventory = &inventory.InventoryPrototype{}
+		if err := s.helper.Copy(&res.Ingredients[i].Inventory, inv); err != nil {
 			s.logger.Error(err)
 			return nil, err
 		}
@@ -137,8 +137,8 @@ func (s *recipeService) Update(ctx context.Context, id string, req recipe.Update
 		return err
 	}
 
-	usageUnitCodes := make([]string, 0, len(req.Inventories))
-	for _, inventory := range req.Inventories {
+	usageUnitCodes := make([]string, 0, len(req.Ingredients))
+	for _, inventory := range req.Ingredients {
 		usageUnitCodes = append(usageUnitCodes, inventory.UsageUnitCode)
 	}
 
@@ -147,13 +147,13 @@ func (s *recipeService) Update(ctx context.Context, id string, req recipe.Update
 		return err
 	}
 
-	for i, inventory := range req.Inventories {
+	for i, inventory := range req.Ingredients {
 		usageUnitName, ok := mapUsageUnit[inventory.UsageUnitCode]
 		if !ok {
 			return errors.New("invalid usageUnitName")
 		}
 
-		req.Inventories[i].UsageUnit.SetAttr(inventory.UsageUnitCode, usageUnitName)
+		req.Ingredients[i].UsageUnit.SetAttr(inventory.UsageUnitCode, usageUnitName)
 	}
 
 	if err := s.recipeRepo.Update(ctx, id, req); err != nil {

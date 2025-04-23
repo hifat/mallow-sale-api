@@ -20,7 +20,7 @@ type RecipeInventory struct {
 type Recipe struct {
 	entity.Base `bson:"inline"`
 	Name        string            `json:"name" bson:"name"`
-	Inventories []RecipeInventory `json:"inventories" bson:"inventories"`
+	Ingredients []RecipeInventory `json:"ingredients" bson:"ingredients"`
 }
 
 func (m *Recipe) DocName() string {

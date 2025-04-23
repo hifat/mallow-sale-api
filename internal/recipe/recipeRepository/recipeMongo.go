@@ -33,8 +33,8 @@ func (r *recipeMongo) Create(ctx context.Context, req recipe.RecipeReq) (id stri
 
 	newRecipe.SetDateTime()
 
-	for i := range newRecipe.Inventories {
-		newRecipe.Inventories[i].ID = primitive.NewObjectID().Hex()
+	for i := range newRecipe.Ingredients {
+		newRecipe.Ingredients[i].ID = primitive.NewObjectID().Hex()
 	}
 
 	result, err := r.db.Collection(newRecipe.DocName()).
@@ -99,32 +99,32 @@ func (r *recipeMongo) Update(ctx context.Context, id string, req recipe.UpdateRe
 		return err
 	}
 
-	setInventories := make([]bson.M, 0, len(req.Inventories))
-	for _, inventory := range editRecipe.Inventories {
+	setIngredients := make([]bson.M, 0, len(req.Ingredients))
+	for _, _inventory := range editRecipe.Ingredients {
 		code, name := "", ""
-		if inventory.UsageUnit != nil {
-			code = inventory.UsageUnit.Code
-			name = inventory.UsageUnit.Name
+		if _inventory.UsageUnit != nil {
+			code = _inventory.UsageUnit.Code
+			name = _inventory.UsageUnit.Name
 		}
 
 		mapInventory := bson.M{
 			"_id":            primitive.NewObjectID().Hex(),
-			"usage_quantity": inventory.UsageQuantity,
-			"remark":         inventory.Remark,
+			"usage_quantity": _inventory.UsageQuantity,
+			"remark":         _inventory.Remark,
 			"usage_unit": bson.M{
 				"code": code,
 				"name": name,
 			},
-			"inventory_id": inventory.InventoryID,
+			"inventory_id": _inventory.InventoryID,
 		}
 
-		setInventories = append(setInventories, mapInventory)
+		setIngredients = append(setIngredients, mapInventory)
 	}
 
 	setRecipe := bson.M{
 		"name":        req.Name,
 		"updated_at":  time.Now(),
-		"inventories": setInventories,
+		"ingredients": setIngredients,
 	}
 
 	_, err := r.db.Collection(editRecipe.DocName()).
