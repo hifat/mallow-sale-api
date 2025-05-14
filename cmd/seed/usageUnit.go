@@ -1,0 +1,57 @@
+package main
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/hifat/cost-calculator-api/internal/entity"
+	"github.com/hifat/cost-calculator-api/internal/usageUnit"
+	"github.com/hifat/cost-calculator-api/pkg/utils"
+)
+
+func seedUsageUnit() error {
+	ctx := context.Background()
+
+	docs := []usageUnit.UsageUnit{
+		{
+			Code: "ML",
+			Name: "ml",
+			Base: entity.Base{
+				CreatedAt: utils.TimeNow(),
+				UpdatedAt: utils.TimeNow(),
+			},
+		},
+		{
+			Code: "G",
+			Name: "g",
+			Base: entity.Base{
+				CreatedAt: utils.TimeNow(),
+				UpdatedAt: utils.TimeNow(),
+			},
+		},
+		{
+			Code: "KG",
+			Name: "kg",
+			Base: entity.Base{
+				CreatedAt: utils.TimeNow(),
+				UpdatedAt: utils.TimeNow(),
+			},
+		},
+	}
+
+	_usageUnit := usageUnit.UsageUnit{}
+	newDocs := make([]interface{}, 0, len(docs))
+	for _, doc := range docs {
+		newDocs = append(newDocs, doc)
+	}
+
+	result, err := db.Collection(_usageUnit.DocName()).
+		InsertMany(ctx, newDocs)
+	if err != nil {
+		return err
+	}
+
+	logg.Info(fmt.Sprintf("seeded UsageUnit: %v", result.InsertedIDs))
+
+	return nil
+}

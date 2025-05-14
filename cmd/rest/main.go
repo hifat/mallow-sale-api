@@ -13,8 +13,23 @@ import (
 	core "github.com/hifat/goroger-core"
 	"github.com/hifat/goroger-core/framework"
 	"github.com/hifat/goroger-core/rules"
+
+	fiberSwagger "github.com/swaggo/fiber-swagger"
+	_ "github.com/swaggo/fiber-swagger/example/docs"
 )
 
+// @title           Mallow Sale API
+// @version         1.0
+// @description     This is a sample server celler server.
+// @termsOfService  http://swagger.io/terms/
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @Security bearer
+// @securityDefinitions.apikey bearer
+// @in header
+// @name Authorization
 func main() {
 	cfg := config.LoadAppConfig("./", ".env")
 	ctx := context.Background()
@@ -25,6 +40,9 @@ func main() {
 	db := dbClient.Database(cfg.Db.Name)
 
 	app := fiber.New()
+
+	app.Get("/swagger/*", fiberSwagger.WrapHandler)
+
 	engine := framework.NewFiberEngineCtx(fiber.New())
 
 	app.Use(cors.New())
