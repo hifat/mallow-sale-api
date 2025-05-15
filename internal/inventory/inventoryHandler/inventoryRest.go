@@ -1,8 +1,6 @@
 package inventoryHandler
 
 import (
-	"net/http"
-
 	"github.com/hifat/cost-calculator-api/internal/inventory"
 	"github.com/hifat/cost-calculator-api/internal/inventory/inventoryService"
 	"github.com/hifat/cost-calculator-api/pkg/utils/handlerUtils.go"
@@ -40,9 +38,7 @@ func (h *inventoryRest) Find(c core.IHttpCtx) {
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]any{
-		"items": res,
-	})
+	handlerUtils.ResponseItems(c, res)
 }
 
 func (h *inventoryRest) FindByID(c core.IHttpCtx) {
@@ -55,9 +51,7 @@ func (h *inventoryRest) FindByID(c core.IHttpCtx) {
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]any{
-		"item": res,
-	})
+	handlerUtils.ResponseItem(c, res)
 }
 
 func (h *inventoryRest) Update(c core.IHttpCtx) {

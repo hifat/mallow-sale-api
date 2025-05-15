@@ -30,8 +30,20 @@ func ResponseCreated(c core.IHttpCtx) {
 }
 
 func ResponseOK(c core.IHttpCtx) {
-	c.JSON(http.StatusCreated, response.Response{
+	c.JSON(http.StatusOK, response.Response{
 		Code:    response.CodeOK,
 		Message: http.StatusText(http.StatusOK),
+	})
+}
+
+func ResponseItem[T comparable](c core.IHttpCtx, item T) {
+	c.JSON(http.StatusOK, response.ResponseSuccess{
+		Item: item,
+	})
+}
+
+func ResponseItems[T any](c core.IHttpCtx, items []T) {
+	c.JSON(http.StatusOK, response.ResponseSuccess{
+		Items: items,
 	})
 }

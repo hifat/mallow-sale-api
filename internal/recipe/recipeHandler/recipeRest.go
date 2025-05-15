@@ -45,9 +45,7 @@ func (h *recipeRest) Find(c core.IHttpCtx) {
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]any{
-		"items": res,
-	})
+	handlerUtils.ResponseItems(c, res)
 }
 
 func (h *recipeRest) FindByID(c core.IHttpCtx) {
@@ -59,9 +57,7 @@ func (h *recipeRest) FindByID(c core.IHttpCtx) {
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]any{
-		"item": res,
-	})
+	handlerUtils.ResponseItem(c, res)
 }
 
 func (h *recipeRest) Update(c core.IHttpCtx) {
