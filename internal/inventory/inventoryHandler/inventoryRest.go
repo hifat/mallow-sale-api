@@ -5,6 +5,7 @@ import (
 
 	"github.com/hifat/cost-calculator-api/internal/inventory"
 	"github.com/hifat/cost-calculator-api/internal/inventory/inventoryService"
+	"github.com/hifat/cost-calculator-api/pkg/utils/handlerUtils.go"
 	core "github.com/hifat/goroger-core"
 )
 
@@ -19,30 +20,22 @@ func NewRest(inventorySrv inventoryService.IInventoryService) *inventoryRest {
 func (h *inventoryRest) Create(c core.IHttpCtx) {
 	inventoryReq := inventory.InventoryReq{}
 	if err := c.BodyParser(&inventoryReq); err != nil {
-		c.AbortWithJSON(http.StatusBadRequest, map[string]any{
-			"message": err.Error(),
-		})
+		handlerUtils.ResponseBadRequest(c, err)
 	}
 
 	if err := h.inventorySrv.Create(c.Context(), inventoryReq); err != nil {
-		c.AbortWithJSON(http.StatusInternalServerError, map[string]any{
-			"message": err.Error(),
-		})
+		handlerUtils.ResponseErr(c, err)
 
 		return
 	}
 
-	c.JSON(http.StatusCreated, map[string]any{
-		"message": "ok",
-	})
+	handlerUtils.ResponseCreated(c)
 }
 
 func (h *inventoryRest) Find(c core.IHttpCtx) {
 	res, err := h.inventorySrv.Find(c.Context())
 	if err != nil {
-		c.AbortWithJSON(http.StatusInternalServerError, map[string]any{
-			"message": err.Error(),
-		})
+		handlerUtils.ResponseErr(c, err)
 
 		return
 	}
@@ -57,9 +50,7 @@ func (h *inventoryRest) FindByID(c core.IHttpCtx) {
 
 	res, err := h.inventorySrv.FindByID(c.Context(), inventoryID)
 	if err != nil {
-		c.AbortWithJSON(http.StatusInternalServerError, map[string]any{
-			"message": err.Error(),
-		})
+		handlerUtils.ResponseErr(c, err)
 
 		return
 	}
@@ -74,25 +65,19 @@ func (h *inventoryRest) Update(c core.IHttpCtx) {
 
 	req := inventory.InventoryReq{}
 	if err := c.BodyParser(&req); err != nil {
-		c.AbortWithJSON(http.StatusBadRequest, map[string]any{
-			"message": err.Error(),
-		})
+		handlerUtils.ResponseBadRequest(c, err)
 
 		return
 	}
 
 	err := h.inventorySrv.Update(c.Context(), inventoryID, req)
 	if err != nil {
-		c.AbortWithJSON(http.StatusInternalServerError, map[string]any{
-			"message": err.Error(),
-		})
+		handlerUtils.ResponseErr(c, err)
 
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]any{
-		"message": "ok",
-	})
+	handlerUtils.ResponseCreated(c)
 }
 
 func (h *inventoryRest) Delete(c core.IHttpCtx) {
@@ -100,14 +85,10 @@ func (h *inventoryRest) Delete(c core.IHttpCtx) {
 
 	err := h.inventorySrv.Delete(c.Context(), inventoryID)
 	if err != nil {
-		c.AbortWithJSON(http.StatusInternalServerError, map[string]any{
-			"message": err.Error(),
-		})
+		handlerUtils.ResponseErr(c, err)
 
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]any{
-		"message": "ok",
-	})
+	handlerUtils.ResponseOK(c)
 }

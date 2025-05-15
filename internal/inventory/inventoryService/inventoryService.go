@@ -7,6 +7,7 @@ import (
 	"github.com/hifat/cost-calculator-api/internal/inventory"
 	"github.com/hifat/cost-calculator-api/internal/inventory/inventoryRepository"
 	"github.com/hifat/cost-calculator-api/internal/usageUnit/usageUnitRepository"
+	"github.com/hifat/cost-calculator-api/pkg/throw"
 	core "github.com/hifat/goroger-core"
 	"github.com/hifat/goroger-core/rules"
 )
@@ -62,7 +63,7 @@ func (s *inventoryService) validateField(ctx context.Context, req inventory.Inve
 
 func (s *inventoryService) Create(ctx context.Context, req inventory.InventoryReq) error {
 	if err := s.validator.Validate(req); err != nil {
-		return err
+		return throw.ValidateErr(err)
 	}
 
 	reqUnitCodes := []string{
@@ -71,18 +72,18 @@ func (s *inventoryService) Create(ctx context.Context, req inventory.InventoryRe
 
 	unitCodeMap, err := s.mapUsageUnit(ctx, reqUnitCodes)
 	if err != nil {
-		return err
+		return throw.InternalServerErr(err)
 	}
 
 	if err := s.validateField(ctx, req, unitCodeMap); err != nil {
-		return err
+		return throw.BadRequestErr(err)
 	}
 
 	req.PurchaseUnit.SetAttr(req.PurchaseUnitCode, unitCodeMap[req.PurchaseUnitCode])
 
 	if _, err := s.inventoryRepo.Create(ctx, req); err != nil {
 		s.logger.Error(err)
-		return err
+		return throw.InternalServerErr(err)
 	}
 
 	return nil
@@ -92,7 +93,7 @@ func (s *inventoryService) Find(ctx context.Context) ([]inventory.InventoryRes, 
 	inventories, err := s.inventoryRepo.Find(ctx)
 	if err != nil {
 		s.logger.Error(err)
-		return nil, err
+		return nil, throw.InternalServerErr(err)
 	}
 
 	res := []inventory.InventoryRes{}
@@ -108,13 +109,13 @@ func (s *inventoryService) FindByID(ctx context.Context, id string) (*inventory.
 	_inventory, err := s.inventoryRepo.FindByID(ctx, id)
 	if err != nil {
 		s.logger.Error(err)
-		return nil, err
+		return nil, throw.WhenRecordNotFoundErr(err)
 	}
 
 	res := inventory.InventoryRes{}
 	if err := s.helper.Copy(&res, _inventory); err != nil {
 		s.logger.Error(err)
-		return nil, err
+		return nil, throw.InternalServerErr(err)
 	}
 
 	return &res, nil
@@ -122,7 +123,7 @@ func (s *inventoryService) FindByID(ctx context.Context, id string) (*inventory.
 
 func (s *inventoryService) Update(ctx context.Context, id string, req inventory.InventoryReq) error {
 	if err := s.validator.Validate(req); err != nil {
-		return err
+		return throw.ValidateErr(err)
 	}
 
 	reqUnitCodes := []string{
@@ -132,18 +133,18 @@ func (s *inventoryService) Update(ctx context.Context, id string, req inventory.
 	unitCodeMap, err := s.mapUsageUnit(ctx, reqUnitCodes)
 	if err != nil {
 		s.logger.Error(err)
-		return err
+		return throw.InternalServerErr(err)
 	}
 
 	if err := s.validateField(ctx, req, unitCodeMap); err != nil {
-		return err
+		return throw.BadRequestErr(err)
 	}
 
 	req.PurchaseUnit.SetAttr(req.PurchaseUnitCode, unitCodeMap[req.PurchaseUnitCode])
 
 	if err := s.inventoryRepo.Update(ctx, id, req); err != nil {
 		s.logger.Error(err)
-		return err
+		return throw.InternalServerErr(err)
 	}
 
 	return nil
@@ -152,7 +153,7 @@ func (s *inventoryService) Update(ctx context.Context, id string, req inventory.
 func (s *inventoryService) Delete(ctx context.Context, id string) error {
 	if err := s.inventoryRepo.Delete(ctx, id); err != nil {
 		s.logger.Error(err)
-		return err
+		return throw.InternalServerErr(err)
 	}
 
 	return nil

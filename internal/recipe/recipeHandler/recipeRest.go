@@ -5,6 +5,7 @@ import (
 
 	"github.com/hifat/cost-calculator-api/internal/recipe"
 	"github.com/hifat/cost-calculator-api/internal/recipe/recipeService"
+	"github.com/hifat/cost-calculator-api/pkg/utils/handlerUtils.go"
 	core "github.com/hifat/goroger-core"
 )
 
@@ -19,18 +20,14 @@ func NewRest(recipeSrv recipeService.IRecipeService) *recipeRest {
 func (h *recipeRest) Create(c core.IHttpCtx) {
 	req := recipe.RecipeReq{}
 	if err := c.BodyParser(&req); err != nil {
-		c.AbortWithJSON(http.StatusBadRequest, map[string]any{
-			"message": err.Error(),
-		})
+		handlerUtils.ResponseBadRequest(c, err)
 
 		return
 	}
 
 	res, err := h.recipeSrv.Create(c.Context(), req)
 	if err != nil {
-		c.AbortWithJSON(http.StatusBadRequest, map[string]any{
-			"message": err.Error(),
-		})
+		handlerUtils.ResponseErr(c, err)
 
 		return
 	}
@@ -43,9 +40,7 @@ func (h *recipeRest) Create(c core.IHttpCtx) {
 func (h *recipeRest) Find(c core.IHttpCtx) {
 	res, err := h.recipeSrv.Find(c.Context())
 	if err != nil {
-		c.AbortWithJSON(http.StatusBadRequest, map[string]any{
-			"message": err.Error(),
-		})
+		handlerUtils.ResponseErr(c, err)
 
 		return
 	}
@@ -60,10 +55,7 @@ func (h *recipeRest) FindByID(c core.IHttpCtx) {
 
 	res, err := h.recipeSrv.FindByID(c.Context(), recipeID)
 	if err != nil {
-		c.AbortWithJSON(http.StatusBadRequest, map[string]any{
-			"message": err.Error(),
-		})
-
+		handlerUtils.ResponseErr(c, err)
 		return
 	}
 
@@ -77,25 +69,19 @@ func (h *recipeRest) Update(c core.IHttpCtx) {
 
 	req := recipe.UpdateRecipeReq{}
 	if err := c.BodyParser(&req); err != nil {
-		c.AbortWithJSON(http.StatusBadRequest, map[string]any{
-			"message": err.Error(),
-		})
+		handlerUtils.ResponseBadRequest(c, err)
 
 		return
 	}
 
 	err := h.recipeSrv.Update(c.Context(), recipeID, req)
 	if err != nil {
-		c.AbortWithJSON(http.StatusBadRequest, map[string]any{
-			"message": err.Error(),
-		})
+		handlerUtils.ResponseErr(c, err)
 
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]any{
-		"message": "ok",
-	})
+	handlerUtils.ResponseOK(c)
 }
 
 func (h *recipeRest) Delete(c core.IHttpCtx) {
@@ -103,14 +89,10 @@ func (h *recipeRest) Delete(c core.IHttpCtx) {
 
 	err := h.recipeSrv.Delete(c.Context(), recipeID)
 	if err != nil {
-		c.AbortWithJSON(http.StatusBadRequest, map[string]any{
-			"message": err.Error(),
-		})
+		handlerUtils.ResponseBadRequest(c, err)
 
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]any{
-		"message": "ok",
-	})
+	handlerUtils.ResponseOK(c)
 }

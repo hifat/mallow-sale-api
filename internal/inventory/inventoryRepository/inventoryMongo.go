@@ -2,10 +2,13 @@ package inventoryRepository
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/hifat/cost-calculator-api/internal/inventory"
 	"github.com/hifat/cost-calculator-api/pkg/database"
+	"github.com/hifat/cost-calculator-api/pkg/throw"
+	"github.com/hifat/cost-calculator-api/pkg/utils/repoUtils"
 	core "github.com/hifat/goroger-core"
 	"github.com/jinzhu/copier"
 	"go.mongodb.org/mongo-driver/bson"
@@ -36,7 +39,7 @@ func (r *inventoryMongo) Create(ctx context.Context, req inventory.InventoryReq)
 	_, err := r.db.Collection(newInventory.DocName()).
 		InsertOne(ctx, newInventory)
 
-	return newInventory.ID, err
+	return newInventory.ID, repoUtils.MongoErr(err)
 }
 
 func (r *inventoryMongo) Find(ctx context.Context) ([]inventory.Inventory, error) {
@@ -44,13 +47,13 @@ func (r *inventoryMongo) Find(ctx context.Context) ([]inventory.Inventory, error
 	cur, err := r.db.Collection(_inventory.DocName()).
 		Find(ctx, bson.M{})
 	if err != nil {
-		return nil, err
+		return nil, repoUtils.MongoErr(err)
 	}
 	defer cur.Close(ctx)
 
 	inventories := []inventory.Inventory{}
 
-	return inventories, cur.All(ctx, &inventories)
+	return inventories, repoUtils.MongoErr(cur.All(ctx, &inventories))
 }
 
 func (r *inventoryMongo) FindByID(ctx context.Context, id string) (*inventory.Inventory, error) {
@@ -60,7 +63,11 @@ func (r *inventoryMongo) FindByID(ctx context.Context, id string) (*inventory.In
 			"_id": database.MustStrToObjectID(id),
 		}).Decode(&_inventory)
 
-	return &_inventory, err
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		return nil, throw.ErrRecordNotFound
+	}
+
+	return &_inventory, repoUtils.MongoErr(err)
 }
 
 func (r *inventoryMongo) FindInID(ctx context.Context, ids []string) ([]inventory.Inventory, error) {
@@ -77,13 +84,13 @@ func (r *inventoryMongo) FindInID(ctx context.Context, ids []string) ([]inventor
 			},
 		})
 	if err != nil {
-		return nil, err
+		return nil, repoUtils.MongoErr(err)
 	}
 	defer cur.Close(ctx)
 
 	inventories := []inventory.Inventory{}
 
-	return inventories, cur.All(ctx, &inventories)
+	return inventories, repoUtils.MongoErr(cur.All(ctx, &inventories))
 }
 
 func (r *inventoryMongo) Update(ctx context.Context, id string, req inventory.InventoryReq) error {
@@ -104,7 +111,7 @@ func (r *inventoryMongo) Update(ctx context.Context, id string, req inventory.In
 			},
 		})
 
-	return err
+	return repoUtils.MongoErr(err)
 }
 
 func (r *inventoryMongo) Delete(ctx context.Context, id string) error {
@@ -114,5 +121,5 @@ func (r *inventoryMongo) Delete(ctx context.Context, id string) error {
 			"_id": database.MustStrToObjectID(id),
 		})
 
-	return err
+	return repoUtils.MongoErr(err)
 }
