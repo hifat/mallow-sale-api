@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -50,8 +52,14 @@ func main() {
 	engine.Use(func(c core.IHttpCtx) {
 		// Set CORS headers
 		c.SetHeader("Access-Control-Allow-Origin", "*")
-		c.SetHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,PATCH,OPTIONS")
-		c.SetHeader("Access-Control-Allow-Headers", "Origin, Content-Type, Accept, Authorization")
+		c.SetHeader("Access-Control-Allow-Methods", strings.Join([]string{
+			http.MethodGet,
+			http.MethodPost,
+			http.MethodPut,
+			http.MethodPatch,
+			http.MethodDelete,
+		}, ","))
+		c.SetHeader("Access-Control-Allow-Headers", "Origin, Content-Type, Accept, Authorization, X-Api-Key")
 		c.SetHeader("Access-Control-Allow-Credentials", "true")
 
 		// Handle preflight requests

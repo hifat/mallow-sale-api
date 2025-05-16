@@ -19,7 +19,7 @@ func ResponseErr(c core.IHttpCtx, err error) {
 }
 
 func ResponseBadRequest(c core.IHttpCtx, err error) {
-	c.AbortWithJSON(http.StatusBadRequest, throw.InternalServerErr(err))
+	c.AbortWithJSON(http.StatusBadRequest, throw.BadRequestErr(err))
 }
 
 func ResponseCreated(c core.IHttpCtx) {
