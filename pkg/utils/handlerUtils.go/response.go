@@ -3,9 +3,9 @@ package handlerUtils
 import (
 	"net/http"
 
-	"github.com/hifat/cost-calculator-api/pkg/throw"
-	"github.com/hifat/cost-calculator-api/pkg/utils/response"
 	core "github.com/hifat/goroger-core"
+	"github.com/hifat/mallow-sale-api/pkg/throw"
+	"github.com/hifat/mallow-sale-api/pkg/utils/response"
 )
 
 func ResponseErr(c core.IHttpCtx, err error) {

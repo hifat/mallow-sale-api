@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/hifat/cost-calculator-api/internal/recipe"
-	"github.com/hifat/cost-calculator-api/pkg/database"
 	core "github.com/hifat/goroger-core"
+	"github.com/hifat/mallow-sale-api/internal/recipe"
+	"github.com/hifat/mallow-sale-api/pkg/database"
 	"github.com/jinzhu/copier"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"

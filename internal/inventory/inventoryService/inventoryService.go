@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 
-	"github.com/hifat/cost-calculator-api/internal/inventory"
-	"github.com/hifat/cost-calculator-api/internal/inventory/inventoryRepository"
-	"github.com/hifat/cost-calculator-api/internal/usageUnit/usageUnitRepository"
-	"github.com/hifat/cost-calculator-api/pkg/throw"
 	core "github.com/hifat/goroger-core"
 	"github.com/hifat/goroger-core/rules"
+	"github.com/hifat/mallow-sale-api/internal/inventory"
+	"github.com/hifat/mallow-sale-api/internal/inventory/inventoryRepository"
+	"github.com/hifat/mallow-sale-api/internal/usageUnit/usageUnitRepository"
+	"github.com/hifat/mallow-sale-api/pkg/throw"
 )
 
 type IInventoryService interface {

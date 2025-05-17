@@ -3,7 +3,7 @@ package recipeRepository
 import (
 	"context"
 
-	"github.com/hifat/cost-calculator-api/internal/recipe"
+	"github.com/hifat/mallow-sale-api/internal/recipe"
 )
 
 type IRecipeRepository interface {

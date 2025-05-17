@@ -3,7 +3,7 @@ package inventory
 import (
 	"time"
 
-	"github.com/hifat/cost-calculator-api/internal/usageUnit"
+	"github.com/hifat/mallow-sale-api/internal/usageUnit"
 )
 
 type (

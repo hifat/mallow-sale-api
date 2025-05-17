@@ -3,18 +3,21 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/hifat/cost-calculator-api/config"
-	"github.com/hifat/cost-calculator-api/pkg/database"
-	"github.com/hifat/cost-calculator-api/pkg/initial"
-	"github.com/hifat/cost-calculator-api/router"
 	core "github.com/hifat/goroger-core"
 	"github.com/hifat/goroger-core/framework"
 	"github.com/hifat/goroger-core/rules"
+	"github.com/hifat/mallow-sale-api/config"
+	"github.com/hifat/mallow-sale-api/constant"
+	"github.com/hifat/mallow-sale-api/pkg/database"
+	"github.com/hifat/mallow-sale-api/pkg/initial"
+	"github.com/hifat/mallow-sale-api/router"
 
 	fiberSwagger "github.com/swaggo/fiber-swagger"
 	_ "github.com/swaggo/fiber-swagger/example/docs"
@@ -22,7 +25,6 @@ import (
 
 // @title           Mallow Sale API
 // @version         1.0
-// @description     This is a sample server celler server.
 // @termsOfService  http://swagger.io/terms/
 
 // @license.name  Apache 2.0
@@ -33,7 +35,12 @@ import (
 // @in header
 // @name Authorization
 func main() {
-	cfg := config.LoadAppConfig("./", ".env")
+	args := os.Args
+	if len(args) != 2 {
+		log.Fatal("please give server name and env path: go run . <server_name> <env_path>")
+	}
+
+	cfg := config.LoadAppConfig(args[1])
 	ctx := context.Background()
 
 	dbClient := database.MongoConnect(ctx, &cfg.Db)
@@ -84,8 +91,12 @@ func main() {
 		})
 	})
 
-	r.InventoryRouter()
-	r.RecipeRouter()
+	switch cfg.App.Service {
+	case constant.ServiceInventory:
+		r.InventoryRouter()
+	case constant.ServiceRecipe:
+		r.RecipeRouter()
+	}
 
 	engine.Listener(fmt.Sprintf("%s:%s", cfg.App.Host, cfg.App.Port))
 }

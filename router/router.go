@@ -2,8 +2,8 @@ package router
 
 import (
 	"github.com/go-playground/validator/v10"
-	"github.com/hifat/cost-calculator-api/config"
 	core "github.com/hifat/goroger-core"
+	"github.com/hifat/mallow-sale-api/config"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.uber.org/zap"
 )

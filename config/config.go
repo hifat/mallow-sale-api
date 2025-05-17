@@ -1,6 +1,10 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	"strings"
+
+	"github.com/spf13/viper"
+)
 
 type Config struct {
 	App App
@@ -8,8 +12,9 @@ type Config struct {
 }
 
 type App struct {
-	Host string `mapstructure:"APP_HOST"`
-	Port string `mapstructure:"APP_PORT"`
+	Service string `mapstructure:"APP_SERVICE"`
+	Host    string `mapstructure:"APP_HOST"`
+	Port    string `mapstructure:"APP_PORT"`
 }
 
 type Db struct {
@@ -38,7 +43,11 @@ func (c *Config) Init(path string, filename string) error {
 	return nil
 }
 
-func LoadAppConfig(path string, filename string) *Config {
+func LoadAppConfig(paths string) *Config {
+	split := strings.Split(paths, "/")
+	path := strings.Join(split[:len(split)-1], "/")
+	filename := split[len(split)-1]
+
 	cfg := Config{}
 
 	err := cfg.Init(path, filename)

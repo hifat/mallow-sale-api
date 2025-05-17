@@ -1,6 +1,6 @@
 package router
 
-import inventoryDI "github.com/hifat/cost-calculator-api/internal/inventory/inventoryDi"
+import inventoryDI "github.com/hifat/mallow-sale-api/internal/inventory/inventoryDi"
 
 func (r *router) InventoryRouter() {
 	handler := inventoryDI.Init(r.cfg, r.db, r.logger, r.validator)

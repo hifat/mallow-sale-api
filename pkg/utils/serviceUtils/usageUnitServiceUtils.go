@@ -3,7 +3,7 @@ package usageUnitServiceUtils
 import (
 	"context"
 
-	"github.com/hifat/cost-calculator-api/internal/usageUnit/usageUnitRepository"
+	"github.com/hifat/mallow-sale-api/internal/usageUnit/usageUnitRepository"
 )
 
 type IUsageUnitServiceUtils interface {

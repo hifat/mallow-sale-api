@@ -1,10 +1,10 @@
 package inventoryHandler
 
 import (
-	"github.com/hifat/cost-calculator-api/internal/inventory"
-	"github.com/hifat/cost-calculator-api/internal/inventory/inventoryService"
-	"github.com/hifat/cost-calculator-api/pkg/utils/handlerUtils.go"
 	core "github.com/hifat/goroger-core"
+	"github.com/hifat/mallow-sale-api/internal/inventory"
+	"github.com/hifat/mallow-sale-api/internal/inventory/inventoryService"
+	"github.com/hifat/mallow-sale-api/pkg/utils/handlerUtils.go"
 )
 
 type inventoryRest struct {

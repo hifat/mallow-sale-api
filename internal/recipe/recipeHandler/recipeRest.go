@@ -3,10 +3,10 @@ package recipeHandler
 import (
 	"net/http"
 
-	"github.com/hifat/cost-calculator-api/internal/recipe"
-	"github.com/hifat/cost-calculator-api/internal/recipe/recipeService"
-	"github.com/hifat/cost-calculator-api/pkg/utils/handlerUtils.go"
 	core "github.com/hifat/goroger-core"
+	"github.com/hifat/mallow-sale-api/internal/recipe"
+	"github.com/hifat/mallow-sale-api/internal/recipe/recipeService"
+	"github.com/hifat/mallow-sale-api/pkg/utils/handlerUtils.go"
 )
 
 type recipeRest struct {

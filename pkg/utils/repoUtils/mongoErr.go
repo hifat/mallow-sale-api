@@ -3,7 +3,7 @@ package repoUtils
 import (
 	"errors"
 
-	"github.com/hifat/cost-calculator-api/pkg/throw"
+	"github.com/hifat/mallow-sale-api/pkg/throw"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 

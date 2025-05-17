@@ -3,7 +3,7 @@ package inventoryRepository
 import (
 	"context"
 
-	"github.com/hifat/cost-calculator-api/internal/inventory"
+	"github.com/hifat/mallow-sale-api/internal/inventory"
 )
 
 type IInventoryRepository interface {

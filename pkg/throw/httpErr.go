@@ -4,8 +4,8 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/hifat/cost-calculator-api/pkg/utils/response"
 	"github.com/hifat/goroger-core/rules"
+	"github.com/hifat/mallow-sale-api/pkg/utils/response"
 )
 
 var ErrRecordNotFound = errors.New("record not found")

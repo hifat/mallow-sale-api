@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hifat/cost-calculator-api/internal/entity"
-	"github.com/hifat/cost-calculator-api/internal/usageUnit"
-	"github.com/hifat/cost-calculator-api/pkg/utils"
+	"github.com/hifat/mallow-sale-api/internal/entity"
+	"github.com/hifat/mallow-sale-api/internal/usageUnit"
+	"github.com/hifat/mallow-sale-api/pkg/utils"
 )
 
 func seedUsageUnit() error {

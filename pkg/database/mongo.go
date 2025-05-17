@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/hifat/cost-calculator-api/config"
-	"github.com/hifat/cost-calculator-api/pkg/initial"
 	"github.com/hifat/goroger-core/logger"
+	"github.com/hifat/mallow-sale-api/config"
+	"github.com/hifat/mallow-sale-api/pkg/initial"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

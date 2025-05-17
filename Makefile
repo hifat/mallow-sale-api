@@ -1,11 +1,10 @@
-run-rest:
-	go run ./cmd/rest
+run-api:
+	go run ./cmd/api ./env/$e/.env.$s
 
 run-all:
-	go run ./cmd/rest/inventory.go ./env/local/.env.inventory & \
-	go run ./cmd/rest/recipe.go ./env/local/.env.recipe & \
-	go run ./cmd/rest/usageUnit.go ./env/local/.env.usageUnit & \
+	go run ./cmd/api/main.go ./env/local/.env.inventory & \
+	go run ./cmd/api/main.go ./env/local/.env.recipe
 
 # Kill all running Go processes
 kill-all:
-	pkill -f "go run server/"
+	pkill -f "go run ./cmd"

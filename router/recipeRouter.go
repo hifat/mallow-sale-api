@@ -1,7 +1,7 @@
 package router
 
 import (
-	"github.com/hifat/cost-calculator-api/internal/recipe/recipeDI"
+	"github.com/hifat/mallow-sale-api/internal/recipe/recipeDI"
 )
 
 func (r *router) RecipeRouter() {

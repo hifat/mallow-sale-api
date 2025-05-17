@@ -3,7 +3,7 @@ package usageUnitRepository
 import (
 	"context"
 
-	"github.com/hifat/cost-calculator-api/internal/usageUnit"
+	"github.com/hifat/mallow-sale-api/internal/usageUnit"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )

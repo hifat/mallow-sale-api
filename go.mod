@@ -1,4 +1,4 @@
-module github.com/hifat/cost-calculator-api
+module github.com/hifat/mallow-sale-api
 
 go 1.24.0
 

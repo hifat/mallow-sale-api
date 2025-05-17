@@ -1,6 +1,6 @@
 package usageUnit
 
-import "github.com/hifat/cost-calculator-api/internal/entity"
+import "github.com/hifat/mallow-sale-api/internal/entity"
 
 type UsageUnit struct {
 	entity.Base `bson:"inline"`

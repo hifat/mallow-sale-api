@@ -5,13 +5,13 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/hifat/cost-calculator-api/internal/inventory"
-	"github.com/hifat/cost-calculator-api/internal/inventory/inventoryRepository"
-	"github.com/hifat/cost-calculator-api/internal/recipe"
-	"github.com/hifat/cost-calculator-api/internal/recipe/recipeRepository"
-	usageUnitServiceUtils "github.com/hifat/cost-calculator-api/pkg/utils/serviceUtils"
 	core "github.com/hifat/goroger-core"
 	"github.com/hifat/goroger-core/rules"
+	"github.com/hifat/mallow-sale-api/internal/inventory"
+	"github.com/hifat/mallow-sale-api/internal/inventory/inventoryRepository"
+	"github.com/hifat/mallow-sale-api/internal/recipe"
+	"github.com/hifat/mallow-sale-api/internal/recipe/recipeRepository"
+	usageUnitServiceUtils "github.com/hifat/mallow-sale-api/pkg/utils/serviceUtils"
 )
 
 type IRecipeService interface {

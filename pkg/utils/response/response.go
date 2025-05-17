@@ -12,11 +12,16 @@ type Response struct {
 	Status int `json:"-"`
 }
 
+type ResponseMeta struct {
+	Total int64 `json:"total"`
+}
+
 type ResponseSuccess struct {
 	Response
 
-	Item  any `json:"item,omitempty"`
-	Items any `json:"items,omitempty"`
+	Item  any           `json:"item,omitempty"`
+	Items any           `json:"items,omitempty"`
+	Meta  *ResponseMeta `json:"meta,omitempty"`
 }
 
 type ResponseErr struct {
