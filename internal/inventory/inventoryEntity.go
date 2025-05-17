@@ -18,6 +18,6 @@ type (
 	}
 )
 
-func (m *Inventory) DocName() string {
+func (m *Inventory) Doc() string {
 	return "inventories"
 }

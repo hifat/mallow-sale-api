@@ -8,7 +8,7 @@ type UsageUnit struct {
 	Name        string `bson:"name"`
 }
 
-func (e *UsageUnit) DocName() string {
+func (m *UsageUnit) Doc() string {
 	return "usage_units"
 }
 

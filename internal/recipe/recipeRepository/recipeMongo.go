@@ -37,7 +37,7 @@ func (r *recipeMongo) Create(ctx context.Context, req recipe.RecipeReq) (id stri
 		newRecipe.Ingredients[i].ID = primitive.NewObjectID().Hex()
 	}
 
-	result, err := r.db.Collection(newRecipe.DocName()).
+	result, err := r.db.Collection(newRecipe.Doc()).
 		InsertOne(ctx, newRecipe)
 	if err != nil {
 		return "", err
@@ -53,7 +53,7 @@ func (r *recipeMongo) Create(ctx context.Context, req recipe.RecipeReq) (id stri
 
 func (r *recipeMongo) Find(ctx context.Context) ([]recipe.RecipeRes, error) {
 	_recipe := recipe.Recipe{}
-	cur, err := r.db.Collection(_recipe.DocName()).
+	cur, err := r.db.Collection(_recipe.Doc()).
 		Find(ctx, bson.M{})
 	if err != nil {
 		return nil, err
@@ -75,7 +75,7 @@ func (r *recipeMongo) Find(ctx context.Context) ([]recipe.RecipeRes, error) {
 
 func (r *recipeMongo) FindByID(ctx context.Context, id string) (*recipe.RecipeRes, error) {
 	_recipe := recipe.Recipe{}
-	err := r.db.Collection(_recipe.DocName()).
+	err := r.db.Collection(_recipe.Doc()).
 		FindOne(ctx, bson.M{
 			"_id": database.MustStrToObjectID(id),
 		}).Decode(&_recipe)
@@ -127,7 +127,7 @@ func (r *recipeMongo) Update(ctx context.Context, id string, req recipe.UpdateRe
 		"ingredients": setIngredients,
 	}
 
-	_, err := r.db.Collection(editRecipe.DocName()).
+	_, err := r.db.Collection(editRecipe.Doc()).
 		UpdateOne(ctx, bson.M{
 			"_id": database.MustStrToObjectID(id),
 		}, bson.M{
@@ -142,7 +142,7 @@ func (r *recipeMongo) Update(ctx context.Context, id string, req recipe.UpdateRe
 
 func (r *recipeMongo) Delete(ctx context.Context, id string) error {
 	_recipe := recipe.Recipe{}
-	_, err := r.db.Collection(_recipe.DocName()).
+	_, err := r.db.Collection(_recipe.Doc()).
 		DeleteOne(ctx, bson.M{
 			"_id": database.MustStrToObjectID(id),
 		})

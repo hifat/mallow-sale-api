@@ -36,7 +36,7 @@ func (r *inventoryMongo) Create(ctx context.Context, req inventory.InventoryReq)
 
 	newInventory.SetDateTime()
 
-	_, err := r.db.Collection(newInventory.DocName()).
+	_, err := r.db.Collection(newInventory.Doc()).
 		InsertOne(ctx, newInventory)
 
 	return newInventory.ID, repoUtils.MongoErr(err)
@@ -44,7 +44,7 @@ func (r *inventoryMongo) Create(ctx context.Context, req inventory.InventoryReq)
 
 func (r *inventoryMongo) Find(ctx context.Context) ([]inventory.Inventory, error) {
 	_inventory := inventory.Inventory{}
-	cur, err := r.db.Collection(_inventory.DocName()).
+	cur, err := r.db.Collection(_inventory.Doc()).
 		Find(ctx, bson.M{})
 	if err != nil {
 		return nil, repoUtils.MongoErr(err)
@@ -58,7 +58,7 @@ func (r *inventoryMongo) Find(ctx context.Context) ([]inventory.Inventory, error
 
 func (r *inventoryMongo) FindByID(ctx context.Context, id string) (*inventory.Inventory, error) {
 	_inventory := inventory.Inventory{}
-	err := r.db.Collection(_inventory.DocName()).
+	err := r.db.Collection(_inventory.Doc()).
 		FindOne(ctx, bson.M{
 			"_id": database.MustStrToObjectID(id),
 		}).Decode(&_inventory)
@@ -77,7 +77,7 @@ func (r *inventoryMongo) FindInID(ctx context.Context, ids []string) ([]inventor
 	}
 
 	_inventory := inventory.Inventory{}
-	cur, err := r.db.Collection(_inventory.DocName()).
+	cur, err := r.db.Collection(_inventory.Doc()).
 		Find(ctx, bson.M{
 			"_id": bson.M{
 				"$in": objectIDs,
@@ -95,7 +95,7 @@ func (r *inventoryMongo) FindInID(ctx context.Context, ids []string) ([]inventor
 
 func (r *inventoryMongo) Update(ctx context.Context, id string, req inventory.InventoryReq) error {
 	editInventory := inventory.Inventory{}
-	_, err := r.db.Collection(editInventory.DocName()).
+	_, err := r.db.Collection(editInventory.Doc()).
 		UpdateByID(ctx, database.MustStrToObjectID(id), bson.M{
 			"$set": bson.M{
 				"name":              req.Name,
@@ -116,7 +116,7 @@ func (r *inventoryMongo) Update(ctx context.Context, id string, req inventory.In
 
 func (r *inventoryMongo) Delete(ctx context.Context, id string) error {
 	_inventory := inventory.Inventory{}
-	_, err := r.db.Collection(_inventory.DocName()).
+	_, err := r.db.Collection(_inventory.Doc()).
 		DeleteOne(ctx, bson.M{
 			"_id": database.MustStrToObjectID(id),
 		})

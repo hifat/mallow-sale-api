@@ -23,6 +23,6 @@ type Recipe struct {
 	Ingredients []RecipeInventory `json:"ingredients" bson:"ingredients"`
 }
 
-func (m *Recipe) DocName() string {
+func (m *Recipe) Doc() string {
 	return "recipes"
 }

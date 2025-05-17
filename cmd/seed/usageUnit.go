@@ -45,7 +45,7 @@ func seedUsageUnit() error {
 		newDocs = append(newDocs, doc)
 	}
 
-	result, err := db.Collection(_usageUnit.DocName()).
+	result, err := db.Collection(_usageUnit.Doc()).
 		InsertMany(ctx, newDocs)
 	if err != nil {
 		return err
