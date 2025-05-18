@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package inventoryProto;
+option go_package = "./inventoryProto";
+
+message AccessTokenFilter {
+    string id = 1;
+}
+
+message UsageUnitEmbed {
+    string code = 1;
+    string name = 2;
+}
+
+message InventoryRes {
+    float name = 2;
+    float purchasePrice = 3;
+    float purchaseQuantity = 4;
+    float yieldPercentage = 6;
+    float remark = 7;
+
+    UsageUnitEmbed purchaseUnit = 8;
+}
+
+service InventoryGrpcService {
+    rpc FindInventory(AccessTokenFilter) returns (InventoryRes);
+}

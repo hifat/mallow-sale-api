@@ -25,6 +25,14 @@ type Db struct {
 	Name     string `mapstructure:"DB_NAME"`
 }
 
+type Auth struct {
+	AccessToken         string `mapstructure:"ACCESS_TOKEN"`
+	AccessTokenExpires  string `mapstructure:"ACCESS_TOKEN_EXPIRES"`
+	RefreshToken        string `mapstructure:"REFRESH_TOKEN"`
+	RefreshTokenExpires string `mapstructure:"REFRESH_TOKEN_EXPIRES"`
+	APIKey              string `mapstructure:"API_KEY"`
+}
+
 func (c *Config) Init(path string, filename string) error {
 	viper.AddConfigPath(path)
 	viper.SetConfigName(filename)

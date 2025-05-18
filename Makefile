@@ -1,10 +1,7 @@
 run-api:
 	go run ./cmd/api ./env/$e/.env.$s
 
-run-all:
-	go run ./cmd/api/main.go ./env/local/.env.inventory & \
-	go run ./cmd/api/main.go ./env/local/.env.recipe
-
-# Kill all running Go processes
-kill-all:
-	pkill -f "go run ./cmd"
+pb-gen:
+	protoc --go_out=. --go_opt=paths=source_relative \
+    --go-grpc_out=. --go-grpc_opt=paths=source_relative \
+    ./internal/$s/$sProto/$s.proto
