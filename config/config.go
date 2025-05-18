@@ -2,13 +2,15 @@ package config
 
 import (
 	"strings"
+	"time"
 
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	App App
-	Db  Db
+	App  App
+	Db   Db
+	Auth Auth
 }
 
 type App struct {
@@ -26,11 +28,11 @@ type Db struct {
 }
 
 type Auth struct {
-	AccessToken         string `mapstructure:"ACCESS_TOKEN"`
-	AccessTokenExpires  string `mapstructure:"ACCESS_TOKEN_EXPIRES"`
-	RefreshToken        string `mapstructure:"REFRESH_TOKEN"`
-	RefreshTokenExpires string `mapstructure:"REFRESH_TOKEN_EXPIRES"`
-	APIKey              string `mapstructure:"API_KEY"`
+	AccessToken         string        `mapstructure:"ACCESS_TOKEN"`
+	AccessTokenExpires  time.Duration `mapstructure:"ACCESS_TOKEN_EXPIRES"`
+	RefreshToken        string        `mapstructure:"REFRESH_TOKEN"`
+	RefreshTokenExpires time.Duration `mapstructure:"REFRESH_TOKEN_EXPIRES"`
+	APIKey              string        `mapstructure:"API_KEY"`
 }
 
 func (c *Config) Init(path string, filename string) error {
