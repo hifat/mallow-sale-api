@@ -68,7 +68,7 @@ func (t *tokenAuth) Sign(tokenType TokenType, payload *Credentials) (string, err
 	tokenDuration := t.getExpires(tokenType)
 	claims.RegisteredClaims = jwt.RegisteredClaims{
 		ID:        uuid.NewString(),
-		Issuer:    "mallow-sale",
+		Issuer:    t.cfg.App.Name,
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(tokenDuration)),
 	}

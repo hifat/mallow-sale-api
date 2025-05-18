@@ -17,6 +17,7 @@ type App struct {
 	Service string `mapstructure:"APP_SERVICE"`
 	Host    string `mapstructure:"APP_HOST"`
 	Port    string `mapstructure:"APP_PORT"`
+	Name    string `mapstructure:"APP_NAME"`
 }
 
 type Db struct {
