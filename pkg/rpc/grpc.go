@@ -84,7 +84,7 @@ func (c *grpcClient) CloseAll() {
 	}
 }
 
-func NewGrpcServer(cfg *config.Auth, host string) (*grpc.Server, net.Listener, error) {
+func NewGRPCServer(cfg *config.Auth, host string) (*grpc.Server, net.Listener, error) {
 	grpcAuth := &grpcAuth{
 		secretKey: cfg.APIKey,
 	}
