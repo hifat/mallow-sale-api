@@ -3,6 +3,7 @@ package rpc
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net"
 
 	"github.com/hifat/mallow-sale-api/config"
@@ -11,18 +12,6 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
 )
-
-type GrpcClientFactoryHandler interface {
-	Inventory() inventoryProto.InventoryGrpcServiceClient
-}
-
-type grpcClientFactory struct {
-	client *grpc.ClientConn
-}
-
-func (g *grpcClientFactory) Inventory() inventoryProto.InventoryGrpcServiceClient {
-	return inventoryProto.NewInventoryGrpcServiceClient(g.client)
-}
 
 type grpcAuth struct {
 	secretKey string
@@ -52,30 +41,58 @@ func (g *grpcAuth) unaryAuth(ctx context.Context, req any, info *grpc.UnaryServe
 	return handler(ctx, req)
 }
 
-func NewGrpcClient(host string) (GrpcClientFactoryHandler, error) {
-	opts := make([]grpc.DialOption, 0)
+type GrpcClient interface {
+	Inventory() inventoryProto.InventoryGrpcServiceClient
+	CloseAll()
+}
 
-	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+type grpcClient struct {
+	inventoryConn *grpc.ClientConn
+}
 
-	clientConn, err := grpc.NewClient(host, opts...)
-	if err != nil {
-		return nil, err
+func NewGRPCClient(cfg *config.Config) (GrpcClient, error) {
+	// Connection options with a timeout
+	opts := []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	}
 
-	return &grpcClientFactory{
-		client: clientConn,
+	// Connect to User service
+	inventoryConn, err := grpc.NewClient(cfg.GRPC.InventoryHost, opts...)
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect to inventory service: %v", err)
+	}
+
+	// Connect to Comment service
+	// inventoryConn, err := grpc.Dial(CommentServiceAddr, opts...)
+	// if err != nil {
+	// 	userConn.Close() // Clean up
+	// 	return nil, fmt.Errorf("failed to connect to comment service: %v", err)
+	// }
+
+	return &grpcClient{
+		inventoryConn,
 	}, nil
 }
 
-func NewGrpcServer(cfg *config.Auth, host string) (*grpc.Server, net.Listener, error) {
-	opts := make([]grpc.ServerOption, 0)
+func (g *grpcClient) Inventory() inventoryProto.InventoryGrpcServiceClient {
+	return inventoryProto.NewInventoryGrpcServiceClient(g.inventoryConn)
+}
 
+func (c *grpcClient) CloseAll() {
+	if c.inventoryConn != nil {
+		c.inventoryConn.Close()
+	}
+}
+
+func NewGrpcServer(cfg *config.Auth, host string) (*grpc.Server, net.Listener, error) {
 	grpcAuth := &grpcAuth{
 		secretKey: cfg.APIKey,
 	}
 
-	opts = append(opts, grpc.UnaryInterceptor(grpcAuth.unaryAuth))
-
+	opts := []grpc.ServerOption{
+		grpc.UnaryInterceptor(grpcAuth.unaryAuth),
+	}
+	recover()
 	grpcServer := grpc.NewServer(opts...)
 
 	lis, err := net.Listen("tcp", host)

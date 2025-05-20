@@ -3,8 +3,10 @@ syntax = "proto3";
 package inventoryProto;
 option go_package = "./inventoryProto";
 
-message AccessTokenFilter {
-    string id = 1;
+import "google/protobuf/timestamp.proto";
+
+message InFilter {
+    repeated string ids = 1;
 }
 
 message UsageUnitEmbed {
@@ -12,16 +14,23 @@ message UsageUnitEmbed {
     string name = 2;
 }
 
-message InventoryRes {
-    float name = 2;
+message Inventory {
+    string id = 1;
+    string name = 2;
     float purchasePrice = 3;
     float purchaseQuantity = 4;
     float yieldPercentage = 6;
-    float remark = 7;
+    string remark = 7;
+    google.protobuf.Timestamp created_at = 8;
+    google.protobuf.Timestamp updated_at = 9;
 
-    UsageUnitEmbed purchaseUnit = 8;
+    UsageUnitEmbed purchaseUnit = 10;
+}
+
+message InventoryRes {
+    repeated Inventory items = 1;
 }
 
 service InventoryGrpcService {
-    rpc FindInventory(AccessTokenFilter) returns (InventoryRes);
+    rpc FindIn(InFilter) returns (InventoryRes);
 }

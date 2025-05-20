@@ -17,6 +17,7 @@ import (
 	"github.com/hifat/mallow-sale-api/constant"
 	"github.com/hifat/mallow-sale-api/pkg/database"
 	"github.com/hifat/mallow-sale-api/pkg/initial"
+	"github.com/hifat/mallow-sale-api/pkg/rpc"
 	"github.com/hifat/mallow-sale-api/router"
 
 	fiberSwagger "github.com/swaggo/fiber-swagger"
@@ -83,7 +84,13 @@ func main() {
 		panic(err)
 	}
 
-	r := router.New(engine, cfg, db, initial.Logger, validateRegis)
+	grpc, err := rpc.NewGRPCClient(cfg)
+	if err != nil {
+		panic(err)
+	}
+	defer grpc.CloseAll()
+
+	r := router.New(engine, cfg, db, initial.Logger, validateRegis, grpc)
 
 	engine.Get("/health", func(ic core.IHttpCtx) {
 		ic.JSON(200, map[string]any{

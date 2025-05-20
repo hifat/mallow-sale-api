@@ -9,6 +9,7 @@ package inventoryProto
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -21,27 +22,27 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type AccessTokenFilter struct {
+type InFilter struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Ids           []string               `protobuf:"bytes,1,rep,name=ids,proto3" json:"ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AccessTokenFilter) Reset() {
-	*x = AccessTokenFilter{}
+func (x *InFilter) Reset() {
+	*x = InFilter{}
 	mi := &file_internal_inventory_inventoryProto_inventory_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AccessTokenFilter) String() string {
+func (x *InFilter) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AccessTokenFilter) ProtoMessage() {}
+func (*InFilter) ProtoMessage() {}
 
-func (x *AccessTokenFilter) ProtoReflect() protoreflect.Message {
+func (x *InFilter) ProtoReflect() protoreflect.Message {
 	mi := &file_internal_inventory_inventoryProto_inventory_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -53,16 +54,16 @@ func (x *AccessTokenFilter) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AccessTokenFilter.ProtoReflect.Descriptor instead.
-func (*AccessTokenFilter) Descriptor() ([]byte, []int) {
+// Deprecated: Use InFilter.ProtoReflect.Descriptor instead.
+func (*InFilter) Descriptor() ([]byte, []int) {
 	return file_internal_inventory_inventoryProto_inventory_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *AccessTokenFilter) GetId() string {
+func (x *InFilter) GetIds() []string {
 	if x != nil {
-		return x.Id
+		return x.Ids
 	}
-	return ""
+	return nil
 }
 
 type UsageUnitEmbed struct {
@@ -117,21 +118,124 @@ func (x *UsageUnitEmbed) GetName() string {
 	return ""
 }
 
-type InventoryRes struct {
+type Inventory struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	Name             float32                `protobuf:"fixed32,2,opt,name=name,proto3" json:"name,omitempty"`
+	Id               string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name             string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	PurchasePrice    float32                `protobuf:"fixed32,3,opt,name=purchasePrice,proto3" json:"purchasePrice,omitempty"`
 	PurchaseQuantity float32                `protobuf:"fixed32,4,opt,name=purchaseQuantity,proto3" json:"purchaseQuantity,omitempty"`
 	YieldPercentage  float32                `protobuf:"fixed32,6,opt,name=yieldPercentage,proto3" json:"yieldPercentage,omitempty"`
-	Remark           float32                `protobuf:"fixed32,7,opt,name=remark,proto3" json:"remark,omitempty"`
-	PurchaseUnit     *UsageUnitEmbed        `protobuf:"bytes,8,opt,name=purchaseUnit,proto3" json:"purchaseUnit,omitempty"`
+	Remark           string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`
+	CreatedAt        *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt        *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	PurchaseUnit     *UsageUnitEmbed        `protobuf:"bytes,10,opt,name=purchaseUnit,proto3" json:"purchaseUnit,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
 
+func (x *Inventory) Reset() {
+	*x = Inventory{}
+	mi := &file_internal_inventory_inventoryProto_inventory_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Inventory) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Inventory) ProtoMessage() {}
+
+func (x *Inventory) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_inventory_inventoryProto_inventory_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Inventory.ProtoReflect.Descriptor instead.
+func (*Inventory) Descriptor() ([]byte, []int) {
+	return file_internal_inventory_inventoryProto_inventory_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *Inventory) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Inventory) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Inventory) GetPurchasePrice() float32 {
+	if x != nil {
+		return x.PurchasePrice
+	}
+	return 0
+}
+
+func (x *Inventory) GetPurchaseQuantity() float32 {
+	if x != nil {
+		return x.PurchaseQuantity
+	}
+	return 0
+}
+
+func (x *Inventory) GetYieldPercentage() float32 {
+	if x != nil {
+		return x.YieldPercentage
+	}
+	return 0
+}
+
+func (x *Inventory) GetRemark() string {
+	if x != nil {
+		return x.Remark
+	}
+	return ""
+}
+
+func (x *Inventory) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *Inventory) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+func (x *Inventory) GetPurchaseUnit() *UsageUnitEmbed {
+	if x != nil {
+		return x.PurchaseUnit
+	}
+	return nil
+}
+
+type InventoryRes struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Items         []*Inventory           `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
 func (x *InventoryRes) Reset() {
 	*x = InventoryRes{}
-	mi := &file_internal_inventory_inventoryProto_inventory_proto_msgTypes[2]
+	mi := &file_internal_inventory_inventoryProto_inventory_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -143,7 +247,7 @@ func (x *InventoryRes) String() string {
 func (*InventoryRes) ProtoMessage() {}
 
 func (x *InventoryRes) ProtoReflect() protoreflect.Message {
-	mi := &file_internal_inventory_inventoryProto_inventory_proto_msgTypes[2]
+	mi := &file_internal_inventory_inventoryProto_inventory_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -156,47 +260,12 @@ func (x *InventoryRes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InventoryRes.ProtoReflect.Descriptor instead.
 func (*InventoryRes) Descriptor() ([]byte, []int) {
-	return file_internal_inventory_inventoryProto_inventory_proto_rawDescGZIP(), []int{2}
+	return file_internal_inventory_inventoryProto_inventory_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *InventoryRes) GetName() float32 {
+func (x *InventoryRes) GetItems() []*Inventory {
 	if x != nil {
-		return x.Name
-	}
-	return 0
-}
-
-func (x *InventoryRes) GetPurchasePrice() float32 {
-	if x != nil {
-		return x.PurchasePrice
-	}
-	return 0
-}
-
-func (x *InventoryRes) GetPurchaseQuantity() float32 {
-	if x != nil {
-		return x.PurchaseQuantity
-	}
-	return 0
-}
-
-func (x *InventoryRes) GetYieldPercentage() float32 {
-	if x != nil {
-		return x.YieldPercentage
-	}
-	return 0
-}
-
-func (x *InventoryRes) GetRemark() float32 {
-	if x != nil {
-		return x.Remark
-	}
-	return 0
-}
-
-func (x *InventoryRes) GetPurchaseUnit() *UsageUnitEmbed {
-	if x != nil {
-		return x.PurchaseUnit
+		return x.Items
 	}
 	return nil
 }
@@ -205,21 +274,29 @@ var File_internal_inventory_inventoryProto_inventory_proto protoreflect.FileDesc
 
 const file_internal_inventory_inventoryProto_inventory_proto_rawDesc = "" +
 	"\n" +
-	"1internal/inventory/inventoryProto/inventory.proto\x12\x0einventoryProto\"#\n" +
-	"\x11AccessTokenFilter\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"8\n" +
+	"1internal/inventory/inventoryProto/inventory.proto\x12\x0einventoryProto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x1c\n" +
+	"\bInFilter\x12\x10\n" +
+	"\x03ids\x18\x01 \x03(\tR\x03ids\"8\n" +
 	"\x0eUsageUnitEmbed\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\tR\x04code\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\"\xfa\x01\n" +
-	"\fInventoryRes\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\x02R\x04name\x12$\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\"\xfd\x02\n" +
+	"\tInventory\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12$\n" +
 	"\rpurchasePrice\x18\x03 \x01(\x02R\rpurchasePrice\x12*\n" +
 	"\x10purchaseQuantity\x18\x04 \x01(\x02R\x10purchaseQuantity\x12(\n" +
 	"\x0fyieldPercentage\x18\x06 \x01(\x02R\x0fyieldPercentage\x12\x16\n" +
-	"\x06remark\x18\a \x01(\x02R\x06remark\x12B\n" +
-	"\fpurchaseUnit\x18\b \x01(\v2\x1e.inventoryProto.UsageUnitEmbedR\fpurchaseUnit2h\n" +
-	"\x14InventoryGrpcService\x12P\n" +
-	"\rFindInventory\x12!.inventoryProto.AccessTokenFilter\x1a\x1c.inventoryProto.InventoryResB\x12Z\x10./inventoryProtob\x06proto3"
+	"\x06remark\x18\a \x01(\tR\x06remark\x129\n" +
+	"\n" +
+	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"\n" +
+	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12B\n" +
+	"\fpurchaseUnit\x18\n" +
+	" \x01(\v2\x1e.inventoryProto.UsageUnitEmbedR\fpurchaseUnit\"?\n" +
+	"\fInventoryRes\x12/\n" +
+	"\x05items\x18\x01 \x03(\v2\x19.inventoryProto.InventoryR\x05items2X\n" +
+	"\x14InventoryGrpcService\x12@\n" +
+	"\x06FindIn\x12\x18.inventoryProto.InFilter\x1a\x1c.inventoryProto.InventoryResB\x12Z\x10./inventoryProtob\x06proto3"
 
 var (
 	file_internal_inventory_inventoryProto_inventory_proto_rawDescOnce sync.Once
@@ -233,21 +310,26 @@ func file_internal_inventory_inventoryProto_inventory_proto_rawDescGZIP() []byte
 	return file_internal_inventory_inventoryProto_inventory_proto_rawDescData
 }
 
-var file_internal_inventory_inventoryProto_inventory_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_internal_inventory_inventoryProto_inventory_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_internal_inventory_inventoryProto_inventory_proto_goTypes = []any{
-	(*AccessTokenFilter)(nil), // 0: inventoryProto.AccessTokenFilter
-	(*UsageUnitEmbed)(nil),    // 1: inventoryProto.UsageUnitEmbed
-	(*InventoryRes)(nil),      // 2: inventoryProto.InventoryRes
+	(*InFilter)(nil),              // 0: inventoryProto.InFilter
+	(*UsageUnitEmbed)(nil),        // 1: inventoryProto.UsageUnitEmbed
+	(*Inventory)(nil),             // 2: inventoryProto.Inventory
+	(*InventoryRes)(nil),          // 3: inventoryProto.InventoryRes
+	(*timestamppb.Timestamp)(nil), // 4: google.protobuf.Timestamp
 }
 var file_internal_inventory_inventoryProto_inventory_proto_depIdxs = []int32{
-	1, // 0: inventoryProto.InventoryRes.purchaseUnit:type_name -> inventoryProto.UsageUnitEmbed
-	0, // 1: inventoryProto.InventoryGrpcService.FindInventory:input_type -> inventoryProto.AccessTokenFilter
-	2, // 2: inventoryProto.InventoryGrpcService.FindInventory:output_type -> inventoryProto.InventoryRes
-	2, // [2:3] is the sub-list for method output_type
-	1, // [1:2] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	4, // 0: inventoryProto.Inventory.created_at:type_name -> google.protobuf.Timestamp
+	4, // 1: inventoryProto.Inventory.updated_at:type_name -> google.protobuf.Timestamp
+	1, // 2: inventoryProto.Inventory.purchaseUnit:type_name -> inventoryProto.UsageUnitEmbed
+	2, // 3: inventoryProto.InventoryRes.items:type_name -> inventoryProto.Inventory
+	0, // 4: inventoryProto.InventoryGrpcService.FindIn:input_type -> inventoryProto.InFilter
+	3, // 5: inventoryProto.InventoryGrpcService.FindIn:output_type -> inventoryProto.InventoryRes
+	5, // [5:6] is the sub-list for method output_type
+	4, // [4:5] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_internal_inventory_inventoryProto_inventory_proto_init() }
@@ -261,7 +343,7 @@ func file_internal_inventory_inventoryProto_inventory_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_internal_inventory_inventoryProto_inventory_proto_rawDesc), len(file_internal_inventory_inventoryProto_inventory_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

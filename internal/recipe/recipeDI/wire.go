@@ -14,6 +14,7 @@ import (
 	"github.com/hifat/mallow-sale-api/internal/recipe/recipeRepository"
 	"github.com/hifat/mallow-sale-api/internal/recipe/recipeService"
 	"github.com/hifat/mallow-sale-api/internal/usageUnit/usageUnitRepository"
+	"github.com/hifat/mallow-sale-api/pkg/rpc"
 	usageUnitServiceUtils "github.com/hifat/mallow-sale-api/pkg/utils/serviceUtils"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.uber.org/zap"
@@ -23,6 +24,7 @@ var RepoSet = wire.NewSet(
 	recipeRepository.NewMongo,
 	usageUnitRepository.NewMongo,
 	inventoryRepository.NewMongo,
+	inventoryRepository.NewGRPC,
 )
 
 var ServiceSet = wire.NewSet(
@@ -38,12 +40,11 @@ var HandlerSet = wire.NewSet(
 	recipeHandler.NewRest,
 )
 
-func Init(db *mongo.Database, log *zap.Logger, validate *validator.Validate) recipeHandler.Handler {
+func Init(db *mongo.Database, log *zap.Logger, validate *validator.Validate, grpc rpc.GrpcClient) recipeHandler.Handler {
 	wire.Build(
 		RepoSet,
 		ServiceSet,
 		HandlerSet,
 	)
-
 	return recipeHandler.Handler{}
 }

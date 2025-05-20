@@ -23,15 +23,24 @@ type IRecipeService interface {
 }
 
 type recipeService struct {
-	logger           core.Logger
-	validator        rules.Validator
-	helper           core.Helper
-	usageServiceUtil usageUnitServiceUtils.IUsageUnitServiceUtils
-	recipeRepo       recipeRepository.IRecipeRepository
-	inventoryRepo    inventoryRepository.IInventoryRepository
+	logger            core.Logger
+	validator         rules.Validator
+	helper            core.Helper
+	usageServiceUtil  usageUnitServiceUtils.IUsageUnitServiceUtils
+	recipeRepo        recipeRepository.IRecipeRepository
+	inventoryRepo     inventoryRepository.IInventoryRepository
+	inventoryGRPCRepo inventoryRepository.IInventoryGRPCRepository
 }
 
-func New(logger core.Logger, validator rules.Validator, helper core.Helper, usageServiceUtil usageUnitServiceUtils.IUsageUnitServiceUtils, recipeRepo recipeRepository.IRecipeRepository, inventoryRepo inventoryRepository.IInventoryRepository) IRecipeService {
+func New(
+	logger core.Logger,
+	validator rules.Validator,
+	helper core.Helper,
+	usageServiceUtil usageUnitServiceUtils.IUsageUnitServiceUtils,
+	recipeRepo recipeRepository.IRecipeRepository,
+	inventoryRepo inventoryRepository.IInventoryRepository,
+	inventoryGRPCRepo inventoryRepository.IInventoryGRPCRepository,
+) IRecipeService {
 	return &recipeService{
 		logger,
 		validator,
@@ -39,6 +48,7 @@ func New(logger core.Logger, validator rules.Validator, helper core.Helper, usag
 		usageServiceUtil,
 		recipeRepo,
 		inventoryRepo,
+		inventoryGRPCRepo,
 	}
 }
 

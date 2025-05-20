@@ -9,14 +9,14 @@ package inventoryDI
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/google/wire"
+	"github.com/hifat/goroger-core/helper"
+	"github.com/hifat/goroger-core/logger"
+	"github.com/hifat/goroger-core/rules"
 	"github.com/hifat/mallow-sale-api/config"
 	"github.com/hifat/mallow-sale-api/internal/inventory/inventoryHandler"
 	"github.com/hifat/mallow-sale-api/internal/inventory/inventoryRepository"
 	"github.com/hifat/mallow-sale-api/internal/inventory/inventoryService"
 	"github.com/hifat/mallow-sale-api/internal/usageUnit/usageUnitRepository"
-	"github.com/hifat/goroger-core/helper"
-	"github.com/hifat/goroger-core/logger"
-	"github.com/hifat/goroger-core/rules"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.uber.org/zap"
 )

@@ -11,6 +11,7 @@ type Config struct {
 	App  App
 	Db   Db
 	Auth Auth
+	GRPC GRPC
 }
 
 type App struct {
@@ -34,6 +35,9 @@ type Auth struct {
 	RefreshToken        string        `mapstructure:"REFRESH_TOKEN"`
 	RefreshTokenExpires time.Duration `mapstructure:"REFRESH_TOKEN_EXPIRES"`
 	APIKey              string        `mapstructure:"API_KEY"`
+}
+type GRPC struct {
+	InventoryHost string `mapstructure:"GRPC_INVENTORY_HOST"`
 }
 
 func (c *Config) Init(path string, filename string) error {

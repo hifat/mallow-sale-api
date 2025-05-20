@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type InventoryGrpcServiceClient interface {
-	FindInventory(ctx context.Context, in *AccessTokenFilter, opts ...grpc.CallOption) (*InventoryRes, error)
+	FindIn(ctx context.Context, in *InFilter, opts ...grpc.CallOption) (*InventoryRes, error)
 }
 
 type inventoryGrpcServiceClient struct {
@@ -33,9 +33,9 @@ func NewInventoryGrpcServiceClient(cc grpc.ClientConnInterface) InventoryGrpcSer
 	return &inventoryGrpcServiceClient{cc}
 }
 
-func (c *inventoryGrpcServiceClient) FindInventory(ctx context.Context, in *AccessTokenFilter, opts ...grpc.CallOption) (*InventoryRes, error) {
+func (c *inventoryGrpcServiceClient) FindIn(ctx context.Context, in *InFilter, opts ...grpc.CallOption) (*InventoryRes, error) {
 	out := new(InventoryRes)
-	err := c.cc.Invoke(ctx, "/inventoryProto.InventoryGrpcService/FindInventory", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/inventoryProto.InventoryGrpcService/FindIn", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (c *inventoryGrpcServiceClient) FindInventory(ctx context.Context, in *Acce
 // All implementations must embed UnimplementedInventoryGrpcServiceServer
 // for forward compatibility
 type InventoryGrpcServiceServer interface {
-	FindInventory(context.Context, *AccessTokenFilter) (*InventoryRes, error)
+	FindIn(context.Context, *InFilter) (*InventoryRes, error)
 	mustEmbedUnimplementedInventoryGrpcServiceServer()
 }
 
@@ -54,8 +54,8 @@ type InventoryGrpcServiceServer interface {
 type UnimplementedInventoryGrpcServiceServer struct {
 }
 
-func (UnimplementedInventoryGrpcServiceServer) FindInventory(context.Context, *AccessTokenFilter) (*InventoryRes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FindInventory not implemented")
+func (UnimplementedInventoryGrpcServiceServer) FindIn(context.Context, *InFilter) (*InventoryRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindIn not implemented")
 }
 func (UnimplementedInventoryGrpcServiceServer) mustEmbedUnimplementedInventoryGrpcServiceServer() {}
 
@@ -70,20 +70,20 @@ func RegisterInventoryGrpcServiceServer(s grpc.ServiceRegistrar, srv InventoryGr
 	s.RegisterService(&InventoryGrpcService_ServiceDesc, srv)
 }
 
-func _InventoryGrpcService_FindInventory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AccessTokenFilter)
+func _InventoryGrpcService_FindIn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InFilter)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InventoryGrpcServiceServer).FindInventory(ctx, in)
+		return srv.(InventoryGrpcServiceServer).FindIn(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/inventoryProto.InventoryGrpcService/FindInventory",
+		FullMethod: "/inventoryProto.InventoryGrpcService/FindIn",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InventoryGrpcServiceServer).FindInventory(ctx, req.(*AccessTokenFilter))
+		return srv.(InventoryGrpcServiceServer).FindIn(ctx, req.(*InFilter))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -96,8 +96,8 @@ var InventoryGrpcService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*InventoryGrpcServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "FindInventory",
-			Handler:    _InventoryGrpcService_FindInventory_Handler,
+			MethodName: "FindIn",
+			Handler:    _InventoryGrpcService_FindIn_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

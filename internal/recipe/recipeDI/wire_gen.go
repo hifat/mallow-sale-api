@@ -9,22 +9,23 @@ package recipeDI
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/google/wire"
+	"github.com/hifat/goroger-core/helper"
+	"github.com/hifat/goroger-core/logger"
+	"github.com/hifat/goroger-core/rules"
 	"github.com/hifat/mallow-sale-api/internal/inventory/inventoryRepository"
 	"github.com/hifat/mallow-sale-api/internal/recipe/recipeHandler"
 	"github.com/hifat/mallow-sale-api/internal/recipe/recipeRepository"
 	"github.com/hifat/mallow-sale-api/internal/recipe/recipeService"
 	"github.com/hifat/mallow-sale-api/internal/usageUnit/usageUnitRepository"
+	"github.com/hifat/mallow-sale-api/pkg/rpc"
 	"github.com/hifat/mallow-sale-api/pkg/utils/serviceUtils"
-	"github.com/hifat/goroger-core/helper"
-	"github.com/hifat/goroger-core/logger"
-	"github.com/hifat/goroger-core/rules"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.uber.org/zap"
 )
 
 // Injectors from wire.go:
 
-func Init(db *mongo.Database, log *zap.Logger, validate *validator.Validate) recipeHandler.Handler {
+func Init(db *mongo.Database, log *zap.Logger, validate *validator.Validate, grpc rpc.GrpcClient) recipeHandler.Handler {
 	coreLogger := logger.New(log)
 	rulesValidator := rules.New(validate)
 	coreHelper := helper.New()
@@ -32,7 +33,8 @@ func Init(db *mongo.Database, log *zap.Logger, validate *validator.Validate) rec
 	iUsageUnitServiceUtils := usageUnitServiceUtils.New(iUsageUnitRepository)
 	iRecipeRepository := recipeRepository.NewMongo(db, coreHelper)
 	iInventoryRepository := inventoryRepository.NewMongo(db, coreHelper)
-	iRecipeService := recipeService.New(coreLogger, rulesValidator, coreHelper, iUsageUnitServiceUtils, iRecipeRepository, iInventoryRepository)
+	iInventoryGRPCRepository := inventoryRepository.NewGRPC(grpc)
+	iRecipeService := recipeService.New(coreLogger, rulesValidator, coreHelper, iUsageUnitServiceUtils, iRecipeRepository, iInventoryRepository, iInventoryGRPCRepository)
 	recipeRest := recipeHandler.NewRest(iRecipeService)
 	handler := recipeHandler.New(recipeRest)
 	return handler
@@ -40,7 +42,7 @@ func Init(db *mongo.Database, log *zap.Logger, validate *validator.Validate) rec
 
 // wire.go:
 
-var RepoSet = wire.NewSet(recipeRepository.NewMongo, usageUnitRepository.NewMongo, inventoryRepository.NewMongo)
+var RepoSet = wire.NewSet(recipeRepository.NewMongo, usageUnitRepository.NewMongo, inventoryRepository.NewMongo, inventoryRepository.NewGRPC)
 
 var ServiceSet = wire.NewSet(logger.New, rules.New, helper.New, recipeService.New, usageUnitServiceUtils.New)
 
