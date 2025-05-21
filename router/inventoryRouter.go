@@ -1,9 +1,29 @@
 package router
 
-import inventoryDI "github.com/hifat/mallow-sale-api/internal/inventory/inventoryDi"
+import (
+	"fmt"
+	"log/slog"
+
+	inventoryDI "github.com/hifat/mallow-sale-api/internal/inventory/inventoryDi"
+	"github.com/hifat/mallow-sale-api/internal/inventory/inventoryProto"
+	"github.com/hifat/mallow-sale-api/pkg/rpc"
+)
 
 func (r *router) InventoryRouter() {
 	handler := inventoryDI.Init(r.cfg, r.db, r.logger, r.validator)
+
+	go func() {
+		grpcServer, lis, err := rpc.NewGRPCServer(&r.cfg.Auth, r.cfg.GRPC.InventoryHost)
+		if err != nil {
+			slog.Error(err.Error())
+			return
+		}
+
+		inventoryProto.RegisterInventoryGrpcServiceServer(grpcServer, handler.GRPC)
+
+		slog.Info(fmt.Sprintf("Auth gRPC server listening on: %s", r.cfg.GRPC.InventoryHost))
+		grpcServer.Serve(lis)
+	}()
 
 	inventory := r.route.Group("/api/inventories")
 	inventory.Get("", handler.InventoryRest.Find)

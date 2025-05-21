@@ -31,7 +31,8 @@ func Init(cfg *config.Config, db *mongo.Database, log *zap.Logger, validator2 *v
 	iUsageUnitRepository := usageUnitRepository.NewMongo(db)
 	iInventoryService := inventoryService.New(coreHelper, coreLogger, rulesValidator, iInventoryRepository, iUsageUnitRepository)
 	inventoryRest := inventoryHandler.NewRest(iInventoryService)
-	handler := inventoryHandler.New(inventoryRest)
+	inventoryGRPC := inventoryHandler.NewGRPC(iInventoryService)
+	handler := inventoryHandler.New(inventoryRest, inventoryGRPC)
 	return handler
 }
 
@@ -41,4 +42,4 @@ var RepoSet = wire.NewSet(inventoryRepository.NewMongo, usageUnitRepository.NewM
 
 var ServiceSet = wire.NewSet(helper.New, logger.New, rules.New, inventoryService.New)
 
-var HandlerSet = wire.NewSet(inventoryHandler.New, inventoryHandler.NewRest)
+var HandlerSet = wire.NewSet(inventoryHandler.New, inventoryHandler.NewRest, inventoryHandler.NewGRPC)

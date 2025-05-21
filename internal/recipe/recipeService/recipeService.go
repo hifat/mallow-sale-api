@@ -114,9 +114,8 @@ func (s *recipeService) FindByID(ctx context.Context, id string) (*recipe.Recipe
 		inventoryIDs = append(inventoryIDs, inventory.InventoryID)
 	}
 
-	inventories, err := s.inventoryRepo.FindInID(ctx, inventoryIDs)
+	inventories, err := s.inventoryGRPCRepo.FindInID(ctx, inventoryIDs)
 	if err != nil {
-		s.logger.Error(err)
 		return nil, err
 	}
 

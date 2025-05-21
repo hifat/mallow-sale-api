@@ -33,6 +33,7 @@ var ServiceSet = wire.NewSet(
 var HandlerSet = wire.NewSet(
 	inventoryHandler.New,
 	inventoryHandler.NewRest,
+	inventoryHandler.NewGRPC,
 )
 
 func Init(cfg *config.Config, db *mongo.Database, log *zap.Logger, validator *validator.Validate) inventoryHandler.Handler {

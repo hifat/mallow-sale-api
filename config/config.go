@@ -54,6 +54,7 @@ func (c *Config) Init(path string, filename string) error {
 
 	viper.Unmarshal(&c.App)
 	viper.Unmarshal(&c.Db)
+	viper.Unmarshal(&c.GRPC)
 
 	return nil
 }

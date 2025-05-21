@@ -16,6 +16,7 @@ type IInventoryService interface {
 	Create(ctx context.Context, req inventory.InventoryReq) error
 	Find(ctx context.Context) ([]inventory.InventoryRes, error)
 	FindByID(ctx context.Context, id string) (*inventory.InventoryRes, error)
+	FindInID(ctx context.Context, ids []string) ([]inventory.InventoryRes, error)
 	Update(ctx context.Context, id string, req inventory.InventoryReq) error
 	Delete(ctx context.Context, id string) error
 }
@@ -119,6 +120,37 @@ func (s *inventoryService) FindByID(ctx context.Context, id string) (*inventory.
 	}
 
 	return &res, nil
+}
+
+func (s *inventoryService) FindInID(ctx context.Context, ids []string) ([]inventory.InventoryRes, error) {
+
+	inventories, err := s.inventoryRepo.FindInID(ctx, ids)
+	if err != nil {
+		return []inventory.InventoryRes{}, err
+	}
+
+	res := make([]inventory.InventoryRes, 0, len(inventories))
+	for _, v := range inventories {
+		item := inventory.InventoryRes{
+			InventoryPrototype: inventory.InventoryPrototype{
+				ID:               v.ID,
+				Name:             v.Name,
+				PurchasePrice:    v.PurchasePrice,
+				PurchaseQuantity: v.PurchaseQuantity,
+				YieldPercentage:  v.YieldPercentage,
+				Remark:           v.Remark,
+				CreatedAt:        v.CreatedAt,
+				UpdatedAt:        v.UpdatedAt,
+			},
+		}
+
+		purchaseUnit := v.PurchaseUnit
+		item.PurchaseUnit.SetAttr(purchaseUnit.Code, purchaseUnit.Name)
+
+		res = append(res, item)
+	}
+
+	return res, nil
 }
 
 func (s *inventoryService) Update(ctx context.Context, id string, req inventory.InventoryReq) error {
