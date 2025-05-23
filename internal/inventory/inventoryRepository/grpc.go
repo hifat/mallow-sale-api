@@ -6,8 +6,10 @@ import (
 	"github.com/hifat/mallow-sale-api/internal/entity"
 	"github.com/hifat/mallow-sale-api/internal/inventory"
 	"github.com/hifat/mallow-sale-api/internal/inventory/inventoryProto"
+	"github.com/hifat/mallow-sale-api/internal/usageUnit"
 	"github.com/hifat/mallow-sale-api/pkg/rpc"
 	"github.com/hifat/mallow-sale-api/pkg/utils/repoUtils"
+	"google.golang.org/grpc/metadata"
 )
 
 type IInventoryGRPCRepository interface {
@@ -23,6 +25,7 @@ func NewGRPC(grpcClient rpc.GrpcClient) IInventoryGRPCRepository {
 }
 
 func (r *grpcRepository) FindInID(ctx context.Context, ids []string) ([]inventory.Inventory, error) {
+	ctx = metadata.NewOutgoingContext(ctx, metadata.Pairs("x-api-key", "sdfsdf"))
 	result, err := r.grpcClient.Inventory().FindIn(ctx, &inventoryProto.InFilter{
 		Ids: ids,
 	})
@@ -46,6 +49,7 @@ func (r *grpcRepository) FindInID(ctx context.Context, ids []string) ([]inventor
 		}
 
 		purchaseUnit := v.PurchaseUnit
+		_inventory.PurchaseUnit = &usageUnit.UsageUnitEmbed{}
 		_inventory.PurchaseUnit.SetAttr(purchaseUnit.Code, purchaseUnit.Name)
 
 		inventories = append(inventories, _inventory)

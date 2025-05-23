@@ -57,24 +57,25 @@ func (s *recipeService) Create(ctx context.Context, req recipe.RecipeReq) (*reci
 		return nil, err
 	}
 
-	usageUnitCodes := make([]string, 0, len(req.Ingredients))
-	for _, ingredient := range req.Ingredients {
-		usageUnitCodes = append(usageUnitCodes, ingredient.UsageUnitCode)
-	}
+	// TODO: Enable this code when finish migration
+	// usageUnitCodes := make([]string, 0, len(req.Ingredients))
+	// for _, ingredient := range req.Ingredients {
+	// 	usageUnitCodes = append(usageUnitCodes, ingredient.UsageUnitCode)
+	// }
 
-	mapUsageUnit, err := s.usageServiceUtil.MapUsageUnitName(ctx, usageUnitCodes)
-	if err != nil {
-		return nil, err
-	}
+	// mapUsageUnit, err := s.usageServiceUtil.MapUsageUnitName(ctx, usageUnitCodes)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	for i, ingredient := range req.Ingredients {
-		usageUnitName, ok := mapUsageUnit[ingredient.UsageUnitCode]
-		if !ok {
-			return nil, errors.New("invalid usageUnitName")
-		}
+	// for i, ingredient := range req.Ingredients {
+	// 	usageUnitName, ok := mapUsageUnit[ingredient.UsageUnitCode]
+	// 	if !ok {
+	// 		return nil, errors.New("invalid usageUnitName")
+	// 	}
 
-		req.Ingredients[i].UsageUnit.SetAttr(ingredient.UsageUnitCode, usageUnitName)
-	}
+	// 	req.Ingredients[i].UsageUnit.SetAttr(ingredient.UsageUnitCode, usageUnitName)
+	// }
 
 	recipeID, err := s.recipeRepo.Create(ctx, req)
 	if err != nil {
@@ -116,6 +117,7 @@ func (s *recipeService) FindByID(ctx context.Context, id string) (*recipe.Recipe
 
 	inventories, err := s.inventoryGRPCRepo.FindInID(ctx, inventoryIDs)
 	if err != nil {
+		s.logger.Error(err)
 		return nil, err
 	}
 

@@ -15,8 +15,9 @@ import (
 var logg core.Logger
 var db *mongo.Database
 
+// TODO fix migration to support microservice
 func init() {
-	cfg := config.LoadAppConfig("./.env")
+	cfg := config.LoadAppConfig("../env/local/.env.inventory")
 	ctx := context.Background()
 
 	dbClient := database.MongoConnect(ctx, &cfg.Db)

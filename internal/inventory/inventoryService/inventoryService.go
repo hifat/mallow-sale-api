@@ -67,20 +67,21 @@ func (s *inventoryService) Create(ctx context.Context, req inventory.InventoryRe
 		return throw.ValidateErr(err)
 	}
 
-	reqUnitCodes := []string{
-		req.PurchaseUnitCode,
-	}
+	// TODO: Enable this code when finish migration
+	// reqUnitCodes := []string{
+	// 	req.PurchaseUnitCode,
+	// }
 
-	unitCodeMap, err := s.mapUsageUnit(ctx, reqUnitCodes)
-	if err != nil {
-		return throw.InternalServerErr(err)
-	}
+	// unitCodeMap, err := s.mapUsageUnit(ctx, reqUnitCodes)
+	// if err != nil {
+	// 	return throw.InternalServerErr(err)
+	// }
 
-	if err := s.validateField(ctx, req, unitCodeMap); err != nil {
-		return throw.BadRequestErr(err)
-	}
+	// if err := s.validateField(ctx, req, unitCodeMap); err != nil {
+	// 	return throw.BadRequestErr(err)
+	// }
 
-	req.PurchaseUnit.SetAttr(req.PurchaseUnitCode, unitCodeMap[req.PurchaseUnitCode])
+	// req.PurchaseUnit.SetAttr(req.PurchaseUnitCode, unitCodeMap[req.PurchaseUnitCode])
 
 	if _, err := s.inventoryRepo.Create(ctx, req); err != nil {
 		s.logger.Error(err)
@@ -145,6 +146,7 @@ func (s *inventoryService) FindInID(ctx context.Context, ids []string) ([]invent
 		}
 
 		purchaseUnit := v.PurchaseUnit
+		item.PurchaseUnit = &inventory.UsageUnitRes{}
 		item.PurchaseUnit.SetAttr(purchaseUnit.Code, purchaseUnit.Name)
 
 		res = append(res, item)
