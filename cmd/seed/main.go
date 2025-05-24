@@ -2,6 +2,9 @@ package main
 
 import (
 	"context"
+	"log"
+	"log/slog"
+	"os"
 
 	core "github.com/hifat/goroger-core"
 	"github.com/hifat/goroger-core/logger"
@@ -13,29 +16,39 @@ import (
 )
 
 var logg core.Logger
-var db *mongo.Database
 
-// TODO fix migration to support microservice
-func init() {
-	cfg := config.LoadAppConfig("../env/local/.env.inventory")
+func dbConn(cfg config.Db) *mongo.Database {
 	ctx := context.Background()
 
-	dbClient := database.MongoConnect(ctx, &cfg.Db)
-	// defer dbClient.Disconnect(ctx)
+	dbClient := database.MongoConnect(ctx, &cfg)
 
-	db = dbClient.Database(cfg.Db.Name)
+	db := dbClient.Database(cfg.Name)
 
 	logg = logger.New(initial.Logger)
 
 	if err := dbClient.Ping(ctx, readpref.Primary()); err != nil {
 		logg.Error(err)
 	}
+
+	return db
 }
 
 func main() {
+	args := os.Args
+	if len(args) != 3 {
+		log.Fatal("please provide all required parameters: ... <env_path> <service_name>")
+	}
+
+	cfg := config.LoadAppConfig(args[1])
+
+	db := dbConn(cfg.Db)
 	defer db.Client().Disconnect(context.Background())
 
-	if err := seedUsageUnit(); err != nil {
-		logg.Error(err)
+	switch args[2] {
+	case "usageUnit":
+		if err := seedUsageUnit(db); err != nil {
+			logg.Error(err)
+		}
+		slog.Info("seeded usage unit")
 	}
 }

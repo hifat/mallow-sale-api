@@ -38,7 +38,7 @@ import (
 func main() {
 	args := os.Args
 	if len(args) != 2 {
-		log.Fatal("please give server name and env path: go run . <server_name> <env_path>")
+		log.Fatal("please give service name and env path: go run . <server_name> <env_path>")
 	}
 
 	cfg := config.LoadAppConfig(args[1])

@@ -7,9 +7,10 @@ import (
 	"github.com/hifat/mallow-sale-api/internal/entity"
 	"github.com/hifat/mallow-sale-api/internal/usageUnit"
 	"github.com/hifat/mallow-sale-api/pkg/utils"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func seedUsageUnit() error {
+func seedUsageUnit(db *mongo.Database) error {
 	ctx := context.Background()
 
 	docs := []usageUnit.UsageUnit{
