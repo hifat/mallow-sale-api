@@ -13,7 +13,7 @@ import (
 )
 
 type IInventoryGRPCRepository interface {
-	FindInID(ctx context.Context, ids []string) ([]inventory.Inventory, error)
+	FindIn(ctx context.Context, filter inventory.FilterReq) ([]inventory.Inventory, error)
 }
 
 type grpcRepository struct {
@@ -24,10 +24,11 @@ func NewGRPC(grpcClient rpc.GrpcClient) IInventoryGRPCRepository {
 	return &grpcRepository{grpcClient}
 }
 
-func (r *grpcRepository) FindInID(ctx context.Context, ids []string) ([]inventory.Inventory, error) {
+func (r *grpcRepository) FindIn(ctx context.Context, filter inventory.FilterReq) ([]inventory.Inventory, error) {
 	ctx = metadata.NewOutgoingContext(ctx, metadata.Pairs("x-api-key", "sdfsdf"))
 	result, err := r.grpcClient.Inventory().FindIn(ctx, &inventoryProto.InFilter{
-		Ids: ids,
+		Ids:   filter.IDs,
+		Codes: filter.Codes,
 	})
 	if err != nil {
 		return nil, err

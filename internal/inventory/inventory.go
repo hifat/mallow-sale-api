@@ -41,5 +41,10 @@ type InventoryReq struct {
 
 type InventoryRes struct {
 	InventoryPrototype
-	PurchaseUnit *UsageUnitRes `json:"purchaseUnit"`
+	PurchaseUnit UsageUnitRes `json:"purchaseUnit"`
+}
+
+type FilterReq struct {
+	IDs   []string `json:"ids"`
+	Codes []string `json:"codes"`
 }

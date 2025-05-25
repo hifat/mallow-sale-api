@@ -14,6 +14,7 @@ import (
 	"github.com/hifat/mallow-sale-api/internal/inventory/inventoryRepository"
 	"github.com/hifat/mallow-sale-api/internal/inventory/inventoryService"
 	"github.com/hifat/mallow-sale-api/internal/usageUnit/usageUnitRepository"
+	"github.com/hifat/mallow-sale-api/pkg/rpc"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.uber.org/zap"
 )
@@ -21,6 +22,7 @@ import (
 var RepoSet = wire.NewSet(
 	inventoryRepository.NewMongo,
 	usageUnitRepository.NewMongo,
+	usageUnitRepository.NewGRPC,
 )
 
 var ServiceSet = wire.NewSet(
@@ -36,7 +38,7 @@ var HandlerSet = wire.NewSet(
 	inventoryHandler.NewGRPC,
 )
 
-func Init(cfg *config.Config, db *mongo.Database, log *zap.Logger, validator *validator.Validate) inventoryHandler.Handler {
+func Init(cfg *config.Config, db *mongo.Database, log *zap.Logger, validator *validator.Validate, grpc rpc.GrpcClient) inventoryHandler.Handler {
 	wire.Build(
 		RepoSet,
 		ServiceSet,

@@ -8,6 +8,7 @@ import (
 	"github.com/hifat/goroger-core/rules"
 	"github.com/hifat/mallow-sale-api/internal/inventory"
 	"github.com/hifat/mallow-sale-api/internal/inventory/inventoryRepository"
+	"github.com/hifat/mallow-sale-api/internal/usageUnit"
 	"github.com/hifat/mallow-sale-api/internal/usageUnit/usageUnitRepository"
 	"github.com/hifat/mallow-sale-api/pkg/throw"
 )
@@ -16,31 +17,33 @@ type IInventoryService interface {
 	Create(ctx context.Context, req inventory.InventoryReq) error
 	Find(ctx context.Context) ([]inventory.InventoryRes, error)
 	FindByID(ctx context.Context, id string) (*inventory.InventoryRes, error)
-	FindInID(ctx context.Context, ids []string) ([]inventory.InventoryRes, error)
+	FindIn(ctx context.Context, filter inventory.FilterReq) ([]inventory.InventoryRes, error)
 	Update(ctx context.Context, id string, req inventory.InventoryReq) error
 	Delete(ctx context.Context, id string) error
 }
 
 type inventoryService struct {
-	helper        core.Helper
-	logger        core.Logger
-	validator     rules.Validator
-	inventoryRepo inventoryRepository.IInventoryRepository
-	usageUnitRepo usageUnitRepository.IUsageUnitRepository
+	helper            core.Helper
+	logger            core.Logger
+	validator         rules.Validator
+	inventoryRepo     inventoryRepository.IInventoryRepository
+	usageUnitGRPCRepo usageUnitRepository.IUsageUnitGRPCRepository
 }
 
-func New(helper core.Helper, logger core.Logger, validator rules.Validator, inventoryRepo inventoryRepository.IInventoryRepository, usageUnitRepo usageUnitRepository.IUsageUnitRepository) IInventoryService {
+func New(helper core.Helper, logger core.Logger, validator rules.Validator, inventoryRepo inventoryRepository.IInventoryRepository, usageUnitGRPCRepo usageUnitRepository.IUsageUnitGRPCRepository) IInventoryService {
 	return &inventoryService{
 		helper,
 		logger,
 		validator,
 		inventoryRepo,
-		usageUnitRepo,
+		usageUnitGRPCRepo,
 	}
 }
 
 func (s *inventoryService) mapUsageUnit(ctx context.Context, codes []string) (map[string]string, error) {
-	_usageUnits, err := s.usageUnitRepo.FindInCodes(ctx, codes)
+	_usageUnits, err := s.usageUnitGRPCRepo.FindIn(ctx, usageUnit.FilterReq{
+		Codes: codes,
+	})
 	if err != nil {
 		s.logger.Error(err)
 		return nil, err
@@ -67,21 +70,20 @@ func (s *inventoryService) Create(ctx context.Context, req inventory.InventoryRe
 		return throw.ValidateErr(err)
 	}
 
-	// TODO: Enable this code when finish migration
-	// reqUnitCodes := []string{
-	// 	req.PurchaseUnitCode,
-	// }
+	reqUnitCodes := []string{
+		req.PurchaseUnitCode,
+	}
 
-	// unitCodeMap, err := s.mapUsageUnit(ctx, reqUnitCodes)
-	// if err != nil {
-	// 	return throw.InternalServerErr(err)
-	// }
+	unitCodeMap, err := s.mapUsageUnit(ctx, reqUnitCodes)
+	if err != nil {
+		return throw.InternalServerErr(err)
+	}
 
-	// if err := s.validateField(ctx, req, unitCodeMap); err != nil {
-	// 	return throw.BadRequestErr(err)
-	// }
+	if err := s.validateField(ctx, req, unitCodeMap); err != nil {
+		return throw.BadRequestErr(err)
+	}
 
-	// req.PurchaseUnit.SetAttr(req.PurchaseUnitCode, unitCodeMap[req.PurchaseUnitCode])
+	req.PurchaseUnit.SetAttr(req.PurchaseUnitCode, unitCodeMap[req.PurchaseUnitCode])
 
 	if _, err := s.inventoryRepo.Create(ctx, req); err != nil {
 		s.logger.Error(err)
@@ -123,9 +125,8 @@ func (s *inventoryService) FindByID(ctx context.Context, id string) (*inventory.
 	return &res, nil
 }
 
-func (s *inventoryService) FindInID(ctx context.Context, ids []string) ([]inventory.InventoryRes, error) {
-
-	inventories, err := s.inventoryRepo.FindInID(ctx, ids)
+func (s *inventoryService) FindIn(ctx context.Context, filter inventory.FilterReq) ([]inventory.InventoryRes, error) {
+	inventories, err := s.inventoryRepo.FindIn(ctx, filter)
 	if err != nil {
 		return []inventory.InventoryRes{}, err
 	}
@@ -145,9 +146,7 @@ func (s *inventoryService) FindInID(ctx context.Context, ids []string) ([]invent
 			},
 		}
 
-		purchaseUnit := v.PurchaseUnit
-		item.PurchaseUnit = &inventory.UsageUnitRes{}
-		item.PurchaseUnit.SetAttr(purchaseUnit.Code, purchaseUnit.Name)
+		item.PurchaseUnit.SetAttr(v.PurchaseUnit.Code, v.PurchaseUnit.Name)
 
 		res = append(res, item)
 	}

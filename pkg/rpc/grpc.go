@@ -8,6 +8,7 @@ import (
 
 	"github.com/hifat/mallow-sale-api/config"
 	"github.com/hifat/mallow-sale-api/internal/inventory/inventoryProto"
+	"github.com/hifat/mallow-sale-api/internal/usageUnit/usageUnitProto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
@@ -43,11 +44,13 @@ func (g *grpcAuth) unaryAuth(ctx context.Context, req any, info *grpc.UnaryServe
 
 type GrpcClient interface {
 	Inventory() inventoryProto.InventoryGrpcServiceClient
+	UsageUnit() usageUnitProto.UsageUnitGrpcServiceClient
 	CloseAll()
 }
 
 type grpcClient struct {
 	inventoryConn *grpc.ClientConn
+	usageUnitConn *grpc.ClientConn
 }
 
 func NewGRPCClient(cfg *config.Config) (GrpcClient, error) {
@@ -62,20 +65,27 @@ func NewGRPCClient(cfg *config.Config) (GrpcClient, error) {
 		return nil, fmt.Errorf("failed to connect to inventory service: %v", err)
 	}
 
-	// Connect to Comment service
-	// inventoryConn, err := grpc.Dial(CommentServiceAddr, opts...)
-	// if err != nil {
-	// 	userConn.Close() // Clean up
-	// 	return nil, fmt.Errorf("failed to connect to comment service: %v", err)
-	// }
+	// Connect to User service
+	usageUnitConn, err := grpc.NewClient(cfg.GRPC.UsageUnitHost, opts...)
+	if err != nil {
+		if err := inventoryConn.Close(); err != nil {
+			return nil, err
+		}
+		return nil, fmt.Errorf("failed to connect to usageUnit service: %v", err)
+	}
 
 	return &grpcClient{
 		inventoryConn,
+		usageUnitConn,
 	}, nil
 }
 
 func (g *grpcClient) Inventory() inventoryProto.InventoryGrpcServiceClient {
 	return inventoryProto.NewInventoryGrpcServiceClient(g.inventoryConn)
+}
+
+func (g *grpcClient) UsageUnit() usageUnitProto.UsageUnitGrpcServiceClient {
+	return usageUnitProto.NewUsageUnitGrpcServiceClient(g.usageUnitConn)
 }
 
 func (c *grpcClient) CloseAll() {

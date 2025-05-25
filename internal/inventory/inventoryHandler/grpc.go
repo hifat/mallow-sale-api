@@ -3,8 +3,10 @@ package inventoryHandler
 import (
 	"context"
 
+	"github.com/hifat/mallow-sale-api/internal/inventory"
 	"github.com/hifat/mallow-sale-api/internal/inventory/inventoryProto"
 	"github.com/hifat/mallow-sale-api/internal/inventory/inventoryService"
+	"github.com/jinzhu/copier"
 )
 
 type inventoryGRPC struct {
@@ -20,7 +22,15 @@ func NewGRPC(inventorySrv inventoryService.IInventoryService) *inventoryGRPC {
 
 // TODO: Reflect and make safe this func
 func (h *inventoryGRPC) FindIn(ctx context.Context, req *inventoryProto.InFilter) (*inventoryProto.InventoryRes, error) {
-	inventories, err := h.inventorySrv.FindInID(ctx, req.Ids)
+	filter := inventory.FilterReq{}
+	if err := copier.Copy(&filter, req); err != nil {
+		return nil, err
+	}
+
+	inventories, err := h.inventorySrv.FindIn(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
 
 	res := make([]*inventoryProto.Inventory, 0, len(inventories))
 	for _, v := range inventories {
@@ -44,5 +54,5 @@ func (h *inventoryGRPC) FindIn(ctx context.Context, req *inventoryProto.InFilter
 
 	return &inventoryProto.InventoryRes{
 		Items: res,
-	}, err
+	}, nil
 }

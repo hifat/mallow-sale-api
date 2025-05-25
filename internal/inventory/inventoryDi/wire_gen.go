@@ -17,19 +17,20 @@ import (
 	"github.com/hifat/mallow-sale-api/internal/inventory/inventoryRepository"
 	"github.com/hifat/mallow-sale-api/internal/inventory/inventoryService"
 	"github.com/hifat/mallow-sale-api/internal/usageUnit/usageUnitRepository"
+	"github.com/hifat/mallow-sale-api/pkg/rpc"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.uber.org/zap"
 )
 
 // Injectors from wire.go:
 
-func Init(cfg *config.Config, db *mongo.Database, log *zap.Logger, validator2 *validator.Validate) inventoryHandler.Handler {
+func Init(cfg *config.Config, db *mongo.Database, log *zap.Logger, validator2 *validator.Validate, grpc rpc.GrpcClient) inventoryHandler.Handler {
 	coreHelper := helper.New()
 	coreLogger := logger.New(log)
 	rulesValidator := rules.New(validator2)
 	iInventoryRepository := inventoryRepository.NewMongo(db, coreHelper)
-	iUsageUnitRepository := usageUnitRepository.NewMongo(db)
-	iInventoryService := inventoryService.New(coreHelper, coreLogger, rulesValidator, iInventoryRepository, iUsageUnitRepository)
+	iUsageUnitGRPCRepository := usageUnitRepository.NewGRPC(grpc)
+	iInventoryService := inventoryService.New(coreHelper, coreLogger, rulesValidator, iInventoryRepository, iUsageUnitGRPCRepository)
 	inventoryRest := inventoryHandler.NewRest(iInventoryService)
 	inventoryGRPC := inventoryHandler.NewGRPC(iInventoryService)
 	handler := inventoryHandler.New(inventoryRest, inventoryGRPC)
@@ -38,7 +39,7 @@ func Init(cfg *config.Config, db *mongo.Database, log *zap.Logger, validator2 *v
 
 // wire.go:
 
-var RepoSet = wire.NewSet(inventoryRepository.NewMongo, usageUnitRepository.NewMongo)
+var RepoSet = wire.NewSet(inventoryRepository.NewMongo, usageUnitRepository.NewMongo, usageUnitRepository.NewGRPC)
 
 var ServiceSet = wire.NewSet(helper.New, logger.New, rules.New, inventoryService.New)
 

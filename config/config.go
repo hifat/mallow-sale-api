@@ -38,6 +38,7 @@ type Auth struct {
 }
 type GRPC struct {
 	InventoryHost string `mapstructure:"GRPC_INVENTORY_HOST"`
+	UsageUnitHost string `mapstructure:"GRPC_USAGE_UNIT_HOST"`
 }
 
 func (c *Config) Init(path string, filename string) error {

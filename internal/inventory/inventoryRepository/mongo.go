@@ -70,9 +70,9 @@ func (r *inventoryMongo) FindByID(ctx context.Context, id string) (*inventory.In
 	return &_inventory, repoUtils.MongoErr(err)
 }
 
-func (r *inventoryMongo) FindInID(ctx context.Context, ids []string) ([]inventory.Inventory, error) {
-	objectIDs := make([]primitive.ObjectID, 0, len(ids))
-	for _, id := range ids {
+func (r *inventoryMongo) FindIn(ctx context.Context, filter inventory.FilterReq) ([]inventory.Inventory, error) {
+	objectIDs := make([]primitive.ObjectID, 0, len(filter.IDs))
+	for _, id := range filter.IDs {
 		objectIDs = append(objectIDs, database.MustStrToObjectID(id))
 	}
 
@@ -81,6 +81,9 @@ func (r *inventoryMongo) FindInID(ctx context.Context, ids []string) ([]inventor
 		Find(ctx, bson.M{
 			"_id": bson.M{
 				"$in": objectIDs,
+			},
+			"code": bson.M{
+				"$in": filter.Codes,
 			},
 		})
 	if err != nil {

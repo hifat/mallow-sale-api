@@ -103,6 +103,8 @@ func main() {
 		r.InventoryRouter()
 	case constant.ServiceRecipe:
 		r.RecipeRouter()
+	case constant.ServiceUsageUnit:
+		r.UsageUnitRouter()
 	}
 
 	engine.Listener(fmt.Sprintf("%s:%s", cfg.App.Host, cfg.App.Port))

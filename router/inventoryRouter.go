@@ -10,7 +10,7 @@ import (
 )
 
 func (r *router) InventoryRouter() {
-	handler := inventoryDI.Init(r.cfg, r.db, r.logger, r.validator)
+	handler := inventoryDI.Init(r.cfg, r.db, r.logger, r.validator, r.grpc)
 
 	go func() {
 		grpcServer, lis, err := rpc.NewGRPCServer(&r.cfg.Auth, r.cfg.GRPC.InventoryHost)

@@ -2,4 +2,4 @@ package constant
 
 const ServiceInventory string = "inventory"
 const ServiceRecipe string = "recipe"
-const ServiceUsageUnit string = "usage_unit"
+const ServiceUsageUnit string = "usageUnit"

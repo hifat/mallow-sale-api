@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package usageUnitProto;
+option go_package = "./usageUnitProto";
+
+message InFilter {
+    repeated string codes = 1;
+}
+
+message UsageUnit {
+    string code = 1;
+    string name = 2;
+}
+
+message UsageUnitRes {
+    repeated UsageUnit items = 1;
+}
+
+service UsageUnitGrpcService {
+    rpc FindIn(InFilter) returns (UsageUnitRes);
+}

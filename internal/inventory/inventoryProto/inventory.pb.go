@@ -25,6 +25,7 @@ const (
 type InFilter struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Ids           []string               `protobuf:"bytes,1,rep,name=ids,proto3" json:"ids,omitempty"`
+	Codes         []string               `protobuf:"bytes,2,rep,name=codes,proto3" json:"codes,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -62,6 +63,13 @@ func (*InFilter) Descriptor() ([]byte, []int) {
 func (x *InFilter) GetIds() []string {
 	if x != nil {
 		return x.Ids
+	}
+	return nil
+}
+
+func (x *InFilter) GetCodes() []string {
+	if x != nil {
+		return x.Codes
 	}
 	return nil
 }
@@ -274,9 +282,10 @@ var File_internal_inventory_inventoryProto_inventory_proto protoreflect.FileDesc
 
 const file_internal_inventory_inventoryProto_inventory_proto_rawDesc = "" +
 	"\n" +
-	"1internal/inventory/inventoryProto/inventory.proto\x12\x0einventoryProto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x1c\n" +
+	"1internal/inventory/inventoryProto/inventory.proto\x12\x0einventoryProto\x1a\x1fgoogle/protobuf/timestamp.proto\"2\n" +
 	"\bInFilter\x12\x10\n" +
-	"\x03ids\x18\x01 \x03(\tR\x03ids\"8\n" +
+	"\x03ids\x18\x01 \x03(\tR\x03ids\x12\x14\n" +
+	"\x05codes\x18\x02 \x03(\tR\x05codes\"8\n" +
 	"\x0eUsageUnitEmbed\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\tR\x04code\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\"\xfd\x02\n" +
