@@ -6,6 +6,7 @@ import (
 	"github.com/hifat/mallow-sale-api/internal/inventory"
 	"github.com/hifat/mallow-sale-api/internal/inventory/inventoryProto"
 	"github.com/hifat/mallow-sale-api/internal/inventory/inventoryService"
+	"github.com/hifat/mallow-sale-api/pkg/utils"
 	"github.com/jinzhu/copier"
 )
 
@@ -20,7 +21,6 @@ func NewGRPC(inventorySrv inventoryService.IInventoryService) *inventoryGRPC {
 	}
 }
 
-// TODO: Reflect and make safe this func
 func (h *inventoryGRPC) FindIn(ctx context.Context, req *inventoryProto.InFilter) (*inventoryProto.InventoryRes, error) {
 	filter := inventory.FilterReq{}
 	if err := copier.Copy(&filter, req); err != nil {
@@ -41,8 +41,8 @@ func (h *inventoryGRPC) FindIn(ctx context.Context, req *inventoryProto.InFilter
 			PurchaseQuantity: v.PurchaseQuantity,
 			YieldPercentage:  v.YieldPercentage,
 			Remark:           v.Remark,
-			// CreatedAt:        v.CreatedAt,
-			// UpdatedAt:        v.UpdatedAt,
+			CreatedAt:        utils.MustToTimestamp(v.CreatedAt),
+			UpdatedAt:        utils.MustToTimestamp(v.UpdatedAt),
 			PurchaseUnit: &inventoryProto.UsageUnitEmbed{
 				Code: v.PurchaseUnit.Code,
 				Name: v.PurchaseUnit.Name,
