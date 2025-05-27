@@ -7,6 +7,8 @@ import (
 	"github.com/hifat/mallow-sale-api/internal/inventory/inventoryProto"
 	"github.com/hifat/mallow-sale-api/internal/inventory/inventoryService"
 	"github.com/jinzhu/copier"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type inventoryGRPC struct {
@@ -24,12 +26,12 @@ func NewGRPC(inventorySrv inventoryService.IInventoryService) *inventoryGRPC {
 func (h *inventoryGRPC) FindIn(ctx context.Context, req *inventoryProto.InFilter) (*inventoryProto.InventoryRes, error) {
 	filter := inventory.FilterReq{}
 	if err := copier.Copy(&filter, req); err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	inventories, err := h.inventorySrv.FindIn(ctx, filter)
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	res := make([]*inventoryProto.Inventory, 0, len(inventories))

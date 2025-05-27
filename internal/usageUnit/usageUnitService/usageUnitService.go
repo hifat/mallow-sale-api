@@ -6,6 +6,7 @@ import (
 	core "github.com/hifat/goroger-core"
 	"github.com/hifat/mallow-sale-api/internal/usageUnit"
 	"github.com/hifat/mallow-sale-api/internal/usageUnit/usageUnitRepository"
+	"github.com/hifat/mallow-sale-api/pkg/throw"
 )
 
 type IUsageUnitService interface {
@@ -28,7 +29,7 @@ func (s *usageUnitService) FindIn(ctx context.Context, filter usageUnit.FilterRe
 	usageUnits, err := s.usageUnitRepo.FindInCodes(ctx, filter.Codes)
 	if err != nil {
 		s.logger.Error(err)
-		return nil, err
+		return nil, throw.InternalServerErr(err)
 	}
 
 	return usageUnits, nil

@@ -7,6 +7,8 @@ import (
 	"github.com/hifat/mallow-sale-api/internal/usageUnit/usageUnitProto"
 	"github.com/hifat/mallow-sale-api/internal/usageUnit/usageUnitService"
 	"github.com/jinzhu/copier"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type usageUnitGRPC struct {
@@ -23,12 +25,12 @@ func NewGRPC(usageUnitSrv usageUnitService.IUsageUnitService) *usageUnitGRPC {
 func (h *usageUnitGRPC) FindIn(ctx context.Context, req *usageUnitProto.InFilter) (*usageUnitProto.UsageUnitRes, error) {
 	filter := usageUnit.FilterReq{}
 	if err := copier.Copy(&filter, req); err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	usageUnits, err := h.usageUnitSrv.FindIn(ctx, filter)
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	res := make([]*usageUnitProto.UsageUnit, 0, len(usageUnits))
