@@ -3,6 +3,8 @@ package utils
 import (
 	"log/slog"
 	"time"
+
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func TimeNow() *time.Time {
@@ -18,4 +20,12 @@ func MustToTime(tStr string) *time.Time {
 	}
 
 	return &t
+}
+
+func MustToTimestamp(t *time.Time) *timestamppb.Timestamp {
+	if t == nil {
+		return nil
+	}
+
+	return timestamppb.New(*t)
 }
