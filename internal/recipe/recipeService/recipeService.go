@@ -11,8 +11,9 @@ import (
 	"github.com/hifat/mallow-sale-api/internal/inventory/inventoryRepository"
 	"github.com/hifat/mallow-sale-api/internal/recipe"
 	"github.com/hifat/mallow-sale-api/internal/recipe/recipeRepository"
+	"github.com/hifat/mallow-sale-api/internal/usageUnit"
+	"github.com/hifat/mallow-sale-api/internal/usageUnit/usageUnitRepository"
 	"github.com/hifat/mallow-sale-api/pkg/throw"
-	usageUnitServiceUtils "github.com/hifat/mallow-sale-api/pkg/utils/serviceUtils"
 )
 
 type IRecipeService interface {
@@ -27,7 +28,7 @@ type recipeService struct {
 	logger            core.Logger
 	validator         rules.Validator
 	helper            core.Helper
-	usageServiceUtil  usageUnitServiceUtils.IUsageUnitServiceUtils
+	usageUnitGRPCRepo usageUnitRepository.IUsageUnitGRPCRepository
 	recipeRepo        recipeRepository.IRecipeRepository
 	inventoryRepo     inventoryRepository.IInventoryRepository
 	inventoryGRPCRepo inventoryRepository.IInventoryGRPCRepository
@@ -37,7 +38,7 @@ func New(
 	logger core.Logger,
 	validator rules.Validator,
 	helper core.Helper,
-	usageServiceUtil usageUnitServiceUtils.IUsageUnitServiceUtils,
+	usageUnitGRPCRepo usageUnitRepository.IUsageUnitGRPCRepository,
 	recipeRepo recipeRepository.IRecipeRepository,
 	inventoryRepo inventoryRepository.IInventoryRepository,
 	inventoryGRPCRepo inventoryRepository.IInventoryGRPCRepository,
@@ -46,11 +47,28 @@ func New(
 		logger,
 		validator,
 		helper,
-		usageServiceUtil,
+		usageUnitGRPCRepo,
 		recipeRepo,
 		inventoryRepo,
 		inventoryGRPCRepo,
 	}
+}
+
+func (s *recipeService) mapUsageUnit(ctx context.Context, codes []string) (map[string]string, error) {
+	_usageUnits, err := s.usageUnitGRPCRepo.FindIn(ctx, usageUnit.FilterReq{
+		Codes: codes,
+	})
+	if err != nil {
+		s.logger.Error(err)
+		return nil, err
+	}
+
+	unitCodeMap := make(map[string]string)
+	for _, usageUnit := range _usageUnits {
+		unitCodeMap[usageUnit.Code] = usageUnit.Name
+	}
+
+	return unitCodeMap, nil
 }
 
 func (s *recipeService) Create(ctx context.Context, req recipe.RecipeReq) (*recipe.RecipeRes, error) {
@@ -63,7 +81,7 @@ func (s *recipeService) Create(ctx context.Context, req recipe.RecipeReq) (*reci
 		usageUnitCodes = append(usageUnitCodes, ingredient.UsageUnitCode)
 	}
 
-	mapUsageUnit, err := s.usageServiceUtil.MapUsageUnitName(ctx, usageUnitCodes)
+	mapUsageUnit, err := s.mapUsageUnit(ctx, usageUnitCodes)
 	if err != nil {
 		return nil, throw.InternalServerErr(err)
 	}
@@ -154,7 +172,7 @@ func (s *recipeService) Update(ctx context.Context, id string, req recipe.Update
 		usageUnitCodes = append(usageUnitCodes, inventory.UsageUnitCode)
 	}
 
-	mapUsageUnit, err := s.usageServiceUtil.MapUsageUnitName(ctx, usageUnitCodes)
+	mapUsageUnit, err := s.mapUsageUnit(ctx, usageUnitCodes)
 	if err != nil {
 		return throw.InternalServerErr(err)
 	}

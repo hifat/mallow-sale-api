@@ -25,7 +25,7 @@ func (r *usageUnitMongo) FindInCodes(ctx context.Context, codes []string) ([]usa
 
 	_usageUnit := usageUnit.UsageUnit{}
 	cur, err := r.db.Collection(_usageUnit.Doc()).
-		Find(context.Background(), filter)
+		Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}

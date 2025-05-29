@@ -18,7 +18,6 @@ import (
 	"github.com/hifat/mallow-sale-api/internal/recipe/recipeService"
 	"github.com/hifat/mallow-sale-api/internal/usageUnit/usageUnitRepository"
 	"github.com/hifat/mallow-sale-api/pkg/rpc"
-	"github.com/hifat/mallow-sale-api/pkg/utils/serviceUtils"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.uber.org/zap"
 )
@@ -29,12 +28,11 @@ func Init(db *mongo.Database, log *zap.Logger, validate *validator.Validate, grp
 	coreLogger := logger.New(log)
 	rulesValidator := rules.New(validate)
 	coreHelper := helper.New()
-	iUsageUnitRepository := usageUnitRepository.NewMongo(db)
-	iUsageUnitServiceUtils := usageUnitServiceUtils.New(iUsageUnitRepository)
+	iUsageUnitGRPCRepository := usageUnitRepository.NewGRPC(grpc)
 	iRecipeRepository := recipeRepository.NewMongo(db, coreHelper)
 	iInventoryRepository := inventoryRepository.NewMongo(db, coreHelper)
 	iInventoryGRPCRepository := inventoryRepository.NewGRPC(grpc)
-	iRecipeService := recipeService.New(coreLogger, rulesValidator, coreHelper, iUsageUnitServiceUtils, iRecipeRepository, iInventoryRepository, iInventoryGRPCRepository)
+	iRecipeService := recipeService.New(coreLogger, rulesValidator, coreHelper, iUsageUnitGRPCRepository, iRecipeRepository, iInventoryRepository, iInventoryGRPCRepository)
 	recipeRest := recipeHandler.NewRest(iRecipeService)
 	handler := recipeHandler.New(recipeRest)
 	return handler
@@ -42,8 +40,8 @@ func Init(db *mongo.Database, log *zap.Logger, validate *validator.Validate, grp
 
 // wire.go:
 
-var RepoSet = wire.NewSet(recipeRepository.NewMongo, usageUnitRepository.NewMongo, inventoryRepository.NewMongo, inventoryRepository.NewGRPC)
+var RepoSet = wire.NewSet(recipeRepository.NewMongo, usageUnitRepository.NewMongo, inventoryRepository.NewMongo, inventoryRepository.NewGRPC, usageUnitRepository.NewGRPC)
 
-var ServiceSet = wire.NewSet(logger.New, rules.New, helper.New, recipeService.New, usageUnitServiceUtils.New)
+var ServiceSet = wire.NewSet(logger.New, rules.New, helper.New, recipeService.New)
 
 var HandlerSet = wire.NewSet(recipeHandler.New, recipeHandler.NewRest)

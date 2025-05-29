@@ -39,7 +39,7 @@ type (
 
 		UsageUnit *usageUnit.UsageUnitProtoType `json:"usageUnit"`
 
-		InventoryID string                        `json:"inventoryID"`
+		InventoryID string                        `json:"-"`
 		Inventory   *inventory.InventoryPrototype `json:"inventory"`
 	}
 

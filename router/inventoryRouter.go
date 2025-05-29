@@ -21,7 +21,7 @@ func (r *router) InventoryRouter() {
 
 		inventoryProto.RegisterInventoryGrpcServiceServer(grpcServer, handler.GRPC)
 
-		slog.Info(fmt.Sprintf("Auth gRPC server listening on: %s", r.cfg.GRPC.InventoryHost))
+		slog.Info(fmt.Sprintf("Inventory gRPC server listening on: %s", r.cfg.GRPC.InventoryHost))
 		grpcServer.Serve(lis)
 	}()
 

@@ -15,7 +15,6 @@ import (
 	"github.com/hifat/mallow-sale-api/internal/recipe/recipeService"
 	"github.com/hifat/mallow-sale-api/internal/usageUnit/usageUnitRepository"
 	"github.com/hifat/mallow-sale-api/pkg/rpc"
-	usageUnitServiceUtils "github.com/hifat/mallow-sale-api/pkg/utils/serviceUtils"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.uber.org/zap"
 )
@@ -25,6 +24,7 @@ var RepoSet = wire.NewSet(
 	usageUnitRepository.NewMongo,
 	inventoryRepository.NewMongo,
 	inventoryRepository.NewGRPC,
+	usageUnitRepository.NewGRPC,
 )
 
 var ServiceSet = wire.NewSet(
@@ -32,7 +32,6 @@ var ServiceSet = wire.NewSet(
 	rules.New,
 	helper.New,
 	recipeService.New,
-	usageUnitServiceUtils.New,
 )
 
 var HandlerSet = wire.NewSet(
