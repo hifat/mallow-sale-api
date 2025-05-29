@@ -6,7 +6,6 @@ import (
 	"github.com/hifat/mallow-sale-api/internal/entity"
 	"github.com/hifat/mallow-sale-api/internal/inventory"
 	"github.com/hifat/mallow-sale-api/internal/inventory/inventoryProto"
-	"github.com/hifat/mallow-sale-api/internal/usageUnit"
 	"github.com/hifat/mallow-sale-api/pkg/rpc"
 	"github.com/hifat/mallow-sale-api/pkg/utils/repoUtils"
 	"google.golang.org/grpc/metadata"
@@ -50,7 +49,6 @@ func (r *grpcRepository) FindIn(ctx context.Context, filter inventory.FilterReq)
 		}
 
 		purchaseUnit := v.PurchaseUnit
-		_inventory.PurchaseUnit = &usageUnit.UsageUnitEmbed{}
 		_inventory.PurchaseUnit.SetAttr(purchaseUnit.Code, purchaseUnit.Name)
 
 		inventories = append(inventories, _inventory)

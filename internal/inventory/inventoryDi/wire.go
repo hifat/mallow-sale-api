@@ -30,6 +30,7 @@ var ServiceSet = wire.NewSet(
 	logger.New,
 	rules.New,
 	inventoryService.New,
+	inventoryService.NewGRPC,
 )
 
 var HandlerSet = wire.NewSet(

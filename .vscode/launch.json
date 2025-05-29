@@ -5,12 +5,59 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Package",
+            "name": "Debug Inventory Service",
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/cmd/rest",
-            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/cmd/api",
+            "args": [
+                "./env/local/.env.inventory"
+            ],
+            "cwd": "${workspaceFolder}/cmd/api",
+            "env": {
+                "CGO_ENABLED": "0",
+                "GO111MODULE": "on"
+            }
+        },
+        {
+            "name": "Debug Recipe Service",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/cmd/api",
+            "args": [
+                "./env/local/.env.recipe"
+            ],
+            "cwd": "${workspaceFolder}/cmd/api",
+            "env": {
+                "CGO_ENABLED": "0",
+                "GO111MODULE": "on"
+            }
+        },
+        {
+            "name": "Debug UsageUnit Service",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/cmd/api",
+            "args": [
+                "./env/local/.env.usageUnit"
+            ],
+            "cwd": "${workspaceFolder}/cmd/api",
+            "env": {
+                "CGO_ENABLED": "0",
+                "GO111MODULE": "on"
+            }
+        },
+    ],
+    "compounds": [
+        {
+            "name": "Debug All Services",
+            "configurations": [
+                "Debug Inventory Service",
+                "Debug Recipe Service",
+                "Debug UsageUnit Service",
+            ]
         }
     ]
 }

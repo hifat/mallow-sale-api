@@ -1,0 +1,14 @@
+name: hello-sekai-shop-db
+
+services:
+   auth-db:
+      image: mongo
+      # restart: always
+      container_name: mls-auth-db
+      ports:
+        - 27017:27017
+      environment:
+         MONGO_INITDB_ROOT_USERNAME: root
+         MONGO_INITDB_ROOT_PASSWORD: 123456
+
+   

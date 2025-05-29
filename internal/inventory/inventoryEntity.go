@@ -9,12 +9,12 @@ type (
 	Inventory struct {
 		entity.Base `bson:"inline"`
 
-		Name             string                    `bson:"name"`
-		PurchasePrice    float32                   `bson:"purchase_price"`
-		PurchaseQuantity float32                   `bson:"purchase_quantity"`
-		PurchaseUnit     *usageUnit.UsageUnitEmbed `bson:"purchase_unit"`
-		YieldPercentage  float32                   `bson:"yield_percentage"`
-		Remark           string                    `bson:"remark"`
+		Name             string                   `bson:"name"`
+		PurchasePrice    float32                  `bson:"purchase_price"`
+		PurchaseQuantity float32                  `bson:"purchase_quantity"`
+		PurchaseUnit     usageUnit.UsageUnitEmbed `bson:"purchase_unit"`
+		YieldPercentage  float32                  `bson:"yield_percentage"`
+		Remark           string                   `bson:"remark"`
 	}
 )
 

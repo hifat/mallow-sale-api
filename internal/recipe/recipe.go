@@ -13,8 +13,8 @@ type (
 		InventoryID   string  `validate:"required" json:"inventoryID"`   // ID สิ่งของ
 		Remark        string  `json:"remark"`                            // หมายเหตุ
 
-		UsageUnitCode string `validate:"required" json:"usageUnit"` // หน่วยใช้
-		UsageUnit     usageUnit.UsageUnitEmbed
+		UsageUnitCode string                   `validate:"required" json:"usageUnitCode"` // หน่วยใช้
+		UsageUnit     usageUnit.UsageUnitEmbed `json:"-"`
 	}
 
 	RecipeReq struct {
