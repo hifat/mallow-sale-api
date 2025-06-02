@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
+//go:generate mockgen -source=./grpc.go -destination=./mock/grpc.go -package=mockInventoryRepository
 type IInventoryGRPCRepository interface {
 	FindIn(ctx context.Context, filter inventory.FilterReq) ([]inventory.Inventory, error)
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/hifat/mallow-sale-api/internal/inventory"
 )
 
+//go:generate mockgen -source=./repository.go -destination=./mock/repository.go -package=mockInventoryRepository
 type IInventoryRepository interface {
 	Create(ctx context.Context, req inventory.InventoryReq) (string, error)
 	Find(ctx context.Context) ([]inventory.Inventory, error)

@@ -29,14 +29,14 @@ type InventoryPrototype struct {
 }
 
 type InventoryReq struct {
-	Name             string  `validate:"required" json:"name"`
-	PurchasePrice    float32 `validate:"required" json:"purchasePrice"`
-	YieldPercentage  float32 `validate:"required" json:"yieldPercentage"`
-	Remark           string  `validate:"required,max=255" json:"remark"`
-	PurchaseQuantity float32 `validate:"required" json:"purchaseQuantity"`
+	Name             string  `fake:"{firstname}" validate:"required" json:"name"`
+	PurchasePrice    float32 `fake:"{number}" validate:"required" json:"purchasePrice"`
+	YieldPercentage  float32 `fake:"{number}" validate:"required" json:"yieldPercentage"`
+	Remark           string  `fake:"{sentence}" validate:"required,max=255" json:"remark"`
+	PurchaseQuantity float32 `fake:"{number}" validate:"required" json:"purchaseQuantity"`
 
-	PurchaseUnitCode string `validate:"required" json:"purchaseUnitCode"`
-	PurchaseUnit     usageUnit.UsageUnitEmbed
+	PurchaseUnitCode string                   ` fake:"ML" validate:"required" json:"purchaseUnitCode"`
+	PurchaseUnit     usageUnit.UsageUnitEmbed `fake:"-" json:"-"`
 }
 
 type InventoryRes struct {

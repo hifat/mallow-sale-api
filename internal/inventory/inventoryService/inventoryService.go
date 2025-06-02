@@ -2,10 +2,10 @@ package inventoryService
 
 import (
 	"context"
-	"errors"
 
 	core "github.com/hifat/goroger-core"
 	"github.com/hifat/goroger-core/rules"
+	"github.com/hifat/mallow-sale-api/constant"
 	"github.com/hifat/mallow-sale-api/internal/inventory"
 	"github.com/hifat/mallow-sale-api/internal/inventory/inventoryRepository"
 	"github.com/hifat/mallow-sale-api/internal/usageUnit"
@@ -59,7 +59,7 @@ func (s *inventoryService) mapUsageUnit(ctx context.Context, codes []string) (ma
 
 func (s *inventoryService) validateField(ctx context.Context, req inventory.InventoryReq, unitCodeMap map[string]string) error {
 	if _, ok := unitCodeMap[req.PurchaseUnitCode]; !ok {
-		return errors.New("invalid purchaseUnitCode")
+		return constant.ErrPurchaseUnitCode
 	}
 
 	return nil

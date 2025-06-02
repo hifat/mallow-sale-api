@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
+//go:generate mockgen -source=./grpc.go -destination=./mock/grpc.go -package=mockUsageUnitRepository
 type IUsageUnitGRPCRepository interface {
 	FindIn(ctx context.Context, filter usageUnit.FilterReq) ([]usageUnit.UsageUnit, error)
 }
