@@ -6,13 +6,22 @@ pipeline {
 
     environment {
         GO111MODULE='on'
+        BRANCH_NAME='main'
     }
 
     stages {
-        stage('Test') {
-            when {
-                branch 'main'
+        stage('Checkout') {
+            steps {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: "*/${BRANCH_NAME}"]],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/hifat/mallow-sale-api.git'
+                    ]]
+                ])
             }
+        }
+        stage('Test') {
             steps {
                 git 'https://github.com/hifat/mallow-sale-api.git'
                 sh 'go test ./...'
