@@ -103,7 +103,7 @@ func (s *inventoryService) Find(ctx context.Context) ([]inventory.InventoryRes, 
 	res := []inventory.InventoryRes{}
 	if err := s.helper.Copy(&res, inventories); err != nil {
 		s.logger.Error(err)
-		return nil, err
+		return nil, throw.InternalServerErr(err)
 	}
 
 	return res, nil

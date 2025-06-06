@@ -217,3 +217,61 @@ func (s *testInventoryServiceSuite) TestInventoryService_Create() {
 		s.Require().Nil(err)
 	})
 }
+
+func (s *testInventoryServiceSuite) TestInventoryService_Find() {
+	s.T().Parallel()
+
+	s.Run("fail - find", func() {
+		errFind := errors.New("mock-error")
+		s.mockInventoryRepo.EXPECT().
+			Find(context.Background()).
+			Return(nil, errFind)
+
+		s.mockLogger.EXPECT().
+			Error(errFind)
+
+		_, err := s.underTest.Find(context.Background())
+		s.Require().NotNil(err)
+		s.Require().IsType(response.ResponseErr{}, err)
+	})
+
+	s.Run("fail - copy", func() {
+		s.mockInventoryRepo.EXPECT().
+			Find(context.Background()).
+			Return([]inventory.Inventory{}, nil)
+
+		errCopy := errors.New("mock-error")
+		s.mockHelper.EXPECT().
+			Copy(gomock.Any(), gomock.Any()).
+			Return(errCopy)
+
+		s.mockLogger.EXPECT().
+			Error(errCopy)
+
+		_, err := s.underTest.Find(context.Background())
+		s.Require().NotNil(err)
+		s.Require().IsType(response.ResponseErr{}, err)
+	})
+
+	s.Run("success - find", func() {
+		mockInventories := make([]inventory.Inventory, 2)
+		for i := range mockInventories {
+			if err := gofakeit.Struct(&mockInventories[i]); err != nil {
+				s.T().Fatal(err)
+			}
+		}
+
+		s.mockInventoryRepo.EXPECT().
+			Find(context.Background()).
+			Return(mockInventories, nil)
+
+		inventories := []inventory.InventoryRes{}
+		s.mockHelper.EXPECT().
+			Copy(&inventories, mockInventories).
+			Return(nil)
+
+		res, err := s.underTest.Find(context.Background())
+		s.Require().Nil(err)
+		s.Require().Equal(res, inventories)
+	})
+}

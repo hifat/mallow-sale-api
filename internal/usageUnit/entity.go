@@ -13,8 +13,8 @@ func (m *UsageUnit) Doc() string {
 }
 
 type UsageUnitEmbed struct {
-	Code string `bson:"code"`
-	Name string `bson:"name"`
+	Code string `fake:"{name}" bson:"code"`
+	Name string `fake:"{name}" bson:"name"`
 }
 
 func (e *UsageUnitEmbed) SetAttr(code, name string) {

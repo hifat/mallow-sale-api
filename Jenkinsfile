@@ -23,7 +23,6 @@ pipeline {
         }
         stage('Test') {
             steps {
-                git 'https://github.com/hifat/mallow-sale-api.git'
                 sh 'go test ./...'
             }
         }
