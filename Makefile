@@ -8,3 +8,9 @@ pb-gen:
 
 seed:
 	go run ./cmd/seed ./env/$e/.env.$s $s
+
+db-up:
+	docker compose -f docker-compose.db.yaml up
+
+db-down:
+	docker compose -f docker-compose.db.yaml down
