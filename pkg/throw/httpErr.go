@@ -9,17 +9,18 @@ import (
 )
 
 var ErrRecordNotFound = errors.New("record not found")
+var ErrInternalServer = errors.New(http.StatusText(http.StatusInternalServerError))
 
-var ErrBadRequestCode = "BAD_REQUEST"
-var ErrInternalServerCode = "INTERNAL_SERVER_ERROR"
-var ErrRecordNotFoundCode = "RECORD_NOT_FOUND"
-var ErrInvalidFormCode = "INVALID_FROM"
+var CodeBadRequest = "BAD_REQUEST"
+var CodeInternalServer = "INTERNAL_SERVER_ERROR"
+var CodeRecordNotFound = "RECORD_NOT_FOUND"
+var CodeInvalidForm = "INVALID_FROM"
 
 func ValidateErr(err error) error {
 	obj := response.ResponseErr{
 		Response: response.Response{
 			Status:  http.StatusBadRequest,
-			Code:    ErrInvalidFormCode,
+			Code:    CodeInvalidForm,
 			Message: err.Error(),
 		},
 	}
@@ -36,7 +37,7 @@ func BadRequestErr(err error) error {
 	return response.ResponseErr{
 		Response: response.Response{
 			Status:  http.StatusBadRequest,
-			Code:    ErrBadRequestCode,
+			Code:    CodeBadRequest,
 			Message: err.Error(),
 		},
 	}
@@ -48,7 +49,7 @@ func WhenRecordNotFoundErr(err error) error {
 		return response.ResponseErr{
 			Response: response.Response{
 				Status:  http.StatusNotFound,
-				Code:    ErrRecordNotFoundCode,
+				Code:    CodeRecordNotFound,
 				Message: ErrRecordNotFound.Error(),
 			},
 		}
@@ -61,8 +62,8 @@ func InternalServerErr(err error) error {
 	return response.ResponseErr{
 		Response: response.Response{
 			Status:  http.StatusInternalServerError,
-			Code:    ErrInternalServerCode,
-			Message: http.StatusText(http.StatusInternalServerError),
+			Code:    CodeInternalServer,
+			Message: ErrInternalServer.Error(),
 		},
 	}
 }

@@ -3,6 +3,7 @@ package inventoryService
 import (
 	"context"
 	"errors"
+	"net/http"
 	"testing"
 	"time"
 
@@ -12,6 +13,7 @@ import (
 	mockInventoryRepository "github.com/hifat/mallow-sale-api/internal/inventory/inventoryRepository/mock"
 	"github.com/hifat/mallow-sale-api/internal/usageUnit"
 	mockUsageUnitRepository "github.com/hifat/mallow-sale-api/internal/usageUnit/usageUnitRepository/mock"
+	"github.com/hifat/mallow-sale-api/pkg/throw"
 	mockCore "github.com/hifat/mallow-sale-api/pkg/utils/mock/core"
 	mockRules "github.com/hifat/mallow-sale-api/pkg/utils/mock/rules"
 	mockValidator "github.com/hifat/mallow-sale-api/pkg/utils/mock/rules"
@@ -255,11 +257,7 @@ func (s *testInventoryServiceSuite) TestInventoryService_Find() {
 
 	s.Run("success - find", func() {
 		mockInventories := make([]inventory.Inventory, 2)
-		for i := range mockInventories {
-			if err := gofakeit.Struct(&mockInventories[i]); err != nil {
-				s.T().Fatal(err)
-			}
-		}
+		gofakeit.Slice(&mockInventories)
 
 		s.mockInventoryRepo.EXPECT().
 			Find(context.Background()).
@@ -273,5 +271,79 @@ func (s *testInventoryServiceSuite) TestInventoryService_Find() {
 		res, err := s.underTest.Find(context.Background())
 		s.Require().Nil(err)
 		s.Require().Equal(res, inventories)
+	})
+}
+
+func (s *testInventoryServiceSuite) TestInventoryService_FindByID() {
+	s.T().Parallel()
+
+	mockID := "mock-id"
+
+	s.Run("fail - find by id", func() {
+		s.mockInventoryRepo.EXPECT().
+			FindByID(context.Background(), mockID).
+			Return(nil, throw.ErrRecordNotFound)
+
+		s.mockLogger.EXPECT().
+			Error(throw.ErrRecordNotFound)
+
+		res, err := s.underTest.FindByID(context.Background(), mockID)
+		s.Require().NotNil(err)
+		s.Require().IsType(response.ResponseErr{}, err)
+		s.Require().Nil(res)
+
+		errRes := err.(response.ResponseErr)
+
+		s.Require().Equal(http.StatusNotFound, errRes.Status)
+		s.Require().Equal(throw.CodeRecordNotFound, errRes.Code)
+		s.Require().Equal(throw.ErrRecordNotFound.Error(), errRes.Message)
+	})
+
+	s.Run("fail - copy", func() {
+		_inventory := &inventory.Inventory{}
+		s.mockInventoryRepo.EXPECT().
+			FindByID(context.Background(), mockID).
+			Return(_inventory, nil)
+
+		mockRes := inventory.InventoryRes{}
+		errCopy := errors.New("error-copy")
+		s.mockHelper.EXPECT().
+			Copy(&mockRes, _inventory).
+			Return(errCopy)
+
+		s.mockLogger.EXPECT().
+			Error(errCopy)
+
+		res, err := s.underTest.FindByID(context.Background(), mockID)
+		s.Require().NotNil(err)
+		s.Require().IsType(response.ResponseErr{}, err)
+		s.Require().Nil(res)
+
+		errRes := err.(response.ResponseErr)
+
+		s.Require().Equal(http.StatusInternalServerError, errRes.Status)
+		s.Require().Equal(throw.CodeInternalServer, errRes.Code)
+		s.Require().Equal(throw.ErrInternalServer.Error(), errRes.Message)
+	})
+
+	s.Run("success - find by id", func() {
+		_inventory := &inventory.Inventory{}
+		if err := gofakeit.Struct(_inventory); err != nil {
+			s.T().Fatal(err)
+		}
+
+		s.mockInventoryRepo.EXPECT().
+			FindByID(context.Background(), mockID).
+			Return(_inventory, nil)
+
+		mockRes := inventory.InventoryRes{}
+		s.mockHelper.EXPECT().
+			Copy(&mockRes, _inventory).
+			Return(nil)
+
+		res, err := s.underTest.FindByID(context.Background(), mockID)
+		s.Require().Nil(err)
+		s.Require().NotNil(res)
+		s.Require().Equal(mockRes, *res)
 	})
 }
