@@ -128,7 +128,7 @@ func (s *inventoryService) FindByID(ctx context.Context, id string) (*inventory.
 func (s *inventoryService) FindIn(ctx context.Context, filter inventory.FilterReq) ([]inventory.InventoryRes, error) {
 	inventories, err := s.inventoryRepo.FindIn(ctx, filter)
 	if err != nil {
-		return []inventory.InventoryRes{}, err
+		return []inventory.InventoryRes{}, throw.InternalServerErr(err)
 	}
 
 	res := make([]inventory.InventoryRes, 0, len(inventories))

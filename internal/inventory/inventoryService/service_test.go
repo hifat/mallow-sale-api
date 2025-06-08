@@ -347,3 +347,57 @@ func (s *testInventoryServiceSuite) TestInventoryService_FindByID() {
 		s.Require().Equal(mockRes, *res)
 	})
 }
+
+func (s *testInventoryServiceSuite) TestInventoryService_FindIn() {
+	s.T().Parallel()
+
+	filter := inventory.FilterReq{
+		Codes: []string{"mock-code"},
+	}
+
+	s.Run("fail - find in", func() {
+		errFindIn := errors.New("mock error")
+		s.mockInventoryRepo.EXPECT().
+			FindIn(context.Background(), filter).
+			Return(nil, errFindIn)
+
+		res, err := s.underTest.FindIn(context.Background(), filter)
+		s.Require().NotNil(err)
+		s.Require().IsType(response.ResponseErr{}, err)
+
+		errRes := err.(response.ResponseErr)
+
+		s.Require().Equal(http.StatusInternalServerError, errRes.Status)
+		s.Require().Equal(throw.CodeInternalServer, errRes.Code)
+		s.Require().Equal(throw.ErrInternalServer.Error(), errRes.Message)
+
+		s.Require().NotNil(res)
+		s.Require().Equal([]inventory.InventoryRes{}, res)
+	})
+
+	s.Run("success - find in return empty slice", func() {
+		s.mockInventoryRepo.EXPECT().
+			FindIn(context.Background(), filter).
+			Return(nil, nil)
+
+		res, err := s.underTest.FindIn(context.Background(), filter)
+		s.Require().Nil(err)
+		s.Require().NotNil(res)
+		s.Require().Equal([]inventory.InventoryRes{}, res)
+	})
+
+	s.Run("success - find in", func() {
+		inventories := make([]inventory.Inventory, 2)
+		gofakeit.Slice(&inventories)
+
+		s.mockInventoryRepo.EXPECT().
+			FindIn(context.Background(), filter).
+			Return(inventories, nil)
+
+		res, err := s.underTest.FindIn(context.Background(), filter)
+		s.Require().Nil(err)
+		s.Require().NotNil(res)
+		s.Require().IsType([]inventory.InventoryRes{}, res)
+		s.Require().Equal(len(inventories), len(res))
+	})
+}
