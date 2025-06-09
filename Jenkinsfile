@@ -1,24 +1,19 @@
 pipeline {
     agent any
     tools {
-        go 'go-1.24'
+        go 'go-1.24.4'
     }
 
     environment {
         GO111MODULE='on'
-        BRANCH_NAME='main'
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout from SCM') {
             steps {
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: "*/${BRANCH_NAME}"]],
-                    userRemoteConfigs: [[
-                        url: 'https://github.com/hifat/mallow-sale-api.git'
-                    ]]
-                ])
+               git branch: 'main',
+               credentialsId: 'github-credential',
+               url: 'https://github.com/hifat/mallow-sale-api'
             }
         }
         stage('Test') {
