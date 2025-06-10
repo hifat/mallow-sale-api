@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/brianvoe/gofakeit/v7"
+	"github.com/hifat/goroger-core/rules"
 	"github.com/hifat/mallow-sale-api/internal/entity"
 	"github.com/hifat/mallow-sale-api/internal/inventory"
 	mockInventoryRepository "github.com/hifat/mallow-sale-api/internal/inventory/inventoryRepository/mock"
@@ -54,6 +55,82 @@ func (s *testInventoryServiceSuite) SetupSuite() {
 
 func TestInventoryServiceSuite(t *testing.T) {
 	suite.Run(t, &testInventoryServiceSuite{})
+}
+
+func (s *testInventoryServiceSuite) testMapUsageUnit() {
+	req := inventory.InventoryReq{}
+	if err := gofakeit.Struct(&req); err != nil {
+		s.T().Fatal(err)
+	}
+
+	s.mockValidator.EXPECT().
+		Validate(req).
+		Return(nil)
+
+	errMapUsageUnit := errors.New("mapUsageUnit_FindIn error")
+	s.mockUsageUnitGRPCRepo.EXPECT().
+		FindIn(context.Background(), gomock.Any()).
+		Return(nil, errMapUsageUnit)
+
+	s.mockLogger.EXPECT().
+		Error(errMapUsageUnit)
+
+	err := s.underTest.Create(context.Background(), req)
+	s.Require().NotNil(err)
+	s.Require().IsType(response.ResponseErr{}, err)
+}
+
+func (s *testInventoryServiceSuite) testValidateField() {
+	req := inventory.InventoryReq{}
+	if err := gofakeit.Struct(&req); err != nil {
+		s.T().Fatal(err)
+	}
+
+	s.mockValidator.EXPECT().
+		Validate(req).
+		Return(nil)
+
+	s.mockUsageUnitGRPCRepo.EXPECT().
+		FindIn(context.Background(), usageUnit.FilterReq{
+			Codes: []string{
+				req.PurchaseUnitCode,
+			},
+		}).
+		Return([]usageUnit.UsageUnit{
+			{
+				Base: entity.Base{
+					ID:        "mock",
+					CreatedAt: &time.Time{},
+					UpdatedAt: &time.Time{},
+				},
+				Code: "mock-code",
+				Name: "mock-name",
+			},
+		}, nil)
+
+	err := s.underTest.Create(context.Background(), req)
+	s.Require().NotNil(err)
+	s.Require().IsType(response.ResponseErr{}, err)
+}
+
+func (s *testInventoryServiceSuite) testValidate(req inventory.InventoryReq) {
+	errValidate := rules.ValidateErrs{
+		"name": "the name is required",
+	}
+	s.mockValidator.EXPECT().
+		Validate(req).
+		Return(errValidate)
+
+	err := s.underTest.Update(context.Background(), "mock-id", req)
+	s.Require().NotNil(err)
+	s.Require().IsType(response.ResponseErr{}, err)
+
+	resErr := err.(response.ResponseErr)
+
+	s.Require().Equal(resErr.Status, http.StatusBadRequest)
+	s.Require().Equal(resErr.Code, throw.CodeInvalidForm)
+	s.Require().Equal(resErr.Message, throw.MsgInvalidForm)
+	s.Require().NotEmpty(resErr.Attribute)
 }
 
 func (s *testInventoryServiceSuite) TestInventoryService_Create() {
@@ -147,19 +224,17 @@ func (s *testInventoryServiceSuite) TestInventoryService_Create() {
 					req.PurchaseUnitCode,
 				},
 			}).
-			DoAndReturn(func(context.Context, usageUnit.FilterReq) ([]usageUnit.UsageUnit, error) {
-				return []usageUnit.UsageUnit{
-					{
-						Base: entity.Base{
-							ID:        "mock",
-							CreatedAt: &time.Time{},
-							UpdatedAt: &time.Time{},
-						},
-						Code: req.PurchaseUnitCode,
-						Name: "mock-name",
+			Return([]usageUnit.UsageUnit{
+				{
+					Base: entity.Base{
+						ID:        "mock",
+						CreatedAt: &time.Time{},
+						UpdatedAt: &time.Time{},
 					},
-				}, nil
-			})
+					Code: req.PurchaseUnitCode,
+					Name: "mock-name",
+				},
+			}, nil)
 
 		newReq := req
 		newReq.PurchaseUnit.SetAttr(req.PurchaseUnitCode, "mock-name")
@@ -399,5 +474,116 @@ func (s *testInventoryServiceSuite) TestInventoryService_FindIn() {
 		s.Require().NotNil(res)
 		s.Require().IsType([]inventory.InventoryRes{}, res)
 		s.Require().Equal(len(inventories), len(res))
+	})
+}
+
+func (s *testInventoryServiceSuite) TestInventoryService_Update() {
+	s.T().Parallel()
+
+	s.Run("fail - validate", func() {
+		req := inventory.InventoryReq{}
+		if err := gofakeit.Struct(&req); err != nil {
+			s.T().Fatal(err)
+		}
+
+		//TODO: Fix helper test to log this line(Parent func) on failed
+		s.testValidate(req)
+	})
+
+	s.Run("fail - mapUsageUnit", func() {
+		s.testMapUsageUnit()
+	})
+
+	s.Run("fail - validateField", func() {
+		s.testValidateField()
+	})
+
+	s.Run("fail - update", func() {
+		req := inventory.InventoryReq{}
+		if err := gofakeit.Struct(&req); err != nil {
+			s.T().Fatal(err)
+		}
+
+		s.mockValidator.EXPECT().
+			Validate(req).
+			Return(nil)
+
+		s.mockUsageUnitGRPCRepo.EXPECT().
+			FindIn(context.Background(), usageUnit.FilterReq{
+				Codes: []string{
+					req.PurchaseUnitCode,
+				},
+			}).
+			Return([]usageUnit.UsageUnit{
+				{
+					Base: entity.Base{
+						ID:        "mock",
+						CreatedAt: &time.Time{},
+						UpdatedAt: &time.Time{},
+					},
+					Code: req.PurchaseUnitCode,
+					Name: "mock-name",
+				},
+			}, nil)
+
+		newReq := req
+		newReq.PurchaseUnit.SetAttr(req.PurchaseUnitCode, "mock-name")
+
+		errUpdate := errors.New("error-update")
+		s.mockInventoryRepo.EXPECT().
+			Update(context.Background(), "mock-id", newReq).
+			Return(errUpdate)
+
+		s.mockLogger.EXPECT().
+			Error(errUpdate)
+
+		err := s.underTest.Update(context.Background(), "mock-id", req)
+		s.Require().NotNil(err)
+		s.Require().IsType(response.ResponseErr{}, err)
+
+		errRes := err.(response.ResponseErr)
+
+		s.Require().Equal(http.StatusInternalServerError, errRes.Status)
+		s.Require().Equal(throw.CodeInternalServer, errRes.Code)
+		s.Require().Equal(throw.ErrInternalServer.Error(), errRes.Message)
+	})
+
+	s.Run("success - update", func() {
+		req := inventory.InventoryReq{}
+		if err := gofakeit.Struct(&req); err != nil {
+			s.T().Fatal(err)
+		}
+
+		s.mockValidator.EXPECT().
+			Validate(req).
+			Return(nil)
+
+		s.mockUsageUnitGRPCRepo.EXPECT().
+			FindIn(context.Background(), usageUnit.FilterReq{
+				Codes: []string{
+					req.PurchaseUnitCode,
+				},
+			}).
+			Return([]usageUnit.UsageUnit{
+				{
+					Base: entity.Base{
+						ID:        "mock",
+						CreatedAt: &time.Time{},
+						UpdatedAt: &time.Time{},
+					},
+					Code: req.PurchaseUnitCode,
+					Name: "mock-name",
+				},
+			}, nil)
+
+		newReq := req
+		newReq.PurchaseUnit.SetAttr(req.PurchaseUnitCode, "mock-name")
+
+		s.mockInventoryRepo.EXPECT().
+			Update(context.Background(), "mock-id", newReq).
+			Return(nil)
+
+		err := s.underTest.Update(context.Background(), "mock-id", req)
+		s.Require().Nil(err)
 	})
 }

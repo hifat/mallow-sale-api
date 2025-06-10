@@ -16,6 +16,8 @@ var CodeInternalServer = "INTERNAL_SERVER_ERROR"
 var CodeRecordNotFound = "RECORD_NOT_FOUND"
 var CodeInvalidForm = "INVALID_FROM"
 
+var MsgInvalidForm = "invalid from"
+
 func ValidateErr(err error) error {
 	obj := response.ResponseErr{
 		Response: response.Response{
@@ -26,7 +28,7 @@ func ValidateErr(err error) error {
 	}
 
 	if attr, ok := err.(rules.ValidateErrs); ok {
-		obj.Message = http.StatusText(http.StatusBadRequest)
+		obj.Message = MsgInvalidForm
 		obj.Attribute = attr
 	}
 
