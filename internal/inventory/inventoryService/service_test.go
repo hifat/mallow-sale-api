@@ -587,3 +587,36 @@ func (s *testInventoryServiceSuite) TestInventoryService_Update() {
 		s.Require().Nil(err)
 	})
 }
+
+func (s *testInventoryServiceSuite) TestInventoryService_Delete() {
+	s.T().Parallel()
+
+	s.Run("fail - delete", func() {
+		errDelete := errors.New("error-delete")
+		s.mockInventoryRepo.EXPECT().
+			Delete(context.Background(), "mock-id").
+			Return(errDelete)
+
+		s.mockLogger.EXPECT().
+			Error(errDelete)
+
+		err := s.underTest.Delete(context.Background(), "mock-id")
+		s.Require().NotNil(err)
+		s.Require().IsType(response.ResponseErr{}, err)
+
+		errRes := err.(response.ResponseErr)
+
+		s.Require().Equal(http.StatusInternalServerError, errRes.Status)
+		s.Require().Equal(throw.CodeInternalServer, errRes.Code)
+		s.Require().Equal(throw.ErrInternalServer.Error(), errRes.Message)
+	})
+
+	s.Run("success - delete", func() {
+		s.mockInventoryRepo.EXPECT().
+			Delete(context.Background(), "mock-id").
+			Return(nil)
+
+		err := s.underTest.Delete(context.Background(), "mock-id")
+		s.Require().Nil(err)
+	})
+}
