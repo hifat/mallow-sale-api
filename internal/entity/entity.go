@@ -7,9 +7,9 @@ import (
 )
 
 type Base struct {
-	ID        string     `json:"id" bson:"_id,omitempty"`
-	CreatedAt *time.Time `json:"created_at" bson:"created_at"`
-	UpdatedAt *time.Time `json:"updated_at" bson:"updated_at,omitempty"`
+	ID        string     `fake:"{uuid}" json:"id" bson:"_id,omitempty"`
+	CreatedAt *time.Time `fake:"{date}" json:"created_at" bson:"created_at"`
+	UpdatedAt *time.Time `fake:"{date}" json:"updated_at" bson:"updated_at,omitempty"`
 }
 
 func (e *Base) SetDateTime() {

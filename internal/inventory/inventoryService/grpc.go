@@ -32,6 +32,7 @@ func NewGRPC(logger core.Logger, inventoryRepo inventoryRepository.IInventoryRep
 func (s *inventoryGRPCService) FindIn(ctx context.Context, filter inventory.FilterReq) (*inventoryProto.InventoryRes, error) {
 	inventories, err := s.inventoryRepo.FindIn(ctx, filter)
 	if err != nil {
+		s.logger.Error(err)
 		return nil, err
 	}
 
