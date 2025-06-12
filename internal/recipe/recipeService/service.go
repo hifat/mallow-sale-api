@@ -16,6 +16,7 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/throw"
 )
 
+//go:generate mockgen -source=./service.go -destination=./mock/service.go -package=mockRecipeRepository
 type IRecipeService interface {
 	Create(ctx context.Context, req recipe.RecipeReq) (*recipe.RecipeRes, error)
 	Find(ctx context.Context) ([]recipe.RecipeRes, error)
