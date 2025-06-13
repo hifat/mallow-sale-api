@@ -9,6 +9,7 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/throw"
 )
 
+//go:generate mockgen -source=./service.go -destination=./mock/service.go -package=mockUsageUnitService
 type IUsageUnitService interface {
 	FindIn(ctx context.Context, filter usageUnit.FilterReq) ([]usageUnit.UsageUnit, error)
 }
