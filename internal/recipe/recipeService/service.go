@@ -113,9 +113,14 @@ func (s *recipeService) Create(ctx context.Context, req recipe.RecipeReq) (*reci
 
 func (s *recipeService) Find(ctx context.Context) ([]recipe.RecipeRes, error) {
 	res := []recipe.RecipeRes{}
-	res, err := s.recipeRepo.Find(ctx)
+	recipes, err := s.recipeRepo.Find(ctx)
 	if err != nil {
+		s.logger.Error(err)
 		return res, throw.InternalServerErr(err)
+	}
+
+	if recipes != nil {
+		res = recipes
 	}
 
 	return res, nil
