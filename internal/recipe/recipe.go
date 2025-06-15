@@ -33,22 +33,35 @@ type (
 	}
 
 	RecipeInventoryRes struct {
-		ID            string  `json:"id"`
-		UsageQuantity float64 `json:"usageQuantity"`
-		Remark        string  `json:"remark"`
+		ID            string  `fake:"{uuid}" json:"id"`
+		UsageQuantity float64 `fake:"{float64}" json:"usageQuantity"`
+		Remark        string  `fake:"{sentence}" json:"remark"`
 
 		UsageUnit *usageUnit.UsageUnitProtoType `json:"usageUnit"`
 
 		InventoryID string                        `json:"-"`
 		Inventory   *inventory.InventoryPrototype `json:"inventory"`
 	}
-
-	RecipeRes struct {
-		ID        string     `json:"id"`
-		Name      string     `json:"name"`
-		CreatedAt *time.Time `json:"createdAt"`
-		UpdatedAt *time.Time `json:"updatedAt"`
-
-		Ingredients []RecipeInventoryRes `json:"ingredients"`
-	}
 )
+
+type RecipeRes struct {
+	ID        string     `fake:"{uuid}" json:"id"`
+	Name      string     `fake:"{name}" json:"name"`
+	CreatedAt *time.Time `fake:"{date}" json:"createdAt"`
+	UpdatedAt *time.Time `fake:"{date}" json:"updatedAt"`
+
+	Ingredients []RecipeInventoryRes `json:"ingredients"`
+}
+
+func (r *RecipeRes) GetInventoryIDs() []string {
+	inventoryIDs := make([]string, 0)
+	if r.Ingredients != nil {
+		inventoryIDs := make([]string, 0, len(r.Ingredients))
+
+		for _, v := range r.Ingredients {
+			inventoryIDs = append(inventoryIDs, v.InventoryID)
+		}
+	}
+
+	return inventoryIDs
+}

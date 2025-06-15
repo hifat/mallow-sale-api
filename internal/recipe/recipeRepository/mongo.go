@@ -7,6 +7,7 @@ import (
 	core "github.com/hifat/goroger-core"
 	"github.com/hifat/mallow-sale-api/internal/recipe"
 	"github.com/hifat/mallow-sale-api/pkg/database"
+	"github.com/hifat/mallow-sale-api/pkg/utils/repoUtils"
 	"github.com/jinzhu/copier"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -80,7 +81,7 @@ func (r *recipeMongo) FindByID(ctx context.Context, id string) (*recipe.RecipeRe
 			"_id": database.MustStrToObjectID(id),
 		}).Decode(&_recipe)
 	if err != nil {
-		return nil, err
+		return nil, repoUtils.MongoErr(err)
 	}
 
 	res := new(recipe.RecipeRes)

@@ -133,13 +133,8 @@ func (s *recipeService) FindByID(ctx context.Context, id string) (*recipe.Recipe
 		return nil, throw.WhenRecordNotFoundErr(err)
 	}
 
-	inventoryIDs := make([]string, 0, len(res.Ingredients))
-	for _, inventory := range res.Ingredients {
-		inventoryIDs = append(inventoryIDs, inventory.InventoryID)
-	}
-
 	inventories, err := s.inventoryGRPCRepo.FindIn(ctx, inventory.FilterReq{
-		IDs: inventoryIDs,
+		IDs: res.GetInventoryIDs(),
 	})
 	if err != nil {
 		s.logger.Error(err)
