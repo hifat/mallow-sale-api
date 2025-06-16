@@ -3,6 +3,7 @@ package recipeService
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"testing"
 
@@ -172,6 +173,34 @@ func (s *testRecipeServiceSuite) TestRecipeService_FindByID() {
 		s.Require().Equal(throw.CodeInternalServer, errRes.Code)
 		s.Require().Equal(http.StatusInternalServerError, errRes.Status)
 		s.Require().Equal(throw.ErrInternalServer.Error(), errRes.Message)
+	})
+
+	s.Run("warn - some inventory id not round", func() {
+		_recipe := &recipe.RecipeRes{}
+		_recipe.Ingredients = make([]recipe.RecipeInventoryRes, 1)
+		if err := gofakeit.Struct(&_recipe); err != nil {
+			s.T().Fatal(err)
+		}
+
+		s.mockRecipeRepo.EXPECT().
+			FindByID(context.Background(), "mock-id").
+			Return(_recipe, nil)
+
+		inventories := make([]inventory.Inventory, 1)
+		s.mockInventoryGrpcRepo.EXPECT().
+			FindIn(context.Background(), inventory.FilterReq{
+				IDs: _recipe.GetInventoryIDs(),
+			}).
+			Return(inventories, nil)
+
+		for _, v := range _recipe.Ingredients {
+			s.mockLogger.EXPECT().
+				Warn(fmt.Sprintf("%s: %s", MsgNotFoundInventoryID, v.InventoryID))
+		}
+
+		res, err := s.underTest.FindByID(context.Background(), "mock-id")
+		s.Require().Nil(err)
+		s.Require().NotNil(res)
 	})
 
 	s.Run("fail - **", func() {

@@ -16,6 +16,8 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/throw"
 )
 
+var MsgNotFoundInventoryID string = "not found inventory id"
+
 //go:generate mockgen -source=./service.go -destination=./mock/service.go -package=mockRecipeRepository
 type IRecipeService interface {
 	Create(ctx context.Context, req recipe.RecipeReq) (*recipe.RecipeRes, error)
@@ -149,12 +151,12 @@ func (s *recipeService) FindByID(ctx context.Context, id string) (*recipe.Recipe
 	for i, _inventory := range res.Ingredients {
 		inv, ok := mapInventory[_inventory.InventoryID]
 		if !ok {
-			s.logger.Warn(fmt.Sprintf("not found inventory id: %s", _inventory.InventoryID))
+			s.logger.Warn(fmt.Sprintf("%s: %s", MsgNotFoundInventoryID, _inventory.InventoryID))
 			continue
 		}
 
 		res.Ingredients[i].Inventory = &inventory.InventoryPrototype{}
-		if err := s.helper.Copy(&res.Ingredients[i].Inventory, inv); err != nil {
+		if err := s.helper.Copy(res.Ingredients[i].Inventory, inv); err != nil {
 			s.logger.Error(err)
 			return nil, throw.InternalServerErr(err)
 		}
