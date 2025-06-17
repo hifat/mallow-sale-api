@@ -8,6 +8,8 @@ import (
 )
 
 func TestRecipe_GetInventoryIDs(t *testing.T) {
+	t.Parallel()
+
 	t.Run("should return inventory IDs when ingredients exist", func(t *testing.T) {
 		_recipeRes := recipe.RecipeRes{
 			Ingredients: []recipe.RecipeInventoryRes{
