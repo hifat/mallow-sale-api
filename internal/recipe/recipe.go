@@ -39,7 +39,7 @@ type (
 
 		UsageUnit *usageUnit.UsageUnitProtoType `json:"usageUnit"`
 
-		InventoryID string                        `json:"-"`
+		InventoryID string                        `fake:"{uuid}" json:"-"`
 		Inventory   *inventory.InventoryPrototype `json:"inventory"`
 	}
 )
@@ -53,10 +53,10 @@ type RecipeRes struct {
 	Ingredients []RecipeInventoryRes `json:"ingredients"`
 }
 
+// Will return InventoryID in Ingredients
 func (r *RecipeRes) GetInventoryIDs() []string {
-	inventoryIDs := make([]string, 0)
+	inventoryIDs := make([]string, 0, len(r.Ingredients))
 	if r.Ingredients != nil {
-		inventoryIDs := make([]string, 0, len(r.Ingredients))
 
 		for _, v := range r.Ingredients {
 			inventoryIDs = append(inventoryIDs, v.InventoryID)

@@ -203,9 +203,50 @@ func (s *testRecipeServiceSuite) TestRecipeService_FindByID() {
 		s.Require().NotNil(res)
 	})
 
-	s.Run("fail - **", func() {
-		// TODO: Check Warn when inventory id not found
-		// TODO: Check when copy error
+	s.Run("fail - copy error", func() {
+		amountIngredients := 2
+
+		_recipe := &recipe.RecipeRes{}
+		_recipe.Ingredients = make([]recipe.RecipeInventoryRes, amountIngredients)
+		if err := gofakeit.Struct(&_recipe); err != nil {
+			s.T().Fatal(err)
+		}
+
+		s.mockRecipeRepo.EXPECT().
+			FindByID(context.Background(), "mock-id").
+			Return(_recipe, nil)
+
+		inventories := make([]inventory.Inventory, amountIngredients)
+		gofakeit.Slice(&inventories)
+
+		for i := range inventories {
+			inventories[i].ID = _recipe.GetInventoryIDs()[i]
+		}
+
+		s.mockInventoryGrpcRepo.EXPECT().
+			FindIn(context.Background(), inventory.FilterReq{
+				IDs: _recipe.GetInventoryIDs(),
+			}).
+			Return(inventories, nil)
+
+		errCopy := errors.New("copy-error")
+		s.mockHelper.EXPECT().
+			Copy(gomock.Any(), gomock.Any()).
+			Return(errCopy)
+
+		s.mockLogger.EXPECT().
+			Error(errCopy)
+
+		res, err := s.underTest.FindByID(context.Background(), "mock-id")
+		s.Require().NotNil(err)
+		s.Require().IsType(response.ResponseErr{}, err)
+		s.Require().Nil(res)
+
+		errRes := err.(response.ResponseErr)
+		s.Require().Equal(throw.CodeInternalServer, errRes.Code)
+		s.Require().Equal(http.StatusInternalServerError, errRes.Status)
+		s.Require().Equal(throw.ErrInternalServer.Error(), errRes.Message)
+
 	})
 
 	// TODO: Success case
