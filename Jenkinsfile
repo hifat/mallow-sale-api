@@ -2,7 +2,6 @@ pipeline {
     agent any
     tools {
         go 'go-1.24.4'
-        sonarScanner 'sonarqube-scanner-latest'  // Add this line
     }
 
     environment {
