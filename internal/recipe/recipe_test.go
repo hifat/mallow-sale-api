@@ -25,7 +25,6 @@ func TestRecipe_GetInventoryIDs(t *testing.T) {
 		inventoryIDs := _recipeRes.GetInventoryIDs()
 
 		assert.Equal(t, []string{"1", "2"}, inventoryIDs)
-		assert.Len(t, inventoryIDs, 2)
 	})
 
 	t.Run("should return empty slice when ingredients is nil", func(t *testing.T) {
