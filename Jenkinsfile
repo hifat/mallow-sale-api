@@ -23,12 +23,14 @@ pipeline {
         }
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv(credentialsId: 'sonarqube-token') {
-                    sh '''
-                        sonar-scanner \
-                            -Dsonar.projectKey=mallow-sale-api \
-                            -Dsonar.sources=. \
-                    '''
+                script {
+                    withSonarQubeEnv(credentialsId: 'sonarqube-token') {
+                        sh '''
+                            sonar-scanner \
+                                -Dsonar.projectKey=mallow-sale-api \
+                                -Dsonar.sources=. \
+                        '''
+                    }
                 }
             }
         }
