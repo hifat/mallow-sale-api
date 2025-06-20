@@ -1,4 +1,4 @@
-name: hello-sekai-shop-db
+name: mallow-sale-api-db
 
 services:
    auth-db:
