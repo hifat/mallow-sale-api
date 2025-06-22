@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        APP_NAME: 'mallow-sale-api'
+        APP_NAME='mallow-sale-api'
         GO111MODULE='on'
         SONAR_SCANNER_HOME = tool 'sonarqube-scanner-latest'
     }
