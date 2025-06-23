@@ -41,7 +41,7 @@ pipeline {
                                 -Dsonar.exclusions=**/*_test.go,**/vendor/**,**/mock/**
                         '''
                     }
-                    waitForQualityGate abortPipeline: false
+                    // waitForQualityGate abortPipeline: false
                 }
             }
         }
