@@ -1,0 +1,19 @@
+# Ignore secret files
+.env
+.env.*
+*.pem
+*.key
+*.crt
+*.log
+
+# Ignore version control
+.git
+.gitignore
+
+# Ignore docs/test/demo files
+README.md
+docs/
+*_test
+*.md
+
+Dockerfile

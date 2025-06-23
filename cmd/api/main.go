@@ -37,8 +37,8 @@ import (
 // @name Authorization
 func main() {
 	args := os.Args
-	if len(args) != 2 {
-		log.Fatal("please give service name and env path: go run . <server_name> <env_path>")
+	if len(args) == 1 {
+		log.Fatal("please give service name and env path: go run . <env_path>")
 	}
 
 	cfg := config.LoadAppConfig(args[1])

@@ -10,7 +10,11 @@ seed:
 	go run ./cmd/seed ./env/$e/.env.$s $s
 
 db-up:
-	docker compose -f docker-compose.db.yaml up
+	docker compose -f docker-compose.db.yaml up -d
 
 db-down:
 	docker compose -f docker-compose.db.yaml down
+
+
+docker-run-local:
+	docker run --env-file ./env/local/.env.$s -v $(pwd)/env/local/.env.$s:/app/.env --name mallow-sale-api -p $p mallow-sale-api /app/.env

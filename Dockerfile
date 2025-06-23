@@ -1,16 +1,19 @@
 FROM golang:1.24.4-alpine3.22 AS builder
 
+WORKDIR /app
+
+RUN apk add --no-cache ca-certificates
+
 COPY . .
 
-# RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /rest-api ./cmd/rest
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o /rest-api ./cmd/rest
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o /api ./cmd/api
 
-FROM scratch
+FROM gcr.io/distroless/static:nonroot
 
-COPY --from=builder ./rest-api /
+COPY --from=builder /api /
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
-# for run in local
-# COPY .env .
+# Run as non-root user by default (UID=65532)
+USER nonroot
 
-ENTRYPOINT ["/rest-api"]
+ENTRYPOINT ["/api"]
