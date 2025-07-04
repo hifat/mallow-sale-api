@@ -10,49 +10,25 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func NewMongo(cfg config.DB) (*mongo.Database, error) {
+func NewMongo(cfg config.DB) (*mongo.Database, func(), error) {
 	// Build connection string with proper authentication
-	var uri string
+	uri := fmt.Sprintf(
+		"mongodb://%s:%s@%s:%s/%s",
+		cfg.Username,
+		cfg.Password,
+		cfg.Host,
+		cfg.Port,
+		cfg.DBName,
+	)
 
-	if cfg.Username != "" && cfg.Password != "" {
-		// With authentication
-		uri = fmt.Sprintf(
-			"mongodb://%s:%s@%s:%s/%s",
-			cfg.Username,
-			cfg.Password,
-			cfg.Host,
-			cfg.Port,
-			cfg.DBName,
-		)
-
-		// Add authSource parameter
-		if cfg.Schema != "" {
-			uri += fmt.Sprintf("?authSource=%s", cfg.Schema)
-		} else {
-			uri += "?authSource=admin"
-		}
-
-		// Add SSL mode if specified
-		if cfg.SSLMode != "" {
-			if cfg.Schema != "" {
-				uri += fmt.Sprintf("&ssl=%s", cfg.SSLMode)
-			} else {
-				uri += fmt.Sprintf("&ssl=%s", cfg.SSLMode)
-			}
-		}
+	if cfg.Schema != "" {
+		uri += fmt.Sprintf("?authSource=%s", cfg.Schema)
 	} else {
-		// Without authentication (for local development)
-		uri = fmt.Sprintf(
-			"mongodb://%s:%s/%s",
-			cfg.Host,
-			cfg.Port,
-			cfg.DBName,
-		)
+		uri += "?authSource=admin"
+	}
 
-		// Add SSL mode if specified
-		if cfg.SSLMode != "" {
-			uri += fmt.Sprintf("?ssl=%s", cfg.SSLMode)
-		}
+	if cfg.SSLMode != "" {
+		uri += fmt.Sprintf("&ssl=%s", cfg.SSLMode)
 	}
 
 	fmt.Printf("Connecting to MongoDB: %s\n", uri)
@@ -67,14 +43,18 @@ func NewMongo(cfg config.DB) (*mongo.Database, error) {
 
 	client, err := mongo.Connect(ctx, clientOpts)
 	if err != nil {
-		return nil, fmt.Errorf("failed to connect to MongoDB: %w", err)
+		return nil, nil, fmt.Errorf("failed to connect to MongoDB: %w", err)
 	}
 
-	// Ping to verify connection
 	if err := client.Ping(ctx, nil); err != nil {
-		return nil, fmt.Errorf("failed to ping MongoDB: %w", err)
+		return nil, nil, fmt.Errorf("failed to ping MongoDB: %w", err)
 	}
 
 	fmt.Println("Successfully connected to MongoDB")
-	return client.Database(cfg.DBName), nil
+
+	return client.Database(cfg.DBName), func() {
+		if err := client.Disconnect(ctx); err != nil {
+			fmt.Printf("Error disconnecting from MongoDB: %v\n", err)
+		}
+	}, nil
 }
