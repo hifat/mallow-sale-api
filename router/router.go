@@ -6,6 +6,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func RegisterAll(r *gin.Engine, cfg *config.Config, db *mongo.Database) {
+func RegisterAll(r *gin.RouterGroup, cfg *config.Config, db *mongo.Database) {
 	InventoryRouter(r, cfg, db)
 }

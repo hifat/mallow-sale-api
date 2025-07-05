@@ -3,9 +3,11 @@ package database
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/hifat/mallow-sale-api/pkg/config"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -57,4 +59,14 @@ func NewMongo(cfg config.DB) (*mongo.Database, func(), error) {
 			fmt.Printf("Error disconnecting from MongoDB: %v\n", err)
 		}
 	}, nil
+}
+
+func MustObjectIDFromHex(id string) primitive.ObjectID {
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		slog.Warn("Invalid ObjectID", "id", id, "error", err)
+		return primitive.NilObjectID
+	}
+
+	return objectID
 }

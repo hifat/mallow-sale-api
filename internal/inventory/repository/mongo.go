@@ -8,6 +8,7 @@ import (
 	entityModule "github.com/hifat/mallow-sale-api/internal/entity"
 	inventoryModule "github.com/hifat/mallow-sale-api/internal/inventory"
 	usageUnitModule "github.com/hifat/mallow-sale-api/internal/usageUnit"
+	"github.com/hifat/mallow-sale-api/pkg/database"
 	"github.com/hifat/mallow-sale-api/pkg/define"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -34,6 +35,10 @@ func (r *mongoRepository) Create(ctx context.Context, req *inventoryModule.Reque
 		},
 		YieldPercentage: req.YieldPercentage,
 		Remark:          req.Remark,
+		Base: entityModule.Base{
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		},
 	}
 
 	_, err := r.db.Collection("inventories").
@@ -46,7 +51,7 @@ func (r *mongoRepository) Create(ctx context.Context, req *inventoryModule.Reque
 }
 
 func (r *mongoRepository) FindByID(ctx context.Context, id string) (*inventoryModule.Response, error) {
-	filter := bson.M{"_id": id}
+	filter := bson.M{"_id": database.MustObjectIDFromHex(id)}
 	var inventory inventoryModule.Entity
 	err := r.db.Collection("inventories").
 		FindOne(ctx, filter).
@@ -69,6 +74,10 @@ func (r *mongoRepository) FindByID(ctx context.Context, id string) (*inventoryMo
 				Code: inventory.PurchaseUnit.Code,
 				Name: inventory.PurchaseUnit.Name,
 			},
+			YieldPercentage: inventory.YieldPercentage,
+			Remark:          inventory.Remark,
+			CreatedAt:       &inventory.CreatedAt,
+			UpdatedAt:       &inventory.UpdatedAt,
 		},
 	}
 
@@ -107,6 +116,10 @@ func (r *mongoRepository) Find(ctx context.Context) ([]inventoryModule.Response,
 					Code: inventory.PurchaseUnit.Code,
 					Name: inventory.PurchaseUnit.Name,
 				},
+				YieldPercentage: inventory.YieldPercentage,
+				Remark:          inventory.Remark,
+				CreatedAt:       &inventory.CreatedAt,
+				UpdatedAt:       &inventory.UpdatedAt,
 			},
 		}
 	}
@@ -115,7 +128,7 @@ func (r *mongoRepository) Find(ctx context.Context) ([]inventoryModule.Response,
 }
 
 func (r *mongoRepository) UpdateByID(ctx context.Context, id string, req *inventoryModule.Request) error {
-	editInventory := &inventoryModule.Entity{
+	editedInventory := &inventoryModule.Entity{
 		Name:             req.Name,
 		PurchasePrice:    req.PurchasePrice,
 		PurchaseQuantity: req.PurchaseQuantity,
@@ -123,14 +136,16 @@ func (r *mongoRepository) UpdateByID(ctx context.Context, id string, req *invent
 			Code: req.PurchaseUnit.Code,
 			Name: req.PurchaseUnit.Name,
 		},
+		YieldPercentage: req.YieldPercentage,
+		Remark:          req.Remark,
 		Base: entityModule.Base{
 			UpdatedAt: time.Now(),
 		},
 	}
 
-	filter := bson.M{"_id": id}
+	filter := bson.M{"_id": database.MustObjectIDFromHex(id)}
 	_, err := r.db.Collection("inventories").
-		UpdateOne(ctx, filter, bson.M{"$set": editInventory})
+		UpdateOne(ctx, filter, bson.M{"$set": editedInventory})
 	if err != nil {
 		return err
 	}
@@ -139,7 +154,7 @@ func (r *mongoRepository) UpdateByID(ctx context.Context, id string, req *invent
 }
 
 func (r *mongoRepository) DeleteByID(ctx context.Context, id string) error {
-	filter := bson.M{"_id": id}
+	filter := bson.M{"_id": database.MustObjectIDFromHex(id)}
 	_, err := r.db.Collection("inventories").
 		DeleteOne(ctx, filter)
 	if err != nil {

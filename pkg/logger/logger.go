@@ -19,7 +19,7 @@ type zapLogger struct {
 func New() Logger {
 	z, _ := zap.NewProduction()
 	return &zapLogger{
-		sugar: z.Sugar(),
+		sugar: z.Sugar().WithOptions(zap.AddCallerSkip(3)),
 	}
 }
 

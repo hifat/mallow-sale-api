@@ -7,13 +7,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func InventoryRouter(r *gin.Engine, cfg *config.Config, db *mongo.Database) {
+func InventoryRouter(r *gin.RouterGroup, cfg *config.Config, db *mongo.Database) {
 	handler := inventoryDi.Init(cfg, db)
 
 	r.Group("/inventories").
-		POST("/", handler.Rest.Create).
+		GET("", handler.Rest.Find).
 		GET("/:id", handler.Rest.FindByID).
-		GET("/", handler.Rest.Find).
+		POST("", handler.Rest.Create).
 		PUT("/:id", handler.Rest.UpdateByID).
 		DELETE("/:id", handler.Rest.DeleteByID)
 }

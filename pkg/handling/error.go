@@ -15,6 +15,11 @@ type ErrorResponse struct {
 	Status int `json:"-"`
 }
 
+type SuccessResponse struct {
+	Message string `json:"message"`
+	Data    any    `json:"data,omitempty"`
+}
+
 func (e ErrorResponse) Error() string {
 	return fmt.Sprintf("code: %s, message: %s, status: %d", e.Code, e.Message, e.Status)
 }
