@@ -37,3 +37,24 @@ func (r *mongoRepository) FindByCode(ctx context.Context, code string) (*usageUn
 		Name: usageUnit.Name,
 	}, nil
 }
+
+func (r *mongoRepository) FindInCodes(ctx context.Context, codes []string) ([]usageUnitModule.Prototype, error) {
+	filter := bson.M{"code": bson.M{"$in": codes}}
+	usageUnits := make([]usageUnitModule.Prototype, 0)
+	cursor, err := r.db.Collection("usage_units").Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var usageUnit usageUnitModule.Entity
+		if err := cursor.Decode(&usageUnit); err != nil {
+			return nil, err
+		}
+
+		usageUnits = append(usageUnits, usageUnitModule.Prototype(usageUnit))
+	}
+
+	return usageUnits, nil
+}

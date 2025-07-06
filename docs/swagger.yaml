@@ -1,5 +1,31 @@
 basePath: /api/v1
 definitions:
+  github_com_hifat_mallow-sale-api_internal_inventory.Prototype:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      purchase_price:
+        type: number
+      purchase_quantity:
+        type: number
+      purchase_unit:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.Prototype'
+      remark:
+        type: string
+      updated_at:
+        type: string
+      yield_percentage:
+        type: number
+    required:
+    - name
+    - purchase_price
+    - purchase_quantity
+    - yield_percentage
+    type: object
   github_com_hifat_mallow-sale-api_internal_inventory.Request:
     properties:
       name:
@@ -46,6 +72,57 @@ definitions:
     - purchase_quantity
     - yield_percentage
     type: object
+  github_com_hifat_mallow-sale-api_internal_recipe.IngredientPrototype:
+    properties:
+      inventory:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_inventory.Prototype'
+      inventory_id:
+        type: string
+      quantity:
+        type: number
+      unit:
+        type: string
+    type: object
+  github_com_hifat_mallow-sale-api_internal_recipe.IngredientRequest:
+    properties:
+      inventory_id:
+        type: string
+      quantity:
+        type: number
+      unit:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.UsageUnitReq'
+    required:
+    - inventory_id
+    - quantity
+    - unit
+    type: object
+  github_com_hifat_mallow-sale-api_internal_recipe.Request:
+    properties:
+      ingredients:
+        items:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.IngredientRequest'
+        type: array
+      name:
+        type: string
+    required:
+    - ingredients
+    - name
+    type: object
+  github_com_hifat_mallow-sale-api_internal_recipe.Response:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      ingredients:
+        items:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.IngredientPrototype'
+        type: array
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
   github_com_hifat_mallow-sale-api_internal_usageUnit.Prototype:
     properties:
       code:
@@ -72,11 +149,40 @@ definitions:
       total:
         type: integer
     type: object
+  github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_inventory_Request:
+    properties:
+      item:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_inventory.Request'
+    type: object
+  github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_inventory_Response:
+    properties:
+      item:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_inventory.Response'
+    type: object
+  github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_recipe_Request:
+    properties:
+      item:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.Request'
+    type: object
+  github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_recipe_Response:
+    properties:
+      item:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.Response'
+    type: object
   github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_inventory_Response:
     properties:
       items:
         items:
           $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_inventory.Response'
+        type: array
+      meta:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse'
+    type: object
+  github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_recipe_Response:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.Response'
         type: array
       meta:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse'
@@ -104,7 +210,6 @@ paths:
     get:
       consumes:
       - application/json
-      description: Retrieve all inventory items
       produces:
       - application/json
       responses:
@@ -116,15 +221,14 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
-      summary: Get all inventory items
+      summary: Find Inventories
       tags:
       - inventory
     post:
       consumes:
       - application/json
-      description: Create a new inventory item with the provided details
       parameters:
-      - description: Inventory item to create
+      - description: Created inventory data
         in: body
         name: inventory
         required: true
@@ -136,25 +240,28 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_inventory.Response'
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_inventory_Request'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
-      summary: Create a new inventory item
+      summary: Create Inventory
       tags:
       - inventory
   /inventories/{id}:
     delete:
       consumes:
       - application/json
-      description: Delete a specific inventory item by its ID
       parameters:
-      - description: Inventory item ID
+      - description: Inventory ID
         in: path
         name: id
         required: true
@@ -178,15 +285,14 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
-      summary: Delete inventory item by ID
+      summary: Delete Inventory by ID
       tags:
       - inventory
     get:
       consumes:
       - application/json
-      description: Retrieve a specific inventory item by its ID
       parameters:
-      - description: Inventory item ID
+      - description: inventoryID
         in: path
         name: id
         required: true
@@ -197,7 +303,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_inventory.Response'
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_inventory_Response'
         "400":
           description: Bad Request
           schema:
@@ -210,20 +316,19 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
-      summary: Get inventory item by ID
+      summary: Find Inventory by ID
       tags:
       - inventory
     put:
       consumes:
       - application/json
-      description: Update a specific inventory item by its ID
       parameters:
-      - description: Inventory item ID
+      - description: inventory ID
         in: path
         name: id
         required: true
         type: string
-      - description: Updated inventory item data
+      - description: Updated inventory data
         in: body
         name: inventory
         required: true
@@ -235,7 +340,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_inventory.Response'
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_inventory_Request'
         "400":
           description: Bad Request
           schema:
@@ -248,25 +353,159 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
-      summary: Update inventory item by ID
+      summary: Update Inventory by ID
       tags:
       - inventory
-  /inventories/ping:
+  /recipes:
     get:
       consumes:
       - application/json
-      description: A simple ping endpoint to check if the server is running
       produces:
       - application/json
       responses:
         "200":
-          description: Server is running
+          description: OK
           schema:
-            additionalProperties: true
-            type: object
-      summary: Ping endpoint
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_recipe_Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      summary: Find Recipes
       tags:
-      - health
+      - recipe
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Created recipe data
+        in: body
+        name: recipe
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.Request'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_recipe_Request'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      summary: Create Recipe
+      tags:
+      - recipe
+  /recipes/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Recipe ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      summary: Delete Recipe by ID
+      tags:
+      - recipe
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: recipeID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_recipe_Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      summary: Find Recipe by ID
+      tags:
+      - recipe
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: recipe ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated recipe data
+        in: body
+        name: recipe
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_recipe_Request'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      summary: Update Recipe by ID
+      tags:
+      - recipe
 securityDefinitions:
   BearerAuth:
     description: Type "Bearer" followed by a space and JWT token.

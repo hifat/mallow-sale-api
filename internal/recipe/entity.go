@@ -1,9 +1,24 @@
-package recipeDomain
+package recipeModule
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	entityModule "github.com/hifat/mallow-sale-api/internal/entity"
+	inventoryModule "github.com/hifat/mallow-sale-api/internal/inventory"
+	usageUnitModule "github.com/hifat/mallow-sale-api/internal/usageUnit"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
-type Recipe struct {
+type IngredientEntity struct {
+	ID          primitive.ObjectID     `bson:"_id,omitempty" json:"id"`
+	InventoryID primitive.ObjectID     `bson:"inventory_id" json:"inventory_id"`
+	Inventory   inventoryModule.Entity `bson:"inventory" json:"inventory"`
+	Quantity    float32                `bson:"quantity" json:"quantity"`
+	Unit        usageUnitModule.Entity `bson:"unit" json:"unit"`
+}
+
+type Entity struct {
+	entityModule.Base `bson:"inline"`
+
 	ID          primitive.ObjectID `bson:"_id,omitempty" json:"id"`
 	Name        string             `bson:"name" json:"name"`
-	Description string             `bson:"description" json:"description"`
+	Ingredients []IngredientEntity `bson:"ingredients" json:"ingredients"`
 }

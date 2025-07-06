@@ -41,10 +41,11 @@ func New(
 func (s *service) Create(ctx context.Context, req *inventoryModule.Request) (*handling.ResponseItem[*inventoryModule.Request], error) {
 	usageUnit, err := s.usageUnitRepository.FindByCode(ctx, req.PurchaseUnit.Code)
 	if err != nil {
-		if !errors.Is(err, define.ErrRecordNotFound) {
-			s.logger.Error(err)
+		if errors.Is(err, define.ErrRecordNotFound) {
+			return nil, handling.ThrowErrByCode(define.CodeInvalidUsageUnit)
 		}
 
+		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
 
@@ -109,10 +110,11 @@ func (s *service) UpdateByID(ctx context.Context, id string, req *inventoryModul
 
 	usageUnit, err := s.usageUnitRepository.FindByCode(ctx, req.PurchaseUnit.Code)
 	if err != nil {
-		if !errors.Is(err, define.ErrRecordNotFound) {
-			s.logger.Error(err)
+		if errors.Is(err, define.ErrRecordNotFound) {
+			return nil, handling.ThrowErrByCode(define.CodeInvalidUsageUnit)
 		}
 
+		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
 

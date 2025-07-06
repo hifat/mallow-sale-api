@@ -1,0 +1,175 @@
+package recipeRepository
+
+import (
+	"context"
+	"errors"
+	"time"
+
+	entityModule "github.com/hifat/mallow-sale-api/internal/entity"
+	recipeModule "github.com/hifat/mallow-sale-api/internal/recipe"
+	usageUnitModule "github.com/hifat/mallow-sale-api/internal/usageUnit"
+	"github.com/hifat/mallow-sale-api/pkg/database"
+	"github.com/hifat/mallow-sale-api/pkg/define"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+)
+
+type mongoRepository struct {
+	db *mongo.Database
+}
+
+func NewMongo(db *mongo.Database) Repository {
+	return &mongoRepository{db: db}
+}
+
+func (r *mongoRepository) Create(ctx context.Context, req *recipeModule.Request) error {
+	ingredients := make([]recipeModule.IngredientEntity, len(req.Ingredients))
+	for i, ingredient := range req.Ingredients {
+		ingredients[i] = recipeModule.IngredientEntity{
+			InventoryID: database.MustObjectIDFromHex(ingredient.InventoryID),
+			Quantity:    ingredient.Quantity,
+			Unit: usageUnitModule.Entity{
+				Code: ingredient.Unit.Code,
+				Name: ingredient.Unit.Name,
+			},
+		}
+	}
+
+	newRecipe := &recipeModule.Entity{
+		Name:        req.Name,
+		Ingredients: ingredients,
+		Base: entityModule.Base{
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		},
+	}
+
+	_, err := r.db.Collection("recipes").InsertOne(ctx, newRecipe)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *mongoRepository) Find(ctx context.Context) ([]recipeModule.Response, error) {
+	recipes := make([]recipeModule.Entity, 0)
+	cursor, err := r.db.Collection("recipes").Find(ctx, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var recipe recipeModule.Entity
+		if err := cursor.Decode(&recipe); err != nil {
+			return nil, err
+		}
+		recipes = append(recipes, recipe)
+	}
+
+	res := make([]recipeModule.Response, 0, len(recipes))
+	for _, recipe := range recipes {
+		ingredients := make([]recipeModule.IngredientPrototype, 0, len(recipe.Ingredients))
+		for _, ingredient := range recipe.Ingredients {
+			ingredients = append(ingredients, recipeModule.IngredientPrototype{
+				InventoryID: ingredient.InventoryID.Hex(),
+				Quantity:    ingredient.Quantity,
+				Unit:        ingredient.Unit.Code,
+			})
+		}
+
+		res = append(res, recipeModule.Response{
+			Prototype: recipeModule.Prototype{
+				ID:          recipe.ID.Hex(),
+				Name:        recipe.Name,
+				Ingredients: ingredients,
+			},
+		})
+	}
+
+	return res, nil
+}
+
+func (r *mongoRepository) FindByID(ctx context.Context, id string) (*recipeModule.Response, error) {
+	filter := bson.M{"_id": database.MustObjectIDFromHex(id)}
+	var recipe recipeModule.Entity
+	err := r.db.Collection("recipes").
+		FindOne(ctx, filter).
+		Decode(&recipe)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, define.ErrRecordNotFound
+		}
+
+		return nil, err
+	}
+
+	ingredients := make([]recipeModule.IngredientPrototype, len(recipe.Ingredients))
+	for j, ingredient := range recipe.Ingredients {
+		ingredients[j] = recipeModule.IngredientPrototype{
+			InventoryID: ingredient.InventoryID.Hex(),
+			Quantity:    ingredient.Quantity,
+			Unit:        ingredient.Unit.Code,
+		}
+	}
+
+	return &recipeModule.Response{
+		Prototype: recipeModule.Prototype{
+			ID:          recipe.ID.Hex(),
+			Name:        recipe.Name,
+			Ingredients: ingredients,
+			CreatedAt:   &recipe.CreatedAt,
+			UpdatedAt:   &recipe.UpdatedAt,
+		},
+	}, nil
+}
+
+func (r *mongoRepository) UpdateByID(ctx context.Context, id string, req *recipeModule.Request) error {
+	filter := bson.M{"_id": database.MustObjectIDFromHex(id)}
+	editedRecipe := &recipeModule.Entity{
+		Name: req.Name,
+		Base: entityModule.Base{
+			UpdatedAt: time.Now(),
+		},
+	}
+
+	ingredients := make([]recipeModule.IngredientEntity, len(req.Ingredients))
+	for i, ingredient := range req.Ingredients {
+		ingredients[i] = recipeModule.IngredientEntity{
+			InventoryID: database.MustObjectIDFromHex(ingredient.InventoryID),
+			Quantity:    ingredient.Quantity,
+			Unit: usageUnitModule.Entity{
+				Code: ingredient.Unit.Code,
+				Name: ingredient.Unit.Name,
+			},
+		}
+	}
+	editedRecipe.Ingredients = ingredients
+
+	_, err := r.db.Collection("recipes").UpdateOne(ctx, filter, bson.M{"$set": editedRecipe})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *mongoRepository) DeleteByID(ctx context.Context, id string) error {
+	filter := bson.M{"_id": database.MustObjectIDFromHex(id)}
+	_, err := r.db.Collection("recipes").DeleteOne(ctx, filter)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *mongoRepository) Count(ctx context.Context) (int64, error) {
+	count, err := r.db.Collection("recipes").CountDocuments(ctx, bson.M{})
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}

@@ -17,17 +17,16 @@ func NewRest(inventoryService inventoryService.Service) *Rest {
 	return &Rest{inventoryService: inventoryService}
 }
 
-// Create Inventory
-// @Summary Create a new inventory item
-// @Description Create a new inventory item with the provided details
-// @Tags inventory
-// @Accept json
-// @Produce json
-// @Param inventory body inventoryModule.Request true "Inventory item to create"
-// @Success 201 {object} inventoryModule.Response
-// @Failure 400 {object} handling.ErrorResponse
-// @Failure 500 {object} handling.ErrorResponse
-// @Router /inventories [post]
+// @Summary 	Create Inventory
+// @Tags 		inventory
+// @Accept 		json
+// @Produce 	json
+// @Param 		inventory body inventoryModule.Request true "Created inventory data"
+// @Success 	201 {object} handling.ResponseItem[inventoryModule.Request]
+// @Failure 	400 {object} handling.ErrorResponse
+// @Failure 	404 {object} handling.ErrorResponse
+// @Failure 	500 {object} handling.ErrorResponse
+// @Router 		/inventories [post]
 func (r *Rest) Create(c *gin.Context) {
 	var req inventoryModule.Request
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -44,18 +43,16 @@ func (r *Rest) Create(c *gin.Context) {
 	handling.ResponseCreated(c, *res)
 }
 
-// Find Inventory By ID
-// @Summary Get inventory item by ID
-// @Description Retrieve a specific inventory item by its ID
-// @Tags inventory
-// @Accept json
-// @Produce json
-// @Param id path string true "inventoryID"
-// @Success 200 {object} inventoryModule.Response
-// @Failure 400 {object} handling.ErrorResponse
-// @Failure 404 {object} handling.ErrorResponse
-// @Failure 500 {object} handling.ErrorResponse
-// @Router /inventories/{id} [get]
+// @Summary 	Find Inventory by ID
+// @Tags 		inventory
+// @Accept 		json
+// @Produce 	json
+// @Param 		id path string true "inventoryID"
+// @Success 	200 {object} handling.ResponseItem[inventoryModule.Response]
+// @Failure 	400 {object} handling.ErrorResponse
+// @Failure 	404 {object} handling.ErrorResponse
+// @Failure 	500 {object} handling.ErrorResponse
+// @Router 		/inventories/{id} [get]
 func (r *Rest) FindByID(c *gin.Context) {
 	id := c.Param("id")
 
@@ -68,24 +65,13 @@ func (r *Rest) FindByID(c *gin.Context) {
 	handling.ResponseSuccess(c, *res)
 }
 
-// @Summary Ping endpoint
-// @Description A simple ping endpoint to check if the server is running
-// @Tags health
-// @Accept json
-// @Produce json
-// @Success 200 {object} map[string]interface{} "Server is running"
-// @Router /inventories/ping [get]
-func (r *Rest) Ping(c *gin.Context) {}
-
-// Find Inventories
-// @Summary Get inventories
-// @Description Retrieve all inventory items
-// @Tags inventory
-// @Accept json
-// @Produce json
-// @Success 200 {object} handling.ResponseItems[inventoryModule.Response]
-// @Failure 500 {object} handling.ErrorResponse
-// @Router /inventories [get]
+// @Summary 	Find Inventories
+// @Tags 		inventory
+// @Accept 		json
+// @Produce 	json
+// @Success 	200 {object} handling.ResponseItems[inventoryModule.Response]
+// @Failure 	500 {object} handling.ErrorResponse
+// @Router 		/inventories [get]
 func (r *Rest) Find(c *gin.Context) {
 	res, err := r.inventoryService.Find(c.Request.Context())
 	if err != nil {
@@ -97,19 +83,17 @@ func (r *Rest) Find(c *gin.Context) {
 	handling.ResponseSuccess(c, *res)
 }
 
-// Update Inventory By ID
-// @Summary Update inventory item by ID
-// @Description Update a specific inventory item by its ID
-// @Tags inventory
-// @Accept json
-// @Produce json
-// @Param id path string true "inventory ID"
-// @Param inventory body inventoryModule.Request true "Updated inventory data"
-// @Success 200 {object} inventoryModule.Response
-// @Failure 400 {object} handling.ErrorResponse
-// @Failure 404 {object} handling.ErrorResponse
-// @Failure 500 {object} handling.ErrorResponse
-// @Router /inventories/{id} [put]
+// @Summary 	Update Inventory by ID
+// @Tags 		inventory
+// @Accept 		json
+// @Produce 	json
+// @Param 		id path string true "inventory ID"
+// @Param 		inventory body inventoryModule.Request true "Updated inventory data"
+// @Success 	200 {object} handling.ResponseItem[inventoryModule.Request]
+// @Failure 	400 {object} handling.ErrorResponse
+// @Failure 	404 {object} handling.ErrorResponse
+// @Failure 	500 {object} handling.ErrorResponse
+// @Router 		/inventories/{id} [put]
 func (r *Rest) UpdateByID(c *gin.Context) {
 	id := c.Param("id")
 
@@ -128,18 +112,16 @@ func (r *Rest) UpdateByID(c *gin.Context) {
 	handling.ResponseSuccess(c, *res)
 }
 
-// Delete Inventory By ID
-// @Summary Delete inventory item by ID
-// @Description Delete a specific inventory item by its ID
-// @Tags inventory
-// @Accept json
-// @Produce json
-// @Param id path string true "Inventory item ID"
-// @Success 200 {object} handling.SuccessResponse
-// @Failure 400 {object} handling.ErrorResponse
-// @Failure 404 {object} handling.ErrorResponse
-// @Failure 500 {object} handling.ErrorResponse
-// @Router /inventories/{id} [delete]
+// @Summary 	Delete Inventory by ID
+// @Tags 		inventory
+// @Accept 		json
+// @Produce 	json
+// @Param 		id 	path string true "Inventory ID"
+// @Success 	200 {object} handling.SuccessResponse
+// @Failure 	400 {object} handling.ErrorResponse
+// @Failure 	404 {object} handling.ErrorResponse
+// @Failure 	500 {object} handling.ErrorResponse
+// @Router 		/inventories/{id} [delete]
 func (r *Rest) DeleteByID(c *gin.Context) {
 	id := c.Param("id")
 

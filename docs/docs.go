@@ -26,7 +26,6 @@ const docTemplate = `{
     "paths": {
         "/inventories": {
             "get": {
-                "description": "Retrieve all inventory items",
                 "consumes": [
                     "application/json"
                 ],
@@ -36,7 +35,7 @@ const docTemplate = `{
                 "tags": [
                     "inventory"
                 ],
-                "summary": "Get all inventory items",
+                "summary": "Find Inventories",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -53,7 +52,6 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Create a new inventory item with the provided details",
                 "consumes": [
                     "application/json"
                 ],
@@ -63,10 +61,10 @@ const docTemplate = `{
                 "tags": [
                     "inventory"
                 ],
-                "summary": "Create a new inventory item",
+                "summary": "Create Inventory",
                 "parameters": [
                     {
-                        "description": "Inventory item to create",
+                        "description": "Created inventory data",
                         "name": "inventory",
                         "in": "body",
                         "required": true,
@@ -79,11 +77,17 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_inventory.Response"
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_inventory_Request"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
                         }
@@ -97,33 +101,8 @@ const docTemplate = `{
                 }
             }
         },
-        "/inventories/ping": {
-            "get": {
-                "description": "A simple ping endpoint to check if the server is running",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "health"
-                ],
-                "summary": "Ping endpoint",
-                "responses": {
-                    "200": {
-                        "description": "Server is running",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
         "/inventories/{id}": {
             "get": {
-                "description": "Retrieve a specific inventory item by its ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -133,11 +112,11 @@ const docTemplate = `{
                 "tags": [
                     "inventory"
                 ],
-                "summary": "Get inventory item by ID",
+                "summary": "Find Inventory by ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Inventory item ID",
+                        "description": "inventoryID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -147,7 +126,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_inventory.Response"
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_inventory_Response"
                         }
                     },
                     "400": {
@@ -171,7 +150,6 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Update a specific inventory item by its ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -181,17 +159,17 @@ const docTemplate = `{
                 "tags": [
                     "inventory"
                 ],
-                "summary": "Update inventory item by ID",
+                "summary": "Update Inventory by ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Inventory item ID",
+                        "description": "inventory ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Updated inventory item data",
+                        "description": "Updated inventory data",
                         "name": "inventory",
                         "in": "body",
                         "required": true,
@@ -204,7 +182,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_inventory.Response"
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_inventory_Request"
                         }
                     },
                     "400": {
@@ -228,7 +206,6 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Delete a specific inventory item by its ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -238,11 +215,240 @@ const docTemplate = `{
                 "tags": [
                     "inventory"
                 ],
-                "summary": "Delete inventory item by ID",
+                "summary": "Delete Inventory by ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Inventory item ID",
+                        "description": "Inventory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/recipes": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "recipe"
+                ],
+                "summary": "Find Recipes",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_recipe_Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "recipe"
+                ],
+                "summary": "Create Recipe",
+                "parameters": [
+                    {
+                        "description": "Created recipe data",
+                        "name": "recipe",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_recipe_Request"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/recipes/{id}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "recipe"
+                ],
+                "summary": "Find Recipe by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "recipeID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_recipe_Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "recipe"
+                ],
+                "summary": "Update Recipe by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "recipe ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated recipe data",
+                        "name": "recipe",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_recipe_Request"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "recipe"
+                ],
+                "summary": "Delete Recipe by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Recipe ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -278,6 +484,44 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "github_com_hifat_mallow-sale-api_internal_inventory.Prototype": {
+            "type": "object",
+            "required": [
+                "name",
+                "purchase_price",
+                "purchase_quantity",
+                "yield_percentage"
+            ],
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "purchase_price": {
+                    "type": "number"
+                },
+                "purchase_quantity": {
+                    "type": "number"
+                },
+                "purchase_unit": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.Prototype"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "yield_percentage": {
+                    "type": "number"
+                }
+            }
+        },
         "github_com_hifat_mallow-sale-api_internal_inventory.Request": {
             "type": "object",
             "required": [
@@ -345,6 +589,83 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_hifat_mallow-sale-api_internal_recipe.IngredientPrototype": {
+            "type": "object",
+            "properties": {
+                "inventory": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_inventory.Prototype"
+                },
+                "inventory_id": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "number"
+                },
+                "unit": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_recipe.IngredientRequest": {
+            "type": "object",
+            "required": [
+                "inventory_id",
+                "quantity",
+                "unit"
+            ],
+            "properties": {
+                "inventory_id": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "number"
+                },
+                "unit": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.UsageUnitReq"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_recipe.Request": {
+            "type": "object",
+            "required": [
+                "ingredients",
+                "name"
+            ],
+            "properties": {
+                "ingredients": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.IngredientRequest"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_recipe.Response": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "ingredients": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.IngredientPrototype"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_hifat_mallow-sale-api_internal_usageUnit.Prototype": {
             "type": "object",
             "properties": {
@@ -386,6 +707,38 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_inventory_Request": {
+            "type": "object",
+            "properties": {
+                "item": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_inventory.Request"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_inventory_Response": {
+            "type": "object",
+            "properties": {
+                "item": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_inventory.Response"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_recipe_Request": {
+            "type": "object",
+            "properties": {
+                "item": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.Request"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_recipe_Response": {
+            "type": "object",
+            "properties": {
+                "item": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.Response"
+                }
+            }
+        },
         "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_inventory_Response": {
             "type": "object",
             "properties": {
@@ -393,6 +746,20 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_inventory.Response"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_recipe_Response": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.Response"
                     }
                 },
                 "meta": {

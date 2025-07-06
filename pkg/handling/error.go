@@ -24,6 +24,41 @@ func (e ErrorResponse) Error() string {
 	return fmt.Sprintf("code: %s, message: %s, status: %d", e.Code, e.Message, e.Status)
 }
 
+func getErrObject(code string) ErrorResponse {
+	mapErr := map[string]ErrorResponse{
+		define.CodeRecordNotFound: {
+			Code:    define.CodeRecordNotFound,
+			Message: define.MsgRecordNotFound,
+			Status:  http.StatusNotFound,
+		},
+		define.CodeInvalidUsageUnit: {
+			Code:    define.CodeInvalidUsageUnit,
+			Message: define.MsgInvalidUsageUnit,
+			Status:  http.StatusBadRequest,
+		},
+		define.CodeInvalidInventoryID: {
+			Code:    define.CodeInvalidInventoryID,
+			Message: define.MsgInvalidInventoryID,
+			Status:  http.StatusBadRequest,
+		},
+	}
+
+	errObj, ok := mapErr[code]
+	if !ok {
+		return ErrorResponse{
+			Code:    define.CodeInternalServerError,
+			Message: define.MsgInternalServerError,
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	return errObj
+}
+
+func ThrowErrByCode(code string) ErrorResponse {
+	return getErrObject(code)
+}
+
 func ThrowErr(err error) ErrorResponse {
 	if errors.Is(err, define.ErrRecordNotFound) {
 		return ErrorResponse{

@@ -11,6 +11,7 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/database"
 	"github.com/hifat/mallow-sale-api/pkg/define"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -122,6 +123,55 @@ func (r *mongoRepository) Find(ctx context.Context) ([]inventoryModule.Response,
 				UpdatedAt:       &inventory.UpdatedAt,
 			},
 		}
+	}
+
+	return res, nil
+}
+
+func (r *mongoRepository) FindInIDs(ctx context.Context, ids []string) ([]inventoryModule.Response, error) {
+	objIDs := make([]primitive.ObjectID, len(ids))
+	for i, id := range ids {
+		objIDs[i] = database.MustObjectIDFromHex(id)
+	}
+
+	filter := bson.M{"_id": bson.M{"$in": objIDs}}
+	var inventories []inventoryModule.Entity
+	cur, err := r.db.Collection("inventories").
+		Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cur.Close(ctx)
+
+	for cur.Next(ctx) {
+		var inventory inventoryModule.Entity
+		if err := cur.Decode(&inventory); err != nil {
+			return nil, err
+		}
+		inventories = append(inventories, inventory)
+	}
+	if err := cur.Err(); err != nil {
+		return nil, err
+	}
+
+	res := make([]inventoryModule.Response, 0, len(inventories))
+	for _, inventory := range inventories {
+		res = append(res, inventoryModule.Response{
+			Prototype: inventoryModule.Prototype{
+				ID:               inventory.ID.Hex(),
+				Name:             inventory.Name,
+				PurchasePrice:    inventory.PurchasePrice,
+				PurchaseQuantity: inventory.PurchaseQuantity,
+				PurchaseUnit: usageUnitModule.Prototype{
+					Code: inventory.PurchaseUnit.Code,
+					Name: inventory.PurchaseUnit.Name,
+				},
+				YieldPercentage: inventory.YieldPercentage,
+				Remark:          inventory.Remark,
+				CreatedAt:       &inventory.CreatedAt,
+				UpdatedAt:       &inventory.UpdatedAt,
+			},
+		})
 	}
 
 	return res, nil
