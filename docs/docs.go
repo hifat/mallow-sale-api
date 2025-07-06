@@ -461,12 +461,6 @@ const docTemplate = `{
                             "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.SuccessResponse"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
-                        }
-                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -594,9 +588,6 @@ const docTemplate = `{
             "properties": {
                 "inventory": {
                     "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_inventory.Prototype"
-                },
-                "inventory_id": {
-                    "type": "string"
                 },
                 "quantity": {
                     "type": "number"
