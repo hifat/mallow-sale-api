@@ -2,75 +2,75 @@ basePath: /api/v1
 definitions:
   github_com_hifat_mallow-sale-api_internal_inventory.Prototype:
     properties:
-      created_at:
+      createdAt:
         type: string
       id:
         type: string
       name:
         type: string
-      purchase_price:
+      purchasePrice:
         type: number
-      purchase_quantity:
+      purchaseQuantity:
         type: number
-      purchase_unit:
+      purchaseUnit:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.Prototype'
       remark:
         type: string
-      updated_at:
+      updatedAt:
         type: string
-      yield_percentage:
+      yieldPercentage:
         type: number
     required:
     - name
-    - purchase_price
-    - purchase_quantity
-    - yield_percentage
+    - purchasePrice
+    - purchaseQuantity
+    - yieldPercentage
     type: object
   github_com_hifat_mallow-sale-api_internal_inventory.Request:
     properties:
       name:
         type: string
-      purchase_price:
+      purchasePrice:
         type: number
-      purchase_quantity:
+      purchaseQuantity:
         type: number
-      purchase_unit:
+      purchaseUnit:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.UsageUnitReq'
       remark:
         type: string
-      yield_percentage:
+      yieldPercentage:
         type: number
     required:
     - name
-    - purchase_price
-    - purchase_quantity
-    - yield_percentage
+    - purchasePrice
+    - purchaseQuantity
+    - yieldPercentage
     type: object
   github_com_hifat_mallow-sale-api_internal_inventory.Response:
     properties:
-      created_at:
+      createdAt:
         type: string
       id:
         type: string
       name:
         type: string
-      purchase_price:
+      purchasePrice:
         type: number
-      purchase_quantity:
+      purchaseQuantity:
         type: number
-      purchase_unit:
+      purchaseUnit:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.Prototype'
       remark:
         type: string
-      updated_at:
+      updatedAt:
         type: string
-      yield_percentage:
+      yieldPercentage:
         type: number
     required:
     - name
-    - purchase_price
-    - purchase_quantity
-    - yield_percentage
+    - purchasePrice
+    - purchaseQuantity
+    - yieldPercentage
     type: object
   github_com_hifat_mallow-sale-api_internal_recipe.IngredientPrototype:
     properties:
@@ -83,14 +83,14 @@ definitions:
     type: object
   github_com_hifat_mallow-sale-api_internal_recipe.IngredientRequest:
     properties:
-      inventory_id:
+      inventoryID:
         type: string
       quantity:
         type: number
       unit:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.UsageUnitReq'
     required:
-    - inventory_id
+    - inventoryID
     - quantity
     - unit
     type: object
@@ -108,7 +108,7 @@ definitions:
     type: object
   github_com_hifat_mallow-sale-api_internal_recipe.Response:
     properties:
-      created_at:
+      createdAt:
         type: string
       id:
         type: string
@@ -118,7 +118,7 @@ definitions:
         type: array
       name:
         type: string
-      updated_at:
+      updatedAt:
         type: string
     type: object
   github_com_hifat_mallow-sale-api_internal_usageUnit.Prototype:
@@ -208,6 +208,29 @@ paths:
     get:
       consumes:
       - application/json
+      parameters:
+      - in: query
+        name: fields
+        type: string
+      - default: 10
+        in: query
+        name: limit
+        type: integer
+      - default: desc
+        in: query
+        name: order
+        type: string
+      - default: 1
+        in: query
+        name: page
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - default: createdAt
+        in: query
+        name: sort
+        type: string
       produces:
       - application/json
       responses:
@@ -358,6 +381,29 @@ paths:
     get:
       consumes:
       - application/json
+      parameters:
+      - in: query
+        name: fields
+        type: string
+      - default: 10
+        in: query
+        name: limit
+        type: integer
+      - default: desc
+        in: query
+        name: order
+        type: string
+      - default: 1
+        in: query
+        name: page
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - default: createdAt
+        in: query
+        name: sort
+        type: string
       produces:
       - application/json
       responses:

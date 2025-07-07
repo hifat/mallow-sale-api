@@ -9,6 +9,7 @@ import (
 	inventoryModule "github.com/hifat/mallow-sale-api/internal/inventory"
 	inventoryRepository "github.com/hifat/mallow-sale-api/internal/inventory/repository"
 	usageUnitRepository "github.com/hifat/mallow-sale-api/internal/usageUnit/repository"
+	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 	"github.com/hifat/mallow-sale-api/pkg/define"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
@@ -16,8 +17,8 @@ import (
 
 type Service interface {
 	Create(ctx context.Context, req *inventoryModule.Request) (*handling.ResponseItem[*inventoryModule.Request], error)
+	Find(ctx context.Context, query *utilsModule.QueryReq) (*handling.ResponseItems[inventoryModule.Response], error)
 	FindByID(ctx context.Context, id string) (*handling.ResponseItem[*inventoryModule.Response], error)
-	Find(ctx context.Context) (*handling.ResponseItems[inventoryModule.Response], error)
 	UpdateByID(ctx context.Context, id string, req *inventoryModule.Request) (*handling.ResponseItem[*inventoryModule.Request], error)
 	DeleteByID(ctx context.Context, id string) error
 }
@@ -70,14 +71,14 @@ func (s *service) Create(ctx context.Context, req *inventoryModule.Request) (*ha
 	}, nil
 }
 
-func (s *service) Find(ctx context.Context) (*handling.ResponseItems[inventoryModule.Response], error) {
-	total, err := s.inventoryRepository.Count(ctx)
+func (s *service) Find(ctx context.Context, query *utilsModule.QueryReq) (*handling.ResponseItems[inventoryModule.Response], error) {
+	count, err := s.inventoryRepository.Count(ctx)
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
 
-	inventories, err := s.inventoryRepository.Find(ctx)
+	inventories, err := s.inventoryRepository.Find(ctx, query)
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
@@ -86,7 +87,7 @@ func (s *service) Find(ctx context.Context) (*handling.ResponseItems[inventoryMo
 	return &handling.ResponseItems[inventoryModule.Response]{
 		Items: inventories,
 		Meta: handling.MetaResponse{
-			Total: total,
+			Total: count,
 		},
 	}, nil
 }

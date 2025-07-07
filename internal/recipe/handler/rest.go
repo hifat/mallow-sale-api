@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	recipeModule "github.com/hifat/mallow-sale-api/internal/recipe"
 	recipeService "github.com/hifat/mallow-sale-api/internal/recipe/service"
+	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 )
 
@@ -45,11 +46,18 @@ func (r *Rest) Create(c *gin.Context) {
 // @Tags 		recipe
 // @Accept 		json
 // @Produce 	json
+// @Param 		query query utilsModule.QueryReq false "Query parameters"
 // @Success 	200 {object} handling.ResponseItems[recipeModule.Response]
 // @Failure 	500 {object} handling.ErrorResponse
 // @Router 		/recipes [get]
 func (r *Rest) Find(c *gin.Context) {
-	res, err := r.recipeService.Find(c.Request.Context())
+	var query utilsModule.QueryReq
+	if err := c.ShouldBindQuery(&query); err != nil {
+		handling.ResponseFormErr(c, err)
+		return
+	}
+
+	res, err := r.recipeService.Find(c.Request.Context(), &query)
 	if err != nil {
 		handling.ResponseErr(c, err)
 		return

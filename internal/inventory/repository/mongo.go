@@ -3,6 +3,7 @@ package inventoryRepository
 import (
 	"context"
 	"errors"
+	"strings"
 	"time"
 
 	inventoryModule "github.com/hifat/mallow-sale-api/internal/inventory"
@@ -13,6 +14,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type mongoRepository struct {
@@ -85,10 +87,40 @@ func (r *mongoRepository) FindByID(ctx context.Context, id string) (*inventoryMo
 	return res, nil
 }
 
-func (r *mongoRepository) Find(ctx context.Context) ([]inventoryModule.Response, error) {
+func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq) ([]inventoryModule.Response, error) {
+	filter := bson.M{}
+	if query.Search != "" {
+		filter["name"] = bson.M{"$regex": query.Search, "$options": "i"}
+	}
+
+	findOptions := options.Find()
+
+	if query.Sort != "" && query.Order != "" {
+		order := 1
+		if strings.ToLower(query.Order) == "desc" {
+			order = -1
+		}
+		findOptions.SetSort(bson.M{query.Sort: order})
+	}
+
+	if query.Page > 0 && query.Limit > 0 {
+		findOptions.SetSkip(int64((query.Page - 1) * query.Limit))
+		findOptions.SetLimit(int64(query.Limit))
+	}
+
+	if query.Fields != "" {
+		fields := strings.Split(query.Fields, ",")
+		projection := bson.M{}
+		for _, field := range fields {
+			projection[field] = 1
+		}
+
+		findOptions.SetProjection(projection)
+	}
+
 	var inventories []inventoryModule.Entity
 	cur, err := r.db.Collection("inventories").
-		Find(ctx, bson.M{})
+		Find(ctx, filter, findOptions)
 	if err != nil {
 		return nil, err
 	}

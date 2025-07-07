@@ -36,6 +36,42 @@ const docTemplate = `{
                     "inventory"
                 ],
                 "summary": "Find Inventories",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "fields",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "desc",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "createdAt",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -265,6 +301,42 @@ const docTemplate = `{
                     "recipe"
                 ],
                 "summary": "Find Recipes",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "fields",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "desc",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "createdAt",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -482,12 +554,12 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "name",
-                "purchase_price",
-                "purchase_quantity",
-                "yield_percentage"
+                "purchasePrice",
+                "purchaseQuantity",
+                "yieldPercentage"
             ],
             "properties": {
-                "created_at": {
+                "createdAt": {
                     "type": "string"
                 },
                 "id": {
@@ -496,22 +568,22 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "purchase_price": {
+                "purchasePrice": {
                     "type": "number"
                 },
-                "purchase_quantity": {
+                "purchaseQuantity": {
                     "type": "number"
                 },
-                "purchase_unit": {
+                "purchaseUnit": {
                     "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.Prototype"
                 },
                 "remark": {
                     "type": "string"
                 },
-                "updated_at": {
+                "updatedAt": {
                     "type": "string"
                 },
-                "yield_percentage": {
+                "yieldPercentage": {
                     "type": "number"
                 }
             }
@@ -520,27 +592,27 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "name",
-                "purchase_price",
-                "purchase_quantity",
-                "yield_percentage"
+                "purchasePrice",
+                "purchaseQuantity",
+                "yieldPercentage"
             ],
             "properties": {
                 "name": {
                     "type": "string"
                 },
-                "purchase_price": {
+                "purchasePrice": {
                     "type": "number"
                 },
-                "purchase_quantity": {
+                "purchaseQuantity": {
                     "type": "number"
                 },
-                "purchase_unit": {
+                "purchaseUnit": {
                     "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.UsageUnitReq"
                 },
                 "remark": {
                     "type": "string"
                 },
-                "yield_percentage": {
+                "yieldPercentage": {
                     "type": "number"
                 }
             }
@@ -549,12 +621,12 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "name",
-                "purchase_price",
-                "purchase_quantity",
-                "yield_percentage"
+                "purchasePrice",
+                "purchaseQuantity",
+                "yieldPercentage"
             ],
             "properties": {
-                "created_at": {
+                "createdAt": {
                     "type": "string"
                 },
                 "id": {
@@ -563,22 +635,22 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "purchase_price": {
+                "purchasePrice": {
                     "type": "number"
                 },
-                "purchase_quantity": {
+                "purchaseQuantity": {
                     "type": "number"
                 },
-                "purchase_unit": {
+                "purchaseUnit": {
                     "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.Prototype"
                 },
                 "remark": {
                     "type": "string"
                 },
-                "updated_at": {
+                "updatedAt": {
                     "type": "string"
                 },
-                "yield_percentage": {
+                "yieldPercentage": {
                     "type": "number"
                 }
             }
@@ -600,12 +672,12 @@ const docTemplate = `{
         "github_com_hifat_mallow-sale-api_internal_recipe.IngredientRequest": {
             "type": "object",
             "required": [
-                "inventory_id",
+                "inventoryID",
                 "quantity",
                 "unit"
             ],
             "properties": {
-                "inventory_id": {
+                "inventoryID": {
                     "type": "string"
                 },
                 "quantity": {
@@ -637,7 +709,7 @@ const docTemplate = `{
         "github_com_hifat_mallow-sale-api_internal_recipe.Response": {
             "type": "object",
             "properties": {
-                "created_at": {
+                "createdAt": {
                     "type": "string"
                 },
                 "id": {
@@ -652,7 +724,7 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "updated_at": {
+                "updatedAt": {
                     "type": "string"
                 }
             }

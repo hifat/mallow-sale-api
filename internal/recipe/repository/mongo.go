@@ -3,6 +3,7 @@ package recipeRepository
 import (
 	"context"
 	"errors"
+	"strings"
 	"time"
 
 	recipeModule "github.com/hifat/mallow-sale-api/internal/recipe"
@@ -12,6 +13,7 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/define"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type mongoRepository struct {
@@ -23,16 +25,16 @@ func NewMongo(db *mongo.Database) Repository {
 }
 
 func (r *mongoRepository) Create(ctx context.Context, req *recipeModule.Request) error {
-	ingredients := make([]recipeModule.IngredientEntity, len(req.Ingredients))
-	for i, ingredient := range req.Ingredients {
-		ingredients[i] = recipeModule.IngredientEntity{
+	ingredients := make([]recipeModule.IngredientEntity, 0, len(req.Ingredients))
+	for _, ingredient := range req.Ingredients {
+		ingredients = append(ingredients, recipeModule.IngredientEntity{
 			InventoryID: database.MustObjectIDFromHex(ingredient.InventoryID),
 			Quantity:    ingredient.Quantity,
 			Unit: usageUnitModule.Entity{
 				Code: ingredient.Unit.Code,
 				Name: ingredient.Unit.Name,
 			},
-		}
+		})
 	}
 
 	newRecipe := &recipeModule.Entity{
@@ -52,9 +54,29 @@ func (r *mongoRepository) Create(ctx context.Context, req *recipeModule.Request)
 	return nil
 }
 
-func (r *mongoRepository) Find(ctx context.Context) ([]recipeModule.Response, error) {
+func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq) ([]recipeModule.Response, error) {
+	filter := bson.M{}
+	if query.Search != "" {
+		filter["name"] = bson.M{"$regex": query.Search, "$options": "i"}
+	}
+
+	findOptions := options.Find()
+	findOptions.SetSort(bson.M{query.Sort: query.Order})
+	findOptions.SetSkip(int64((query.Page - 1) * query.Limit))
+	findOptions.SetLimit(int64(query.Limit))
+
+	if query.Fields != "" {
+		fields := strings.Split(query.Fields, ",")
+		projection := bson.M{}
+		for _, field := range fields {
+			projection[field] = 1
+		}
+
+		findOptions.SetProjection(projection)
+	}
+
 	recipes := make([]recipeModule.Entity, 0)
-	cursor, err := r.db.Collection("recipes").Find(ctx, bson.M{})
+	cursor, err := r.db.Collection("recipes").Find(ctx, filter, findOptions)
 	if err != nil {
 		return nil, err
 	}

@@ -1,11 +1,10 @@
 package inventoryHandler
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 	inventoryModule "github.com/hifat/mallow-sale-api/internal/inventory"
 	inventoryService "github.com/hifat/mallow-sale-api/internal/inventory/service"
+	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 )
 
@@ -69,13 +68,19 @@ func (r *Rest) FindByID(c *gin.Context) {
 // @Tags 		inventory
 // @Accept 		json
 // @Produce 	json
+// @Param 		query query utilsModule.QueryReq false "Query parameters"
 // @Success 	200 {object} handling.ResponseItems[inventoryModule.Response]
 // @Failure 	500 {object} handling.ErrorResponse
 // @Router 		/inventories [get]
 func (r *Rest) Find(c *gin.Context) {
-	res, err := r.inventoryService.Find(c.Request.Context())
+	var query utilsModule.QueryReq
+	if err := c.ShouldBindQuery(&query); err != nil {
+		handling.ResponseFormErr(c, err)
+		return
+	}
+
+	res, err := r.inventoryService.Find(c.Request.Context(), &query)
 	if err != nil {
-		fmt.Println("err", err)
 		handling.ResponseErr(c, err)
 		return
 	}
