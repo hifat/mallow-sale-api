@@ -8,7 +8,7 @@ import (
 )
 
 type IngredientRequest struct {
-	InventoryID string                       `validate:"required" json:"inventory_id"`
+	InventoryID string                       `validate:"required" json:"inventoryID"`
 	Quantity    float32                      `validate:"required" json:"quantity"`
 	Unit        usageUnitModule.UsageUnitReq `validate:"required" json:"unit"`
 }
@@ -48,8 +48,8 @@ type Prototype struct {
 	ID          string                `json:"id"`
 	Name        string                `json:"name"`
 	Ingredients []IngredientPrototype `json:"ingredients"`
-	CreatedAt   *time.Time            `json:"created_at"`
-	UpdatedAt   *time.Time            `json:"updated_at"`
+	CreatedAt   *time.Time            `json:"createdAt"`
+	UpdatedAt   *time.Time            `json:"updatedAt"`
 }
 
 func (p *Prototype) GetInventoryIDs() []string {

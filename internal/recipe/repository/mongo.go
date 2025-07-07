@@ -105,13 +105,13 @@ func (r *mongoRepository) FindByID(ctx context.Context, id string) (*recipeModul
 		return nil, err
 	}
 
-	ingredients := make([]recipeModule.IngredientPrototype, len(recipe.Ingredients))
-	for j, ingredient := range recipe.Ingredients {
-		ingredients[j] = recipeModule.IngredientPrototype{
+	ingredients := make([]recipeModule.IngredientPrototype, 0, len(recipe.Ingredients))
+	for _, ingredient := range recipe.Ingredients {
+		ingredients = append(ingredients, recipeModule.IngredientPrototype{
 			InventoryID: ingredient.InventoryID.Hex(),
 			Quantity:    ingredient.Quantity,
 			Unit:        ingredient.Unit.Code,
-		}
+		})
 	}
 
 	return &recipeModule.Response{

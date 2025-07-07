@@ -9,7 +9,7 @@ import (
 
 type IngredientEntity struct {
 	ID          primitive.ObjectID     `bson:"_id,omitempty" json:"id"`
-	InventoryID primitive.ObjectID     `bson:"inventory_id" json:"inventory_id"`
+	InventoryID primitive.ObjectID     `bson:"inventory_id" json:"inventoryID"`
 	Inventory   inventoryModule.Entity `bson:"inventory" json:"inventory"`
 	Quantity    float32                `bson:"quantity" json:"quantity"`
 	Unit        usageUnitModule.Entity `bson:"unit" json:"unit"`

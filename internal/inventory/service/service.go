@@ -3,6 +3,8 @@ package inventoryService
 import (
 	"context"
 	"errors"
+	"fmt"
+	"strconv"
 
 	inventoryModule "github.com/hifat/mallow-sale-api/internal/inventory"
 	inventoryRepository "github.com/hifat/mallow-sale-api/internal/inventory/repository"
@@ -19,7 +21,6 @@ type Service interface {
 	UpdateByID(ctx context.Context, id string, req *inventoryModule.Request) (*handling.ResponseItem[*inventoryModule.Request], error)
 	DeleteByID(ctx context.Context, id string) error
 }
-
 type service struct {
 	logger              logger.Logger
 	inventoryRepository inventoryRepository.Repository
@@ -51,6 +52,13 @@ func (s *service) Create(ctx context.Context, req *inventoryModule.Request) (*ha
 
 	req.PurchaseUnit.Name = usageUnit.Name
 
+	price, err := strconv.ParseFloat(fmt.Sprintf("%.2f", req.PurchasePrice), 32)
+	if err != nil {
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
+	req.PurchasePrice = float32(price)
 	err = s.inventoryRepository.Create(ctx, req)
 	if err != nil {
 		s.logger.Error(err)
