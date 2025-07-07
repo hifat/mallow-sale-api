@@ -5,9 +5,9 @@ import (
 	"errors"
 	"time"
 
-	entityModule "github.com/hifat/mallow-sale-api/internal/entity"
 	inventoryModule "github.com/hifat/mallow-sale-api/internal/inventory"
 	usageUnitModule "github.com/hifat/mallow-sale-api/internal/usageUnit"
+	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 	"github.com/hifat/mallow-sale-api/pkg/database"
 	"github.com/hifat/mallow-sale-api/pkg/define"
 	"go.mongodb.org/mongo-driver/bson"
@@ -36,7 +36,7 @@ func (r *mongoRepository) Create(ctx context.Context, req *inventoryModule.Reque
 		},
 		YieldPercentage: req.YieldPercentage,
 		Remark:          req.Remark,
-		Base: entityModule.Base{
+		Base: utilsModule.Base{
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		},
@@ -188,7 +188,7 @@ func (r *mongoRepository) UpdateByID(ctx context.Context, id string, req *invent
 		},
 		YieldPercentage: req.YieldPercentage,
 		Remark:          req.Remark,
-		Base: entityModule.Base{
+		Base: utilsModule.Base{
 			UpdatedAt: time.Now(),
 		},
 	}

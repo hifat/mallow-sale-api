@@ -5,9 +5,9 @@ import (
 	"errors"
 	"time"
 
-	entityModule "github.com/hifat/mallow-sale-api/internal/entity"
 	recipeModule "github.com/hifat/mallow-sale-api/internal/recipe"
 	usageUnitModule "github.com/hifat/mallow-sale-api/internal/usageUnit"
+	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 	"github.com/hifat/mallow-sale-api/pkg/database"
 	"github.com/hifat/mallow-sale-api/pkg/define"
 	"go.mongodb.org/mongo-driver/bson"
@@ -38,7 +38,7 @@ func (r *mongoRepository) Create(ctx context.Context, req *recipeModule.Request)
 	newRecipe := &recipeModule.Entity{
 		Name:        req.Name,
 		Ingredients: ingredients,
-		Base: entityModule.Base{
+		Base: utilsModule.Base{
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		},
@@ -129,7 +129,7 @@ func (r *mongoRepository) UpdateByID(ctx context.Context, id string, req *recipe
 	filter := bson.M{"_id": database.MustObjectIDFromHex(id)}
 	editedRecipe := &recipeModule.Entity{
 		Name: req.Name,
-		Base: entityModule.Base{
+		Base: utilsModule.Base{
 			UpdatedAt: time.Now(),
 		},
 	}

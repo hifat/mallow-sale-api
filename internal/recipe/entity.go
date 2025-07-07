@@ -1,9 +1,9 @@
 package recipeModule
 
 import (
-	entityModule "github.com/hifat/mallow-sale-api/internal/entity"
 	inventoryModule "github.com/hifat/mallow-sale-api/internal/inventory"
 	usageUnitModule "github.com/hifat/mallow-sale-api/internal/usageUnit"
+	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -16,7 +16,7 @@ type IngredientEntity struct {
 }
 
 type Entity struct {
-	entityModule.Base `bson:"inline"`
+	utilsModule.Base `bson:"inline"`
 
 	ID          primitive.ObjectID `bson:"_id,omitempty" json:"id"`
 	Name        string             `bson:"name" json:"name"`

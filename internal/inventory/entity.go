@@ -1,12 +1,12 @@
 package inventoryModule
 
 import (
-	entityModule "github.com/hifat/mallow-sale-api/internal/entity"
 	usageUnitModule "github.com/hifat/mallow-sale-api/internal/usageUnit"
+	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 )
 
 type Entity struct {
-	entityModule.Base `bson:"inline"`
+	utilsModule.Base `bson:"inline"`
 
 	Name             string                 `fake:"{name}" bson:"name"`
 	PurchasePrice    float32                `fake:"{float32}" bson:"purchase_price"`

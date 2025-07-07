@@ -1,4 +1,4 @@
-package entityModule
+package utilsModule
 
 import (
 	"time"
