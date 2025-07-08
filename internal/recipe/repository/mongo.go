@@ -119,6 +119,8 @@ func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq)
 				ID:          recipe.ID.Hex(),
 				Name:        recipe.Name,
 				Ingredients: ingredients,
+				CreatedAt:   &recipe.CreatedAt,
+				UpdatedAt:   &recipe.UpdatedAt,
 			},
 		})
 	}

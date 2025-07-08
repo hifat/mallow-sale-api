@@ -115,7 +115,7 @@ func (s *service) FindByID(ctx context.Context, id string) (*handling.ResponseIt
 		return nil, handling.ThrowErr(err)
 	}
 
-	getInventoryByID, err := s.inventoryHelper.FindAndGetByID(ctx, recipe.GetInventoryIDFromIngredients())
+	getInventoryByID, err := s.inventoryHelper.FindAndGetByID(ctx, recipe.GetInventoryIDs())
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)

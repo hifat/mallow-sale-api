@@ -61,17 +61,6 @@ func (p *Prototype) GetInventoryIDs() []string {
 	return inventoryIDs
 }
 
-func (p *Prototype) GetInventoryIDFromIngredients() []string {
-	inventoryIDs := make([]string, 0, len(p.Ingredients))
-	for _, ingredient := range p.Ingredients {
-		if ingredient.Inventory != nil {
-			inventoryIDs = append(inventoryIDs, ingredient.Inventory.ID)
-		}
-	}
-
-	return inventoryIDs
-}
-
 type Response struct {
 	Prototype
 }
