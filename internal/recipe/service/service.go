@@ -91,11 +91,13 @@ func (s *service) Create(ctx context.Context, req *recipeModule.Request) (*handl
 func (s *service) Find(ctx context.Context, query *utilsModule.QueryReq) (*handling.ResponseItems[recipeModule.Response], error) {
 	count, err := s.recipeRepository.Count(ctx)
 	if err != nil {
+		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
 
 	recipes, err := s.recipeRepository.Find(ctx, query)
 	if err != nil {
+		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
 
@@ -113,7 +115,7 @@ func (s *service) FindByID(ctx context.Context, id string) (*handling.ResponseIt
 		return nil, handling.ThrowErr(err)
 	}
 
-	getInventoryByID, err := s.inventoryHelper.FindAndGetByID(ctx, recipe.GetInventoryIDs())
+	getInventoryByID, err := s.inventoryHelper.FindAndGetByID(ctx, recipe.GetInventoryIDFromIngredients())
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
@@ -122,7 +124,7 @@ func (s *service) FindByID(ctx context.Context, id string) (*handling.ResponseIt
 	for i, v := range recipe.Ingredients {
 		inventory := getInventoryByID(v.InventoryID)
 		if inventory == nil {
-			s.logger.Error("inventory not found", "inventory_id", v.InventoryID)
+			s.logger.Error("inventory not found: ", v.InventoryID)
 			continue
 		}
 

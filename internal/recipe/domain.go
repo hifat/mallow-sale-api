@@ -40,8 +40,8 @@ type IngredientPrototype struct {
 	InventoryID string                     `json:"-"`
 	Inventory   *inventoryModule.Prototype `json:"inventory"`
 
-	Quantity float32 `json:"quantity"`
-	Unit     string  `json:"unit"`
+	Quantity float32                   `json:"quantity"`
+	Unit     usageUnitModule.Prototype `json:"unit"`
 }
 
 type Prototype struct {
@@ -56,6 +56,17 @@ func (p *Prototype) GetInventoryIDs() []string {
 	inventoryIDs := make([]string, 0, len(p.Ingredients))
 	for _, ingredient := range p.Ingredients {
 		inventoryIDs = append(inventoryIDs, ingredient.InventoryID)
+	}
+
+	return inventoryIDs
+}
+
+func (p *Prototype) GetInventoryIDFromIngredients() []string {
+	inventoryIDs := make([]string, 0, len(p.Ingredients))
+	for _, ingredient := range p.Ingredients {
+		if ingredient.Inventory != nil {
+			inventoryIDs = append(inventoryIDs, ingredient.Inventory.ID)
+		}
 	}
 
 	return inventoryIDs

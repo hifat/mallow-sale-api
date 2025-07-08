@@ -10,7 +10,7 @@ import (
 func ResponseFormErr(c *gin.Context, err error) {
 	c.AbortWithStatusJSON(http.StatusBadRequest, ErrorResponse{
 		Code:    define.CodeInvalidForm,
-		Message: define.MsgInvalidForm,
+		Message: err.Error(),
 		Status:  http.StatusBadRequest,
 	})
 }

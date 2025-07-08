@@ -61,9 +61,19 @@ func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq)
 	}
 
 	findOptions := options.Find()
-	findOptions.SetSort(bson.M{query.Sort: query.Order})
-	findOptions.SetSkip(int64((query.Page - 1) * query.Limit))
-	findOptions.SetLimit(int64(query.Limit))
+
+	if query.Sort != "" && query.Order != "" {
+		order := 1
+		if strings.ToLower(query.Order) == "desc" {
+			order = -1
+		}
+		findOptions.SetSort(bson.M{query.Sort: order})
+	}
+
+	if query.Page > 0 && query.Limit > 0 {
+		findOptions.SetSkip(int64((query.Page - 1) * query.Limit))
+		findOptions.SetLimit(int64(query.Limit))
+	}
 
 	if query.Fields != "" {
 		fields := strings.Split(query.Fields, ",")
@@ -97,7 +107,10 @@ func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq)
 			ingredients = append(ingredients, recipeModule.IngredientPrototype{
 				InventoryID: ingredient.InventoryID.Hex(),
 				Quantity:    ingredient.Quantity,
-				Unit:        ingredient.Unit.Code,
+				Unit: usageUnitModule.Prototype{
+					Code: ingredient.Unit.Code,
+					Name: ingredient.Unit.Name,
+				},
 			})
 		}
 
@@ -132,7 +145,10 @@ func (r *mongoRepository) FindByID(ctx context.Context, id string) (*recipeModul
 		ingredients = append(ingredients, recipeModule.IngredientPrototype{
 			InventoryID: ingredient.InventoryID.Hex(),
 			Quantity:    ingredient.Quantity,
-			Unit:        ingredient.Unit.Code,
+			Unit: usageUnitModule.Prototype{
+				Code: ingredient.Unit.Code,
+				Name: ingredient.Unit.Name,
+			},
 		})
 	}
 
