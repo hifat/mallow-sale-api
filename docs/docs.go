@@ -665,7 +665,7 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "unit": {
-                    "type": "string"
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.Prototype"
                 }
             }
         },
@@ -691,10 +691,14 @@ const docTemplate = `{
         "github_com_hifat_mallow-sale-api_internal_recipe.Request": {
             "type": "object",
             "required": [
+                "costPercentage",
                 "ingredients",
                 "name"
             ],
             "properties": {
+                "costPercentage": {
+                    "type": "number"
+                },
                 "ingredients": {
                     "type": "array",
                     "items": {
@@ -709,6 +713,9 @@ const docTemplate = `{
         "github_com_hifat_mallow-sale-api_internal_recipe.Response": {
             "type": "object",
             "properties": {
+                "costPercentage": {
+                    "type": "number"
+                },
                 "createdAt": {
                     "type": "string"
                 },
