@@ -18,21 +18,22 @@ func NewMongo(db *mongo.Database) settingModule.Repository {
 }
 
 func (r *mongoRepository) Update(costPercentage float32) error {
-	filter := bson.M{"_id": "global"}
 	update := bson.M{"$set": bson.M{"cost_percentage": costPercentage}}
-	_, err := r.db.Collection("settings").UpdateOne(context.Background(), filter, update, &options.UpdateOptions{Upsert: new(bool)})
+	_, err := r.db.Collection("settings").UpdateOne(context.Background(), bson.M{}, update, &options.UpdateOptions{Upsert: new(bool)})
 	return err
 }
 
-func (r *mongoRepository) Get() (*settingModule.Entity, error) {
-	filter := bson.M{"_id": "global"}
+func (r *mongoRepository) Get() (*settingModule.Response, error) {
 	var settings settingModule.Entity
-	err := r.db.Collection("settings").FindOne(context.Background(), filter).Decode(&settings)
+	err := r.db.Collection("settings").FindOne(context.Background(), bson.M{}).Decode(&settings)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return &settingModule.Entity{CostPercentage: 0}, nil
+			return &settingModule.Response{CostPercentage: 0}, nil
 		}
 		return nil, err
 	}
-	return &settings, nil
+
+	return &settingModule.Response{
+		CostPercentage: settings.CostPercentage,
+	}, nil
 }

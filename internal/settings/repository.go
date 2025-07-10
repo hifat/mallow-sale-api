@@ -1,6 +1,6 @@
 package settingModule
 
 type Repository interface {
-	Get() (*Entity, error)
+	Get() (*Response, error)
 	Update(costPercentage float32) error
 }

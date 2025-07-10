@@ -7,7 +7,7 @@ import (
 
 type Service interface {
 	Update(costPercentage float32) error
-	Get() (*settingModule.Entity, error)
+	Get() (*settingModule.Response, error)
 }
 
 type service struct {
@@ -28,7 +28,7 @@ func (s *service) Update(costPercentage float32) error {
 	return err
 }
 
-func (s *service) Get() (*settingModule.Entity, error) {
+func (s *service) Get() (*settingModule.Response, error) {
 	settings, err := s.repo.Get()
 	if err != nil {
 		s.logger.Error(err)
