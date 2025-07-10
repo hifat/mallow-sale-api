@@ -16,6 +16,7 @@ type IngredientRequest struct {
 type Request struct {
 	Name           string              `validate:"required" json:"name"`
 	CostPercentage float32             `validate:"required" json:"costPercentage"`
+	Price          float32             `validate:"gte=0" json:"price"`
 	Ingredients    []IngredientRequest `validate:"required,dive" json:"ingredients"`
 }
 
@@ -49,6 +50,7 @@ type Prototype struct {
 	ID             string                `json:"id"`
 	Name           string                `json:"name"`
 	CostPercentage float32               `json:"costPercentage"`
+	Price          float32               `json:"price"`
 	Ingredients    []IngredientPrototype `json:"ingredients"`
 	CreatedAt      *time.Time            `json:"createdAt"`
 	UpdatedAt      *time.Time            `json:"updatedAt"`

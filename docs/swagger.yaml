@@ -104,6 +104,9 @@ definitions:
         type: array
       name:
         type: string
+      price:
+        minimum: 0
+        type: number
     required:
     - costPercentage
     - ingredients
@@ -123,6 +126,8 @@ definitions:
         type: array
       name:
         type: string
+      price:
+        type: number
       updatedAt:
         type: string
     type: object

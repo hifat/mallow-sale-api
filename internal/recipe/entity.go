@@ -21,5 +21,6 @@ type Entity struct {
 	ID             primitive.ObjectID `bson:"_id,omitempty" json:"id"`
 	Name           string             `bson:"name" json:"name"`
 	CostPercentage float32            `bson:"cost_percentage" json:"costPercentage"`
+	Price          float32            `bson:"price" json:"price"`
 	Ingredients    []IngredientEntity `bson:"ingredients" json:"ingredients"`
 }

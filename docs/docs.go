@@ -707,6 +707,10 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "price": {
+                    "type": "number",
+                    "minimum": 0
                 }
             }
         },
@@ -730,6 +734,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "price": {
+                    "type": "number"
                 },
                 "updatedAt": {
                     "type": "string"

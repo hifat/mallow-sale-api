@@ -40,6 +40,7 @@ func (r *mongoRepository) Create(ctx context.Context, req *recipeModule.Request)
 	newRecipe := &recipeModule.Entity{
 		Name:           req.Name,
 		CostPercentage: req.CostPercentage,
+		Price:          req.Price,
 		Ingredients:    ingredients,
 		Base: utilsModule.Base{
 			CreatedAt: time.Now(),
@@ -120,6 +121,7 @@ func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq)
 				ID:             recipe.ID.Hex(),
 				Name:           recipe.Name,
 				CostPercentage: recipe.CostPercentage,
+				Price:          recipe.Price,
 				Ingredients:    ingredients,
 				CreatedAt:      &recipe.CreatedAt,
 				UpdatedAt:      &recipe.UpdatedAt,
@@ -161,6 +163,7 @@ func (r *mongoRepository) FindByID(ctx context.Context, id string) (*recipeModul
 			ID:             recipe.ID.Hex(),
 			Name:           recipe.Name,
 			CostPercentage: recipe.CostPercentage,
+			Price:          recipe.Price,
 			Ingredients:    ingredients,
 			CreatedAt:      &recipe.CreatedAt,
 			UpdatedAt:      &recipe.UpdatedAt,
@@ -173,6 +176,7 @@ func (r *mongoRepository) UpdateByID(ctx context.Context, id string, req *recipe
 	editedRecipe := &recipeModule.Entity{
 		Name:           req.Name,
 		CostPercentage: req.CostPercentage,
+		Price:          req.Price,
 		Base: utilsModule.Base{
 			UpdatedAt: time.Now(),
 		},
