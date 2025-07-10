@@ -22,6 +22,7 @@ type Service interface {
 	UpdateByID(ctx context.Context, id string, req *inventoryModule.Request) (*handling.ResponseItem[*inventoryModule.Request], error)
 	DeleteByID(ctx context.Context, id string) error
 }
+
 type service struct {
 	logger              logger.Logger
 	inventoryRepository inventoryRepository.Repository

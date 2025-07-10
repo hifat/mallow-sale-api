@@ -540,17 +540,82 @@
                     }
                 }
             }
+        },
+        "/settings": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Get Settings",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_settings.Entity"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Update Settings",
+                "parameters": [
+                    {
+                        "description": "Settings data",
+                        "name": "settings",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_settings.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
         "github_com_hifat_mallow-sale-api_internal_inventory.Prototype": {
             "type": "object",
-            "required": [
-                "name",
-                "purchasePrice",
-                "purchaseQuantity",
-                "yieldPercentage"
-            ],
             "properties": {
                 "createdAt": {
                     "type": "string"
@@ -612,12 +677,6 @@
         },
         "github_com_hifat_mallow-sale-api_internal_inventory.Response": {
             "type": "object",
-            "required": [
-                "name",
-                "purchasePrice",
-                "purchaseQuantity",
-                "yieldPercentage"
-            ],
             "properties": {
                 "createdAt": {
                     "type": "string"
@@ -733,6 +792,27 @@
                 },
                 "updatedAt": {
                     "type": "string"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_settings.Entity": {
+            "type": "object",
+            "properties": {
+                "costPercentage": {
+                    "type": "number"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_settings.Request": {
+            "type": "object",
+            "required": [
+                "costPercentage"
+            ],
+            "properties": {
+                "costPercentage": {
+                    "type": "number",
+                    "maximum": 100,
+                    "minimum": 0
                 }
             }
         },

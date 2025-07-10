@@ -20,11 +20,6 @@ definitions:
         type: string
       yieldPercentage:
         type: number
-    required:
-    - name
-    - purchasePrice
-    - purchaseQuantity
-    - yieldPercentage
     type: object
   github_com_hifat_mallow-sale-api_internal_inventory.Request:
     properties:
@@ -66,11 +61,6 @@ definitions:
         type: string
       yieldPercentage:
         type: number
-    required:
-    - name
-    - purchasePrice
-    - purchaseQuantity
-    - yieldPercentage
     type: object
   github_com_hifat_mallow-sale-api_internal_recipe.IngredientPrototype:
     properties:
@@ -130,6 +120,20 @@ definitions:
         type: number
       updatedAt:
         type: string
+    type: object
+  github_com_hifat_mallow-sale-api_internal_settings.Entity:
+    properties:
+      costPercentage:
+        type: number
+    type: object
+  github_com_hifat_mallow-sale-api_internal_settings.Request:
+    properties:
+      costPercentage:
+        maximum: 100
+        minimum: 0
+        type: number
+    required:
+    - costPercentage
     type: object
   github_com_hifat_mallow-sale-api_internal_usageUnit.Prototype:
     properties:
@@ -556,6 +560,52 @@ paths:
       summary: Update Recipe by ID
       tags:
       - recipe
+  /settings:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_settings.Entity'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      summary: Get Settings
+      tags:
+      - settings
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Settings data
+        in: body
+        name: settings
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_settings.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      summary: Update Settings
+      tags:
+      - settings
 securityDefinitions:
   BearerAuth:
     description: Type "Bearer" followed by a space and JWT token.

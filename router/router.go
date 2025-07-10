@@ -9,4 +9,5 @@ import (
 func RegisterAll(r *gin.RouterGroup, cfg *config.Config, db *mongo.Database) {
 	InventoryRouter(r, cfg, db)
 	RecipeRouter(r, cfg, db)
+	SettingRouter(r, db)
 }
