@@ -8,11 +8,11 @@ import (
 
 type Prototype struct {
 	ID               string                    `json:"id"`
-	Name             string                    `fake:"{name}" validate:"required" json:"name"`
-	PurchasePrice    float32                   `fake:"{float32}" validate:"required" json:"purchasePrice"`
-	PurchaseQuantity float32                   `fake:"{float32}" validate:"required" json:"purchaseQuantity"`
+	Name             string                    `fake:"{name}" json:"name"`
+	PurchasePrice    float32                   `fake:"{float32}" json:"purchasePrice"`
+	PurchaseQuantity float32                   `fake:"{float32}" json:"purchaseQuantity"`
 	PurchaseUnit     usageUnitModule.Prototype `json:"purchaseUnit"`
-	YieldPercentage  float32                   `fake:"{float32}" validate:"required" json:"yieldPercentage"`
+	YieldPercentage  float32                   `fake:"{float32}" json:"yieldPercentage"`
 	Remark           string                    `fake:"{sentence}" json:"remark"`
 	CreatedAt        *time.Time                `json:"createdAt"`
 	UpdatedAt        *time.Time                `json:"updatedAt"`
