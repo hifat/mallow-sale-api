@@ -94,6 +94,8 @@ definitions:
         type: array
       name:
         type: string
+      otherPercentage:
+        type: number
       price:
         minimum: 0
         type: number
@@ -116,6 +118,8 @@ definitions:
         type: array
       name:
         type: string
+      otherPercentage:
+        type: number
       price:
         type: number
       updatedAt:

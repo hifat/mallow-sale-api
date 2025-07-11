@@ -14,10 +14,11 @@ type IngredientRequest struct {
 }
 
 type Request struct {
-	Name           string              `validate:"required" json:"name"`
-	CostPercentage float32             `validate:"required" json:"costPercentage"`
-	Price          float32             `validate:"gte=0" json:"price"`
-	Ingredients    []IngredientRequest `validate:"required,dive" json:"ingredients"`
+	Name            string              `validate:"required" json:"name"`
+	CostPercentage  float32             `validate:"required" json:"costPercentage"`
+	OtherPercentage float32             `json:"otherPercentage"`
+	Price           float32             `validate:"gte=0" json:"price"`
+	Ingredients     []IngredientRequest `validate:"required,dive" json:"ingredients"`
 }
 
 func (r *Request) GetUsageUnitCodes() []string {
@@ -47,13 +48,14 @@ type IngredientPrototype struct {
 }
 
 type Prototype struct {
-	ID             string                `json:"id"`
-	Name           string                `json:"name"`
-	CostPercentage float32               `json:"costPercentage"`
-	Price          float32               `json:"price"`
-	Ingredients    []IngredientPrototype `json:"ingredients"`
-	CreatedAt      *time.Time            `json:"createdAt"`
-	UpdatedAt      *time.Time            `json:"updatedAt"`
+	ID              string                `json:"id"`
+	Name            string                `json:"name"`
+	CostPercentage  float32               `json:"costPercentage"`
+	OtherPercentage float32               `json:"otherPercentage"`
+	Price           float32               `json:"price"`
+	Ingredients     []IngredientPrototype `json:"ingredients"`
+	CreatedAt       *time.Time            `json:"createdAt"`
+	UpdatedAt       *time.Time            `json:"updatedAt"`
 }
 
 func (p *Prototype) GetInventoryIDs() []string {

@@ -38,10 +38,11 @@ func (r *mongoRepository) Create(ctx context.Context, req *recipeModule.Request)
 	}
 
 	newRecipe := &recipeModule.Entity{
-		Name:           req.Name,
-		CostPercentage: req.CostPercentage,
-		Price:          req.Price,
-		Ingredients:    ingredients,
+		Name:            req.Name,
+		CostPercentage:  req.CostPercentage,
+		OtherPercentage: req.OtherPercentage,
+		Price:           req.Price,
+		Ingredients:     ingredients,
 		Base: utilsModule.Base{
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
@@ -118,13 +119,14 @@ func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq)
 
 		res = append(res, recipeModule.Response{
 			Prototype: recipeModule.Prototype{
-				ID:             recipe.ID.Hex(),
-				Name:           recipe.Name,
-				CostPercentage: recipe.CostPercentage,
-				Price:          recipe.Price,
-				Ingredients:    ingredients,
-				CreatedAt:      &recipe.CreatedAt,
-				UpdatedAt:      &recipe.UpdatedAt,
+				ID:              recipe.ID.Hex(),
+				Name:            recipe.Name,
+				CostPercentage:  recipe.CostPercentage,
+				OtherPercentage: recipe.OtherPercentage,
+				Price:           recipe.Price,
+				Ingredients:     ingredients,
+				CreatedAt:       &recipe.CreatedAt,
+				UpdatedAt:       &recipe.UpdatedAt,
 			},
 		})
 	}
@@ -160,13 +162,14 @@ func (r *mongoRepository) FindByID(ctx context.Context, id string) (*recipeModul
 
 	return &recipeModule.Response{
 		Prototype: recipeModule.Prototype{
-			ID:             recipe.ID.Hex(),
-			Name:           recipe.Name,
-			CostPercentage: recipe.CostPercentage,
-			Price:          recipe.Price,
-			Ingredients:    ingredients,
-			CreatedAt:      &recipe.CreatedAt,
-			UpdatedAt:      &recipe.UpdatedAt,
+			ID:              recipe.ID.Hex(),
+			Name:            recipe.Name,
+			CostPercentage:  recipe.CostPercentage,
+			OtherPercentage: recipe.OtherPercentage,
+			Price:           recipe.Price,
+			Ingredients:     ingredients,
+			CreatedAt:       &recipe.CreatedAt,
+			UpdatedAt:       &recipe.UpdatedAt,
 		},
 	}, nil
 }
@@ -174,9 +177,10 @@ func (r *mongoRepository) FindByID(ctx context.Context, id string) (*recipeModul
 func (r *mongoRepository) UpdateByID(ctx context.Context, id string, req *recipeModule.Request) error {
 	filter := bson.M{"_id": database.MustObjectIDFromHex(id)}
 	editedRecipe := &recipeModule.Entity{
-		Name:           req.Name,
-		CostPercentage: req.CostPercentage,
-		Price:          req.Price,
+		Name:            req.Name,
+		CostPercentage:  req.CostPercentage,
+		OtherPercentage: req.OtherPercentage,
+		Price:           req.Price,
 		Base: utilsModule.Base{
 			UpdatedAt: time.Now(),
 		},

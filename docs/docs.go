@@ -767,6 +767,9 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "otherPercentage": {
+                    "type": "number"
+                },
                 "price": {
                     "type": "number",
                     "minimum": 0
@@ -793,6 +796,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "otherPercentage": {
+                    "type": "number"
                 },
                 "price": {
                     "type": "number"

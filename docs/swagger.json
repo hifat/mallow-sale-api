@@ -760,6 +760,9 @@
                 "name": {
                     "type": "string"
                 },
+                "otherPercentage": {
+                    "type": "number"
+                },
                 "price": {
                     "type": "number",
                     "minimum": 0
@@ -786,6 +789,9 @@
                 },
                 "name": {
                     "type": "string"
+                },
+                "otherPercentage": {
+                    "type": "number"
                 },
                 "price": {
                     "type": "number"
