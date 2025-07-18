@@ -4,15 +4,15 @@ import "errors"
 
 /* ---------------------------------- Code ---------------------------------- */
 
-var CodeInvalidForm = "INVALID_FORM"
-var CodeRecordNotFound = "RECORD_NOT_FOUND"
-var CodeInternalServerError = "INTERNAL_SERVER_ERROR"
+const CodeInvalidForm = "INVALID_FORM"
+const CodeRecordNotFound = "RECORD_NOT_FOUND"
+const CodeInternalServerError = "INTERNAL_SERVER_ERROR"
 
 /* --------------------------------- Message -------------------------------- */
 
-var MsgInvalidForm = "invalid form"
-var MsgRecordNotFound = "record not found"
-var MsgInternalServerError = "internal server error"
+const MsgInvalidForm = "invalid form"
+const MsgRecordNotFound = "record not found"
+const MsgInternalServerError = "internal server error"
 
 /* ---------------------------------- Error --------------------------------- */
 

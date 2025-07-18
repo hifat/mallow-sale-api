@@ -12,4 +12,4 @@ const MsgInvalidUsageUnit = "invalid usage unit"
 
 /* ---------------------------------- Error --------------------------------- */
 
-var ErrInvalidUsageUnit = errors.New("invalid usage unit")
+var ErrInvalidUsageUnit = errors.New(MsgInvalidUsageUnit)

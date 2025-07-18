@@ -12,4 +12,4 @@ const MsgInvalidInventoryID = "invalid inventory id"
 
 /* ---------------------------------- Error --------------------------------- */
 
-var ErrInvalidInventory = errors.New("invalid inventory")
+var ErrInvalidInventory = errors.New(MsgInvalidInventoryID)
