@@ -15,5 +15,6 @@ func RecipeRouter(r *gin.RouterGroup, cfg *config.Config, db *mongo.Database) {
 		GET("/:id", handler.Rest.FindByID).
 		POST("", handler.Rest.Create).
 		PUT("/:id", handler.Rest.UpdateByID).
-		DELETE("/:id", handler.Rest.DeleteByID)
+		DELETE("/:id", handler.Rest.DeleteByID).
+		PATCH("/order-no", handler.Rest.PatchNoBatch)
 }

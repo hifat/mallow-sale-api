@@ -137,3 +137,28 @@ func (r *Rest) DeleteByID(c *gin.Context) {
 
 	handling.ResponseSuccess(c, res)
 }
+
+// @Summary      Batch update recipe order no
+// @Tags         recipe
+// @Accept       json
+// @Produce      json
+// @Param        body body []recipeModule.UpdateOrderNoRequest true "Array of recipe id and orderNo"
+// @Success      200 {object} handling.SuccessResponse
+// @Failure      400 {object} handling.ErrorResponse
+// @Failure      500 {object} handling.ErrorResponse
+// @Router       /recipes/order-no [patch]
+func (r *Rest) PatchNoBatch(c *gin.Context) {
+	var req []recipeModule.UpdateOrderNoRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		handling.ResponseFormErr(c, err)
+		return
+	}
+
+	err := r.recipeService.UpdateNoBatch(c.Request.Context(), req)
+	if err != nil {
+		handling.ResponseErr(c, err)
+		return
+	}
+
+	handling.ResponseSuccess(c, nil)
+}

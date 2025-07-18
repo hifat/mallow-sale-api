@@ -22,6 +22,7 @@ type Service interface {
 	FindByID(ctx context.Context, id string) (*handling.ResponseItem[*recipeModule.Response], error)
 	UpdateByID(ctx context.Context, id string, req *recipeModule.Request) (*handling.ResponseItem[*recipeModule.Request], error)
 	DeleteByID(ctx context.Context, id string) (*handling.ResponseItem[*recipeModule.Request], error)
+	UpdateNoBatch(ctx context.Context, reqs []recipeModule.UpdateOrderNoRequest) error
 }
 
 type service struct {
@@ -168,6 +169,23 @@ func (s *service) UpdateByID(ctx context.Context, id string, req *recipeModule.R
 	return &handling.ResponseItem[*recipeModule.Request]{
 		Item: req,
 	}, nil
+}
+
+func (s *service) UpdateNoBatch(ctx context.Context, reqs []recipeModule.UpdateOrderNoRequest) error {
+	orderNoSet := make(map[int]struct{}, len(reqs))
+	for _, req := range reqs {
+		if _, exists := orderNoSet[req.OrderNo]; exists {
+			return handling.ThrowErrByCode(define.CodeOrderNoMustBeUnique)
+		}
+		orderNoSet[req.OrderNo] = struct{}{}
+	}
+
+	err := s.recipeRepository.UpdateNoBatch(ctx, reqs)
+	if err != nil {
+		return handling.ThrowErr(err)
+	}
+
+	return nil
 }
 
 func (s *service) DeleteByID(ctx context.Context, id string) (*handling.ResponseItem[*recipeModule.Request], error) {

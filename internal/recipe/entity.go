@@ -24,4 +24,5 @@ type Entity struct {
 	OtherPercentage float32            `bson:"other_percentage" json:"otherPercentage"`
 	Price           float32            `bson:"price" json:"price"`
 	Ingredients     []IngredientEntity `bson:"ingredients" json:"ingredients"`
+	OrderNo         int                `bson:"order_no" json:"orderNo"`
 }

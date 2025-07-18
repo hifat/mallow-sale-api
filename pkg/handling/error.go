@@ -41,6 +41,11 @@ func getErrObject(code string) ErrorResponse {
 			Message: define.MsgInvalidInventoryID,
 			Status:  http.StatusBadRequest,
 		},
+		define.CodeOrderNoMustBeUnique: {
+			Code:    define.CodeOrderNoMustBeUnique,
+			Message: define.MsgOrderNoMustBeUnique,
+			Status:  http.StatusBadRequest,
+		},
 	}
 
 	errObj, ok := mapErr[code]

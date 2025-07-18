@@ -94,6 +94,8 @@ definitions:
         type: array
       name:
         type: string
+      "no":
+        type: integer
       otherPercentage:
         type: number
       price:
@@ -118,12 +120,21 @@ definitions:
         type: array
       name:
         type: string
+      "no":
+        type: integer
       otherPercentage:
         type: number
       price:
         type: number
       updatedAt:
         type: string
+    type: object
+  github_com_hifat_mallow-sale-api_internal_recipe.UpdateOrderNoRequest:
+    properties:
+      id:
+        type: string
+      orderNo:
+        type: integer
     type: object
   github_com_hifat_mallow-sale-api_internal_settings.Entity:
     properties:
@@ -562,6 +573,37 @@ paths:
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
       summary: Update Recipe by ID
+      tags:
+      - recipe
+  /recipes/order-no:
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Array of recipe id and orderNo
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.UpdateOrderNoRequest'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      summary: Batch update recipe order no
       tags:
       - recipe
   /settings:

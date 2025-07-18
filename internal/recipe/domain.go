@@ -19,6 +19,7 @@ type Request struct {
 	OtherPercentage float32             `json:"otherPercentage"`
 	Price           float32             `validate:"gte=0" json:"price"`
 	Ingredients     []IngredientRequest `validate:"required,dive" json:"ingredients"`
+	No              int                 `json:"no"`
 }
 
 func (r *Request) GetUsageUnitCodes() []string {
@@ -56,6 +57,7 @@ type Prototype struct {
 	Ingredients     []IngredientPrototype `json:"ingredients"`
 	CreatedAt       *time.Time            `json:"createdAt"`
 	UpdatedAt       *time.Time            `json:"updatedAt"`
+	No              int                   `json:"no"`
 }
 
 func (p *Prototype) GetInventoryIDs() []string {
@@ -69,4 +71,9 @@ func (p *Prototype) GetInventoryIDs() []string {
 
 type Response struct {
 	Prototype
+}
+
+type UpdateOrderNoRequest struct {
+	ID      string `json:"id"`
+	OrderNo int    `json:"orderNo"`
 }

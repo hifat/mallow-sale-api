@@ -402,6 +402,54 @@ const docTemplate = `{
                 }
             }
         },
+        "/recipes/order-no": {
+            "patch": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "recipe"
+                ],
+                "summary": "Batch update recipe order no",
+                "parameters": [
+                    {
+                        "description": "Array of recipe id and orderNo",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.UpdateOrderNoRequest"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/recipes/{id}": {
             "get": {
                 "consumes": [
@@ -767,6 +815,9 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "no": {
+                    "type": "integer"
+                },
                 "otherPercentage": {
                     "type": "number"
                 },
@@ -797,6 +848,9 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "no": {
+                    "type": "integer"
+                },
                 "otherPercentage": {
                     "type": "number"
                 },
@@ -805,6 +859,17 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "type": "string"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_recipe.UpdateOrderNoRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "orderNo": {
+                    "type": "integer"
                 }
             }
         },

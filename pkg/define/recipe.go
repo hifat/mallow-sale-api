@@ -4,12 +4,12 @@ import "errors"
 
 /* ---------------------------------- Code ---------------------------------- */
 
-const CodeInvalidInventoryID = "INVALID_INVENTORY_ID"
+const CodeOrderNoMustBeUnique = "ORDER_NO_MUST_BE_UNIQUE"
 
 /* --------------------------------- Message -------------------------------- */
 
-const MsgInvalidInventoryID = "invalid inventory id"
+const MsgOrderNoMustBeUnique = "order no must be unique"
 
 /* ---------------------------------- Error --------------------------------- */
 
-var ErrInvalidInventory = errors.New("invalid inventory")
+var ErrOrderNoMustBeUnique = errors.New(MsgOrderNoMustBeUnique)

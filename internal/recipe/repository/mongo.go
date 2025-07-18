@@ -225,3 +225,19 @@ func (r *mongoRepository) Count(ctx context.Context) (int64, error) {
 
 	return count, nil
 }
+
+func (r *mongoRepository) UpdateNoBatch(ctx context.Context, reqs []recipeModule.UpdateOrderNoRequest) error {
+	if len(reqs) == 0 {
+		return nil
+	}
+
+	models := make([]mongo.WriteModel, 0, len(reqs))
+	for _, v := range reqs {
+		filter := bson.M{"_id": database.MustObjectIDFromHex(v.ID)}
+		updateDoc := bson.M{"$set": bson.M{"order_no": v.OrderNo, "updated_at": time.Now()}}
+		models = append(models, mongo.NewUpdateOneModel().SetFilter(filter).SetUpdate(updateDoc))
+	}
+
+	_, err := r.db.Collection("recipes").BulkWrite(ctx, models)
+	return err
+}
