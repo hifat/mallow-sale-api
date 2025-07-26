@@ -2,15 +2,15 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	supplierDi "github.com/hifat/mallow-sale-api/internal/supplier/di"
+	stockDi "github.com/hifat/mallow-sale-api/internal/stock/di"
 	"github.com/hifat/mallow-sale-api/pkg/config"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func SupplierRouter(r *gin.RouterGroup, cfg *config.Config, db *mongo.Database) {
-	handler := supplierDi.Init(cfg, db)
+func StockRouter(r *gin.RouterGroup, cfg *config.Config, db *mongo.Database) {
+	handler := stockDi.Init(cfg, db)
 
-	r.Group("/suppliers").
+	r.Group("/stocks").
 		GET("", handler.Rest.Find).
 		GET(":id", handler.Rest.FindByID).
 		POST("", handler.Rest.Create).

@@ -9,6 +9,7 @@ import (
 	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 	"github.com/hifat/mallow-sale-api/pkg/database"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -134,4 +135,44 @@ func (r *mongoRepository) DeleteByID(ctx context.Context, id string) error {
 
 func (r *mongoRepository) Count(ctx context.Context) (int64, error) {
 	return r.db.Collection("suppliers").CountDocuments(ctx, bson.M{})
+}
+
+func (r *mongoRepository) FindInIDs(ctx context.Context, ids []string) ([]supplierModule.Response, error) {
+	objIDs := make([]primitive.ObjectID, len(ids))
+	for i, id := range ids {
+		objIDs[i] = database.MustObjectIDFromHex(id)
+	}
+
+	filter := bson.M{"_id": bson.M{"$in": objIDs}}
+	var suppliers []supplierModule.Entity
+	cursor, err := r.db.Collection("suppliers").Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var supplier supplierModule.Entity
+		if err := cursor.Decode(&supplier); err != nil {
+			return nil, err
+		}
+		suppliers = append(suppliers, supplier)
+	}
+
+	res := make([]supplierModule.Response, 0, len(suppliers))
+	for _, supplier := range suppliers {
+		createdAt := supplier.CreatedAt
+		updatedAt := supplier.UpdatedAt
+		res = append(res, supplierModule.Response{
+			Prototype: supplierModule.Prototype{
+				ID:        supplier.ID.Hex(),
+				Name:      supplier.Name,
+				ImgUrl:    supplier.ImgUrl,
+				CreatedAt: &createdAt,
+				UpdatedAt: &updatedAt,
+			},
+		})
+	}
+
+	return res, nil
 }

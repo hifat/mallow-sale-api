@@ -1,21 +1,31 @@
+//go:build wireinject
+// +build wireinject
+
 package supplierDi
 
 import (
+	"github.com/google/wire"
 	supplierHandler "github.com/hifat/mallow-sale-api/internal/supplier/handler"
 	supplierRepository "github.com/hifat/mallow-sale-api/internal/supplier/repository"
 	supplierService "github.com/hifat/mallow-sale-api/internal/supplier/service"
+	"github.com/hifat/mallow-sale-api/pkg/config"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type Handler struct {
-	Rest *supplierHandler.Rest
-}
+func Init(cfg *config.Config, db *mongo.Database) *supplierHandler.Handler {
+	wire.Build(
+		// Repository
+		supplierRepository.NewMongo,
 
-func Init(db *mongo.Database, logger logger.Logger) *Handler {
-	repo := supplierRepository.NewMongo(db)
-	svc := supplierService.New(repo, logger)
-	rest := supplierHandler.NewRest(svc)
+		// Service
+		logger.New,
+		supplierService.New,
 
-	return &Handler{Rest: rest}
+		// Handler
+		supplierHandler.NewRest,
+		supplierHandler.New,
+	)
+
+	return &supplierHandler.Handler{}
 }
