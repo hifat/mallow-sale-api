@@ -70,6 +70,10 @@ func main() {
 
 	r.Use(gin.Recovery())
 	r.Use(cors.New(configCors()))
+	r.Use(func(ctx *gin.Context) {
+		time.Sleep(2 * time.Second)
+		ctx.Next()
+	})
 
 	// Add Swagger documentation route
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

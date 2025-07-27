@@ -126,6 +126,34 @@ func (s *service) Find(ctx context.Context, query *utilsModule.QueryReq) (*handl
 		return nil, handling.ThrowErr(err)
 	}
 
+	inventoryIDs := make([]string, 0, len(stocks))
+	supplierIDs := make([]string, 0, len(stocks))
+	for _, v := range stocks {
+		inventoryIDs = append(inventoryIDs, v.InventoryID)
+		supplierIDs = append(supplierIDs, v.SupplierID)
+	}
+
+	getInventoryByID, err := s.inventoryHelper.FindAndGetByID(ctx, inventoryIDs)
+	if err != nil {
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
+	getSupplierByID, err := s.supplierHelper.FindAndGetByID(ctx, supplierIDs)
+	if err != nil {
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
+	for i, v := range stocks {
+		inventory := getInventoryByID(v.InventoryID)
+		stocks[i].Inventory = &inventory.Prototype
+
+		supplier := getSupplierByID(v.SupplierID)
+		stocks[i].Supplier = &supplier.Prototype
+
+	}
+
 	return &handling.ResponseItems[stockModule.Response]{
 		Items: stocks,
 		Meta:  handling.MetaResponse{Total: count},
