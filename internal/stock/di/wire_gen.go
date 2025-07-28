@@ -7,15 +7,15 @@
 package stockDi
 
 import (
-	inventoryHelper "github.com/hifat/mallow-sale-api/internal/inventory/helper"
-	inventoryRepository "github.com/hifat/mallow-sale-api/internal/inventory/repository"
-	stockHandler "github.com/hifat/mallow-sale-api/internal/stock/handler"
-	stockRepository "github.com/hifat/mallow-sale-api/internal/stock/repository"
-	stockService "github.com/hifat/mallow-sale-api/internal/stock/service"
-	supplierHelper "github.com/hifat/mallow-sale-api/internal/supplier/helper"
-	supplierRepository "github.com/hifat/mallow-sale-api/internal/supplier/repository"
-	usageUnitHelper "github.com/hifat/mallow-sale-api/internal/usageUnit/helper"
-	usageUnitRepository "github.com/hifat/mallow-sale-api/internal/usageUnit/repository"
+	"github.com/hifat/mallow-sale-api/internal/inventory/helper"
+	"github.com/hifat/mallow-sale-api/internal/inventory/repository"
+	"github.com/hifat/mallow-sale-api/internal/stock/handler"
+	"github.com/hifat/mallow-sale-api/internal/stock/repository"
+	"github.com/hifat/mallow-sale-api/internal/stock/service"
+	"github.com/hifat/mallow-sale-api/internal/supplier/helper"
+	"github.com/hifat/mallow-sale-api/internal/supplier/repository"
+	"github.com/hifat/mallow-sale-api/internal/usageUnit/helper"
+	"github.com/hifat/mallow-sale-api/internal/usageUnit/repository"
 	"github.com/hifat/mallow-sale-api/pkg/config"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -28,7 +28,7 @@ func Init(cfg *config.Config, db *mongo.Database) *stockHandler.Handler {
 	inventoryRepositoryRepository := inventoryRepository.NewMongo(db)
 	supplierRepositoryRepository := supplierRepository.NewMongo(db)
 	usageUnitRepositoryRepository := usageUnitRepository.NewMongo(db)
-	helperHelper := inventoryHelper.New(inventoryRepositoryRepository)
+	helperHelper := helper.New(inventoryRepositoryRepository)
 	supplierHelperHelper := supplierHelper.New(supplierRepositoryRepository)
 	loggerLogger := logger.New()
 	usageUnitHelperHelper := usageUnitHelper.New(loggerLogger, usageUnitRepositoryRepository)

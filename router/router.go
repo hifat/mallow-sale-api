@@ -12,4 +12,5 @@ func RegisterAll(r *gin.RouterGroup, cfg *config.Config, db *mongo.Database) {
 	SettingRouter(r, db)
 	SupplierRouter(r, cfg, db)
 	StockRouter(r, cfg, db)
+	PromotionRouter(r, cfg, db)
 }
