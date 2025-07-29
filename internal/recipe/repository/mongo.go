@@ -12,6 +12,7 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/database"
 	"github.com/hifat/mallow-sale-api/pkg/define"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -125,6 +126,46 @@ func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq)
 				OtherPercentage: recipe.OtherPercentage,
 				Price:           recipe.Price,
 				Ingredients:     ingredients,
+				CreatedAt:       &recipe.CreatedAt,
+				UpdatedAt:       &recipe.UpdatedAt,
+			},
+		})
+	}
+
+	return res, nil
+}
+
+func (r *mongoRepository) FindInIDs(ctx context.Context, ids []string) ([]recipeModule.Response, error) {
+	objectIDs := make([]primitive.ObjectID, 0, len(ids))
+	for _, id := range ids {
+		objectIDs = append(objectIDs, database.MustObjectIDFromHex(id))
+	}
+
+	filter := bson.M{"_id": bson.M{"$in": objectIDs}}
+	recipes := make([]recipeModule.Entity, 0)
+	cursor, err := r.db.Collection("recipes").Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var recipe recipeModule.Entity
+		if err := cursor.Decode(&recipe); err != nil {
+			return nil, err
+		}
+		recipes = append(recipes, recipe)
+	}
+
+	res := make([]recipeModule.Response, 0, len(recipes))
+	for _, recipe := range recipes {
+		res = append(res, recipeModule.Response{
+			Prototype: recipeModule.Prototype{
+				ID:              recipe.ID.Hex(),
+				Name:            recipe.Name,
+				CostPercentage:  recipe.CostPercentage,
+				OtherPercentage: recipe.OtherPercentage,
+				Price:           recipe.Price,
 				CreatedAt:       &recipe.CreatedAt,
 				UpdatedAt:       &recipe.UpdatedAt,
 			},

@@ -57,6 +57,15 @@ type ProtoType struct {
 	UpdatedAt string                  `json:"updatedAt"`
 }
 
+func (r *ProtoType) GetProductIDs() []string {
+	productIDs := make([]string, 0, len(r.Products))
+	for _, product := range r.Products {
+		productIDs = append(productIDs, product.ID)
+	}
+
+	return productIDs
+}
+
 type Response struct {
 	ProtoType
 }

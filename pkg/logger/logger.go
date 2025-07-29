@@ -8,6 +8,7 @@ type Logger interface {
 	Info(args ...interface{})
 	Infof(template string, args ...interface{})
 	Error(args ...interface{})
+	Warn(args ...interface{})
 	Errorf(template string, args ...interface{})
 	Sync()
 }
@@ -29,6 +30,10 @@ func (l *zapLogger) Info(args ...interface{}) {
 
 func (l *zapLogger) Infof(template string, args ...interface{}) {
 	l.sugar.Infof(template, args...)
+}
+
+func (l *zapLogger) Warn(args ...interface{}) {
+	l.sugar.Warn(args...)
 }
 
 func (l *zapLogger) Error(args ...interface{}) {
