@@ -10,6 +10,8 @@ import (
 	"github.com/hifat/mallow-sale-api/internal/promotion/handler"
 	"github.com/hifat/mallow-sale-api/internal/promotion/repository"
 	"github.com/hifat/mallow-sale-api/internal/promotion/service"
+	"github.com/hifat/mallow-sale-api/internal/recipe/helper"
+	"github.com/hifat/mallow-sale-api/internal/recipe/repository"
 	"github.com/hifat/mallow-sale-api/pkg/config"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -20,7 +22,9 @@ import (
 func Init(cfg *config.Config, db *mongo.Database) *promotionHandler.Handler {
 	loggerLogger := logger.New()
 	repository := promotionRepository.NewMongo(db)
-	serviceService := service.New(loggerLogger, repository)
+	recipeRepositoryRepository := recipeRepository.NewMongo(db)
+	helperHelper := helper.New(recipeRepositoryRepository)
+	serviceService := service.New(loggerLogger, repository, helperHelper)
 	rest := promotionHandler.NewRest(serviceService)
 	handler := promotionHandler.New(rest)
 	return handler
