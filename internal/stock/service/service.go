@@ -154,11 +154,14 @@ func (s *service) Find(ctx context.Context, query *utilsModule.QueryReq) (*handl
 
 	for i, v := range stocks {
 		inventory := getInventoryByID(v.InventoryID)
-		stocks[i].Inventory = &inventory.Prototype
+		if inventory != nil {
+			stocks[i].Inventory = &inventory.Prototype
+		}
 
 		supplier := getSupplierByID(v.SupplierID)
-		stocks[i].Supplier = &supplier.Prototype
-
+		if supplier != nil {
+			stocks[i].Supplier = &supplier.Prototype
+		}
 	}
 
 	return &handling.ResponseItems[stockModule.Response]{

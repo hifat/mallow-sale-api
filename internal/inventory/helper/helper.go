@@ -40,34 +40,34 @@ func (h *helper) FindAndGetByID(ctx context.Context, ids []string) (func(id stri
 	}, nil
 }
 
-func (h *helper) currentPurchasePrice(inventory inventoryModule.Response, purchasePrice float32) float32 {
+func (h *helper) currentPurchasePrice(inventory inventoryModule.Response, reqPurchasePrice float32) float32 {
 	remainingPricePerUnit := inventory.PurchasePrice / inventory.PurchaseQuantity
 	remainingPrice := remainingPricePerUnit * inventory.PurchaseQuantity
-	currentPrice := purchasePrice + remainingPrice
+	currentPrice := reqPurchasePrice + remainingPrice
 
 	return currentPrice
 }
 
-func (h *helper) IncressStock(ctx context.Context, id string, purchaseQuantity float32, purchasePrice float32) error {
+func (h *helper) IncressStock(ctx context.Context, id string, reqPurchaseQuantity float32, reqPurchasePrice float32) error {
 	inventory, err := h.inventoryRepository.FindByID(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	currentPrice := h.currentPurchasePrice(*inventory, purchasePrice)
-	currentQuantity := inventory.PurchaseQuantity + purchaseQuantity
+	currentPrice := h.currentPurchasePrice(*inventory, reqPurchasePrice)
+	currentQuantity := inventory.PurchaseQuantity + reqPurchaseQuantity
 
-	return h.inventoryRepository.IncressStock(ctx, id, currentQuantity, currentPrice)
+	return h.inventoryRepository.UpdateStock(ctx, id, currentQuantity, currentPrice)
 }
 
-func (h *helper) DecressStock(ctx context.Context, id string, purchaseQuantity float32, purchasePrice float32) error {
+func (h *helper) DecressStock(ctx context.Context, id string, reqPurchaseQuantity float32, reqPurchasePrice float32) error {
 	inventory, err := h.inventoryRepository.FindByID(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	currentPrice := h.currentPurchasePrice(*inventory, purchasePrice)
-	currentQuantity := inventory.PurchaseQuantity - purchaseQuantity
+	currentPrice := h.currentPurchasePrice(*inventory, reqPurchasePrice)
+	currentQuantity := inventory.PurchaseQuantity - reqPurchaseQuantity
 
-	return h.inventoryRepository.DecressStock(ctx, id, currentQuantity, currentPrice)
+	return h.inventoryRepository.UpdateStock(ctx, id, currentQuantity, currentPrice)
 }
