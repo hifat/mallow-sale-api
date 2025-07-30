@@ -9,6 +9,8 @@ import (
 
 type Helper interface {
 	FindAndGetByID(ctx context.Context, ids []string) (func(id string) *inventoryModule.Response, error)
+	IncressStock(ctx context.Context, id string, purchaseQuantity float32, purchasePrice float32) error
+	DecressStock(ctx context.Context, id string, purchaseQuantity float32, purchasePrice float32) error
 }
 
 type helper struct {
@@ -36,4 +38,36 @@ func (h *helper) FindAndGetByID(ctx context.Context, ids []string) (func(id stri
 
 		return nil
 	}, nil
+}
+
+func (h *helper) currentPurchasePrice(inventory inventoryModule.Response, purchasePrice float32) float32 {
+	remainingPricePerUnit := inventory.PurchasePrice / inventory.PurchaseQuantity
+	remainingPrice := remainingPricePerUnit * inventory.PurchaseQuantity
+	currentPrice := purchasePrice + remainingPrice
+
+	return currentPrice
+}
+
+func (h *helper) IncressStock(ctx context.Context, id string, purchaseQuantity float32, purchasePrice float32) error {
+	inventory, err := h.inventoryRepository.FindByID(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	currentPrice := h.currentPurchasePrice(*inventory, purchasePrice)
+	currentQuantity := inventory.PurchaseQuantity + purchaseQuantity
+
+	return h.inventoryRepository.IncressStock(ctx, id, currentQuantity, currentPrice)
+}
+
+func (h *helper) DecressStock(ctx context.Context, id string, purchaseQuantity float32, purchasePrice float32) error {
+	inventory, err := h.inventoryRepository.FindByID(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	currentPrice := h.currentPurchasePrice(*inventory, purchasePrice)
+	currentQuantity := inventory.PurchaseQuantity - purchaseQuantity
+
+	return h.inventoryRepository.DecressStock(ctx, id, currentQuantity, currentPrice)
 }

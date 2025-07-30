@@ -110,6 +110,13 @@ func (s *service) Create(ctx context.Context, req *stockModule.Request) (*handli
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
+
+	err = s.inventoryHelper.IncressStock(ctx, req.InventoryID, req.PurchaseQuantity, req.PurchasePrice)
+	if err != nil {
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
 	return &handling.ResponseItem[*stockModule.Request]{Item: req}, nil
 }
 

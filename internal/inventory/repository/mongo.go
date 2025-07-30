@@ -255,3 +255,17 @@ func (r *mongoRepository) Count(ctx context.Context) (int64, error) {
 
 	return count, nil
 }
+
+func (r *mongoRepository) IncressStock(ctx context.Context, id string, quantity float32, purchasePrice float32) error {
+	filter := bson.M{"_id": database.MustObjectIDFromHex(id)}
+	update := bson.M{"$inc": bson.M{"purchase_quantity": quantity}}
+	_, err := r.db.Collection("inventories").UpdateOne(ctx, filter, update)
+	return err
+}
+
+func (r *mongoRepository) DecressStock(ctx context.Context, id string, quantity float32, purchasePrice float32) error {
+	filter := bson.M{"_id": database.MustObjectIDFromHex(id)}
+	update := bson.M{"$inc": bson.M{"purchase_quantity": -quantity}}
+	_, err := r.db.Collection("inventories").UpdateOne(ctx, filter, update)
+	return err
+}

@@ -15,4 +15,6 @@ type Repository interface {
 	UpdateByID(ctx context.Context, id string, req *inventoryModule.Request) error
 	DeleteByID(ctx context.Context, id string) error
 	Count(ctx context.Context) (int64, error)
+	IncressStock(ctx context.Context, id string, quantity float32, purchasePrice float32) error
+	DecressStock(ctx context.Context, id string, quantity float32, purchasePrice float32) error
 }

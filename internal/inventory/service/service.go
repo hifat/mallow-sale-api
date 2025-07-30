@@ -44,10 +44,6 @@ func New(
 func (s *service) Create(ctx context.Context, req *inventoryModule.Request) (*handling.ResponseItem[*inventoryModule.Request], error) {
 	usageUnit, err := s.usageUnitRepository.FindByCode(ctx, req.PurchaseUnit.Code)
 	if err != nil {
-		if errors.Is(err, define.ErrRecordNotFound) {
-			return nil, handling.ThrowErrByCode(define.CodeInvalidUsageUnit)
-		}
-
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
@@ -96,10 +92,7 @@ func (s *service) Find(ctx context.Context, query *utilsModule.QueryReq) (*handl
 func (s *service) FindByID(ctx context.Context, id string) (*handling.ResponseItem[*inventoryModule.Response], error) {
 	inventory, err := s.inventoryRepository.FindByID(ctx, id)
 	if err != nil {
-		if !errors.Is(err, define.ErrRecordNotFound) {
-			s.logger.Error(err)
-		}
-
+		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
 
@@ -111,10 +104,7 @@ func (s *service) FindByID(ctx context.Context, id string) (*handling.ResponseIt
 func (s *service) UpdateByID(ctx context.Context, id string, req *inventoryModule.Request) (*handling.ResponseItem[*inventoryModule.Request], error) {
 	_, err := s.inventoryRepository.FindByID(ctx, id)
 	if err != nil {
-		if !errors.Is(err, define.ErrRecordNotFound) {
-			s.logger.Error(err)
-		}
-
+		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
 
@@ -144,10 +134,7 @@ func (s *service) UpdateByID(ctx context.Context, id string, req *inventoryModul
 func (s *service) DeleteByID(ctx context.Context, id string) error {
 	_, err := s.inventoryRepository.FindByID(ctx, id)
 	if err != nil {
-		if !errors.Is(err, define.ErrRecordNotFound) {
-			s.logger.Error(err)
-		}
-
+		s.logger.Error(err)
 		return handling.ThrowErr(err)
 	}
 
