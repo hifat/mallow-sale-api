@@ -19,12 +19,10 @@ type Prototype struct {
 }
 
 type Request struct {
-	Name             string                       `fake:"{name}" validate:"required" json:"name"`
-	PurchasePrice    float32                      `fake:"{float32}" validate:"required" json:"purchasePrice"`
-	PurchaseQuantity float32                      `fake:"{float32}" validate:"required" json:"purchaseQuantity"`
-	PurchaseUnit     usageUnitModule.UsageUnitReq `json:"purchaseUnit"`
-	YieldPercentage  float32                      `fake:"{float32}" validate:"required" json:"yieldPercentage"`
-	Remark           string                       `fake:"{sentence}" json:"remark"`
+	Name            string                       `fake:"{name}" validate:"required" json:"name"`
+	PurchaseUnit    usageUnitModule.UsageUnitReq `json:"purchaseUnit"`
+	YieldPercentage float32                      `fake:"{float32}" validate:"required" json:"yieldPercentage"`
+	Remark          string                       `fake:"{sentence}" json:"remark"`
 }
 
 type Response struct {

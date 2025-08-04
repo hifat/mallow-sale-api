@@ -41,7 +41,11 @@ func (h *helper) FindAndGetByID(ctx context.Context, ids []string) (func(id stri
 }
 
 func (h *helper) currentPurchasePrice(inventory inventoryModule.Response, reqPurchasePrice float32) float32 {
-	remainingPricePerUnit := inventory.PurchasePrice / inventory.PurchaseQuantity
+	remainingPricePerUnit := float32(0.0)
+	if inventory.PurchasePrice != 0 || inventory.PurchaseQuantity != 0 {
+		remainingPricePerUnit = inventory.PurchasePrice / inventory.PurchaseQuantity
+	}
+
 	remainingPrice := remainingPricePerUnit * inventory.PurchaseQuantity
 	currentPrice := reqPurchasePrice + remainingPrice
 

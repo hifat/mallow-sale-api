@@ -29,9 +29,7 @@ func NewMongo(db *mongo.Database) Repository {
 
 func (r *mongoRepository) Create(ctx context.Context, req *inventoryModule.Request) error {
 	newInventory := &inventoryModule.Entity{
-		Name:             req.Name,
-		PurchasePrice:    req.PurchasePrice,
-		PurchaseQuantity: req.PurchaseQuantity,
+		Name: req.Name,
 		PurchaseUnit: usageUnitModule.Entity{
 			Code: req.PurchaseUnit.Code,
 			Name: req.PurchaseUnit.Name,
@@ -118,7 +116,6 @@ func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq)
 		findOptions.SetProjection(projection)
 	}
 
-	var inventories []inventoryModule.Entity
 	cur, err := r.db.Collection("inventories").
 		Find(ctx, filter, findOptions)
 	if err != nil {
@@ -126,6 +123,7 @@ func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq)
 	}
 	defer cur.Close(ctx)
 
+	var inventories []inventoryModule.Entity
 	for cur.Next(ctx) {
 		var inventory inventoryModule.Entity
 		if err := cur.Decode(&inventory); err != nil {
@@ -211,9 +209,7 @@ func (r *mongoRepository) FindInIDs(ctx context.Context, ids []string) ([]invent
 
 func (r *mongoRepository) UpdateByID(ctx context.Context, id string, req *inventoryModule.Request) error {
 	editedInventory := &inventoryModule.Entity{
-		Name:             req.Name,
-		PurchasePrice:    req.PurchasePrice,
-		PurchaseQuantity: req.PurchaseQuantity,
+		Name: req.Name,
 		PurchaseUnit: usageUnitModule.Entity{
 			Code: req.PurchaseUnit.Code,
 			Name: req.PurchaseUnit.Name,
@@ -256,12 +252,12 @@ func (r *mongoRepository) Count(ctx context.Context) (int64, error) {
 	return count, nil
 }
 
-func (r *mongoRepository) UpdateStock(ctx context.Context, id string, quantity float32, purchasePrice float32) error {
+func (r *mongoRepository) UpdateStock(ctx context.Context, id string, currentQuantity float32, purchasePrice float32) error {
 	filter := bson.M{"_id": database.MustObjectIDFromHex(id)}
 	update := bson.M{
 		"$set": bson.M{
+			"purchase_quantity": currentQuantity,
 			"purchase_price":    purchasePrice,
-			"purchase_quantity": quantity,
 			"updated_at":        time.Now(),
 		},
 	}
