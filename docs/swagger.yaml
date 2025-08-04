@@ -25,10 +25,6 @@ definitions:
     properties:
       name:
         type: string
-      purchasePrice:
-        type: number
-      purchaseQuantity:
-        type: number
       purchaseUnit:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.UsageUnitReq'
       remark:
@@ -37,8 +33,6 @@ definitions:
         type: number
     required:
     - name
-    - purchasePrice
-    - purchaseQuantity
     - yieldPercentage
     type: object
   github_com_hifat_mallow-sale-api_internal_inventory.Response:

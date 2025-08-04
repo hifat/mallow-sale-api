@@ -1476,19 +1476,11 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "name",
-                "purchasePrice",
-                "purchaseQuantity",
                 "yieldPercentage"
             ],
             "properties": {
                 "name": {
                     "type": "string"
-                },
-                "purchasePrice": {
-                    "type": "number"
-                },
-                "purchaseQuantity": {
-                    "type": "number"
                 },
                 "purchaseUnit": {
                     "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.UsageUnitReq"

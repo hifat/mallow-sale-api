@@ -2,7 +2,6 @@ package stockService
 
 import (
 	"context"
-	"errors"
 
 	inventoryHelper "github.com/hifat/mallow-sale-api/internal/inventory/helper"
 	inventoryRepository "github.com/hifat/mallow-sale-api/internal/inventory/repository"
@@ -207,12 +206,9 @@ func (s *service) FindByID(ctx context.Context, id string) (*handling.ResponseIt
 }
 
 func (s *service) UpdateByID(ctx context.Context, id string, req *stockModule.Request) (*handling.ResponseItem[*stockModule.Request], error) {
-	// Check if stock exists
 	_, err := s.stockRepository.FindByID(ctx, id)
 	if err != nil {
-		if !errors.Is(err, define.ErrRecordNotFound) {
-			s.logger.Error(err)
-		}
+		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
 
@@ -230,11 +226,15 @@ func (s *service) UpdateByID(ctx context.Context, id string, req *stockModule.Re
 }
 
 func (s *service) DeleteByID(ctx context.Context, id string) error {
-	_, err := s.stockRepository.FindByID(ctx, id)
+	stock, err := s.stockRepository.FindByID(ctx, id)
 	if err != nil {
-		if !errors.Is(err, define.ErrRecordNotFound) {
-			s.logger.Error(err)
-		}
+		s.logger.Error(err)
+		return handling.ThrowErr(err)
+	}
+
+	err = s.inventoryHelper.DecressStock(ctx, stock.InventoryID, stock.PurchaseQuantity, stock.PurchasePrice)
+	if err != nil {
+		s.logger.Error(err)
 		return handling.ThrowErr(err)
 	}
 
