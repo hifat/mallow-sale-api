@@ -110,7 +110,7 @@ func (s *service) Create(ctx context.Context, req *stockModule.Request) (*handli
 		return nil, handling.ThrowErr(err)
 	}
 
-	err = s.inventoryHelper.IncressStock(ctx, req.InventoryID, req.PurchaseQuantity, req.PurchasePrice)
+	err = s.inventoryHelper.IncreaseStock(ctx, req.InventoryID, req.PurchaseQuantity, req.PurchasePrice)
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
@@ -232,7 +232,7 @@ func (s *service) DeleteByID(ctx context.Context, id string) error {
 		return handling.ThrowErr(err)
 	}
 
-	err = s.inventoryHelper.DecressStock(ctx, stock.InventoryID, stock.PurchaseQuantity, stock.PurchasePrice)
+	err = s.inventoryHelper.DecreaseStock(ctx, stock.InventoryID, stock.PurchaseQuantity, stock.PurchasePrice)
 	if err != nil {
 		s.logger.Error(err)
 		return handling.ThrowErr(err)

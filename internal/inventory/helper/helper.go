@@ -9,8 +9,8 @@ import (
 
 type Helper interface {
 	FindAndGetByID(ctx context.Context, ids []string) (func(id string) *inventoryModule.Response, error)
-	IncressStock(ctx context.Context, inventoryID string, purchaseQuantity float32, purchasePrice float32) error
-	DecressStock(ctx context.Context, inventoryID string, purchaseQuantity float32, purchasePrice float32) error
+	IncreaseStock(ctx context.Context, inventoryID string, purchaseQuantity float32, purchasePrice float32) error
+	DecreaseStock(ctx context.Context, inventoryID string, purchaseQuantity float32, purchasePrice float32) error
 }
 
 type helper struct {
@@ -52,7 +52,7 @@ func (h *helper) currentPurchasePrice(inventory inventoryModule.Response, reqPur
 	return currentPrice
 }
 
-func (h *helper) IncressStock(ctx context.Context, inventoryID string, reqPurchaseQuantity float32, reqPurchasePrice float32) error {
+func (h *helper) IncreaseStock(ctx context.Context, inventoryID string, reqPurchaseQuantity float32, reqPurchasePrice float32) error {
 	inventory, err := h.inventoryRepository.FindByID(ctx, inventoryID)
 	if err != nil {
 		return err
@@ -64,7 +64,7 @@ func (h *helper) IncressStock(ctx context.Context, inventoryID string, reqPurcha
 	return h.inventoryRepository.UpdateStock(ctx, inventoryID, currentQuantity, currentPrice)
 }
 
-func (h *helper) DecressStock(ctx context.Context, inventoryID string, reqPurchaseQuantity float32, reqPurchasePrice float32) error {
+func (h *helper) DecreaseStock(ctx context.Context, inventoryID string, reqPurchaseQuantity float32, reqPurchasePrice float32) error {
 	inventory, err := h.inventoryRepository.FindByID(ctx, inventoryID)
 	if err != nil {
 		return err
