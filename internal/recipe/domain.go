@@ -24,7 +24,7 @@ type Request struct {
 	OtherPercentage float32             `json:"otherPercentage"`
 	Price           float32             `validate:"gte=0" json:"price"`
 	Ingredients     []IngredientRequest `validate:"required,dive" json:"ingredients"`
-	Type            RecipeTypeRequest   `validate:"required" json:"type"`
+	RecipeType      RecipeTypeRequest   `validate:"required" json:"recipeType"`
 	No              int                 `json:"no"`
 }
 
@@ -68,7 +68,7 @@ type Prototype struct {
 	Ingredients     []IngredientPrototype `json:"ingredients"`
 	CreatedAt       *time.Time            `json:"createdAt"`
 	UpdatedAt       *time.Time            `json:"updatedAt"`
-	Type            RecipeTypePrototype   `json:"type"`
+	RecipeType      RecipeTypePrototype   `json:"recipeType"`
 	No              int                   `json:"no"`
 }
 
@@ -90,7 +90,7 @@ type UpdateOrderNoRequest struct {
 	OrderNo int    `json:"orderNo"`
 }
 
-type TypeResponse struct {
+type RecipeTypeResponse struct {
 	Code string `json:"code"`
 	Name string `json:"name"`
 }

@@ -7,27 +7,27 @@ import (
 	recipeRepository "github.com/hifat/mallow-sale-api/internal/recipe/repository"
 )
 
-type TypeHelper interface {
-	FindAndGetByCode(ctx context.Context, codes []string) (func(id string) *recipeModule.TypeResponse, error)
+type RecipeTypeHelper interface {
+	FindAndGetByCode(ctx context.Context, codes []string) (func(id string) *recipeModule.RecipeTypeResponse, error)
 }
 
-type typeHelper struct {
+type recipeTypeHelper struct {
 	recipeTypeRepository recipeRepository.TypeRepository
 }
 
-func NewType(recipeTypeRepository recipeRepository.TypeRepository) TypeHelper {
-	return &typeHelper{
+func NewRecipeTypeHelper(recipeTypeRepository recipeRepository.TypeRepository) RecipeTypeHelper {
+	return &recipeTypeHelper{
 		recipeTypeRepository: recipeTypeRepository,
 	}
 }
 
-func (h *typeHelper) FindAndGetByCode(ctx context.Context, codes []string) (func(id string) *recipeModule.TypeResponse, error) {
+func (h *recipeTypeHelper) FindAndGetByCode(ctx context.Context, codes []string) (func(id string) *recipeModule.RecipeTypeResponse, error) {
 	recipeTypes, err := h.recipeTypeRepository.FindInCodes(ctx, codes)
 	if err != nil {
 		return nil, err
 	}
 
-	return func(code string) *recipeModule.TypeResponse {
+	return func(code string) *recipeModule.RecipeTypeResponse {
 		for _, v := range recipeTypes {
 			if v.Code == code {
 				return &v

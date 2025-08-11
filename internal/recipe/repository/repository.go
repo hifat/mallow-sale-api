@@ -19,7 +19,7 @@ type Repository interface {
 }
 
 type TypeRepository interface {
-	Find(ctx context.Context, query *utilsModule.QueryReq) ([]recipeModule.TypeResponse, error)
-	FindByCode(ctx context.Context, code string) (*recipeModule.TypeResponse, error)
-	FindInCodes(ctx context.Context, codes []string) ([]recipeModule.TypeResponse, error)
+	Find(ctx context.Context, query *utilsModule.QueryReq) ([]recipeModule.RecipeTypeResponse, error)
+	FindByCode(ctx context.Context, code string) (*recipeModule.RecipeTypeResponse, error)
+	FindInCodes(ctx context.Context, codes []string) ([]recipeModule.RecipeTypeResponse, error)
 }

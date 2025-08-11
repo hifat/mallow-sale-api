@@ -29,7 +29,7 @@ func Init(cfg *config.Config, db *mongo.Database) *recipeHandler.Handler {
 		// Helper
 		usageUnitHelper.New,
 		inventoryHelper.New,
-		recipeHelper.NewType,
+		recipeHelper.NewRecipeTypeHelper,
 
 		// Service
 		logger.New,

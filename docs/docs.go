@@ -1684,7 +1684,7 @@ const docTemplate = `{
                 "costPercentage",
                 "ingredients",
                 "name",
-                "type"
+                "recipeType"
             ],
             "properties": {
                 "costPercentage": {
@@ -1709,7 +1709,7 @@ const docTemplate = `{
                     "type": "number",
                     "minimum": 0
                 },
-                "type": {
+                "recipeType": {
                     "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.RecipeTypeRequest"
                 }
             }
@@ -1744,7 +1744,7 @@ const docTemplate = `{
                 "price": {
                     "type": "number"
                 },
-                "type": {
+                "recipeType": {
                     "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.RecipeTypePrototype"
                 },
                 "updatedAt": {

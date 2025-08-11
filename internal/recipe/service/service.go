@@ -33,7 +33,7 @@ type service struct {
 	usageUnitRepository usageUnitRepository.Repository
 	usageUnitHelper     usageUnitHelper.Helper
 	inventoryHelper     inventoryHelper.Helper
-	recipeTypeHelper    recipeHelper.TypeHelper
+	recipeTypeHelper    recipeHelper.RecipeTypeHelper
 }
 
 func New(
@@ -43,7 +43,7 @@ func New(
 	usageUnitRepository usageUnitRepository.Repository,
 	usageUnitHelper usageUnitHelper.Helper,
 	inventoryHelper inventoryHelper.Helper,
-	recipeTypeHelper recipeHelper.TypeHelper,
+	recipeTypeHelper recipeHelper.RecipeTypeHelper,
 ) Service {
 	return &service{
 		logger:              logger,
@@ -72,13 +72,13 @@ func (s *service) Create(ctx context.Context, req *recipeModule.Request) (*handl
 		req.Ingredients[i].Unit.Name = name
 	}
 
-	getRecipeTypeByCode, err := s.recipeTypeHelper.FindAndGetByCode(ctx, []string{req.Type.Code})
+	getRecipeTypeByCode, err := s.recipeTypeHelper.FindAndGetByCode(ctx, []string{req.RecipeType.Code})
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
 
-	if getRecipeTypeByCode(req.Type.Code) == nil {
+	if getRecipeTypeByCode(req.RecipeType.Code) == nil {
 		return nil, handling.ThrowErrByCode(define.CodeInvalidRecipeType)
 	}
 
@@ -166,13 +166,13 @@ func (s *service) UpdateByID(ctx context.Context, id string, req *recipeModule.R
 		req.Ingredients[i].Unit.Name = name
 	}
 
-	getRecipeTypeByCode, err := s.recipeTypeHelper.FindAndGetByCode(ctx, []string{req.Type.Code})
+	getRecipeTypeByCode, err := s.recipeTypeHelper.FindAndGetByCode(ctx, []string{req.RecipeType.Code})
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
 
-	if getRecipeTypeByCode(req.Type.Code) == nil {
+	if getRecipeTypeByCode(req.RecipeType.Code) == nil {
 		return nil, handling.ThrowErrByCode(define.CodeInvalidRecipeType)
 	}
 

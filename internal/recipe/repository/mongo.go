@@ -43,9 +43,9 @@ func (r *mongoRepository) Create(ctx context.Context, req *recipeModule.Request)
 		CostPercentage:  req.CostPercentage,
 		OtherPercentage: req.OtherPercentage,
 		Price:           req.Price,
-		Type: recipeModule.RecipeTypeEntity{
-			Code: req.Type.Code,
-			Name: req.Type.Name,
+		RecipeType: recipeModule.RecipeTypeEntity{
+			Code: req.RecipeType.Code,
+			Name: req.RecipeType.Name,
 		},
 		Ingredients: ingredients,
 		Base: utilsModule.Base{
@@ -129,9 +129,9 @@ func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq)
 				CostPercentage:  recipe.CostPercentage,
 				OtherPercentage: recipe.OtherPercentage,
 				Price:           recipe.Price,
-				Type: recipeModule.RecipeTypePrototype{
-					Code: recipe.Type.Code,
-					Name: recipe.Type.Name,
+				RecipeType: recipeModule.RecipeTypePrototype{
+					Code: recipe.RecipeType.Code,
+					Name: recipe.RecipeType.Name,
 				},
 				Ingredients: ingredients,
 				CreatedAt:   &recipe.CreatedAt,
@@ -174,9 +174,9 @@ func (r *mongoRepository) FindInIDs(ctx context.Context, ids []string) ([]recipe
 				CostPercentage:  recipe.CostPercentage,
 				OtherPercentage: recipe.OtherPercentage,
 				Price:           recipe.Price,
-				Type: recipeModule.RecipeTypePrototype{
-					Code: recipe.Type.Code,
-					Name: recipe.Type.Name,
+				RecipeType: recipeModule.RecipeTypePrototype{
+					Code: recipe.RecipeType.Code,
+					Name: recipe.RecipeType.Name,
 				},
 				CreatedAt: &recipe.CreatedAt,
 				UpdatedAt: &recipe.UpdatedAt,
@@ -220,9 +220,9 @@ func (r *mongoRepository) FindByID(ctx context.Context, id string) (*recipeModul
 			CostPercentage:  recipe.CostPercentage,
 			OtherPercentage: recipe.OtherPercentage,
 			Price:           recipe.Price,
-			Type: recipeModule.RecipeTypePrototype{
-				Code: recipe.Type.Code,
-				Name: recipe.Type.Name,
+			RecipeType: recipeModule.RecipeTypePrototype{
+				Code: recipe.RecipeType.Code,
+				Name: recipe.RecipeType.Name,
 			},
 			Ingredients: ingredients,
 			CreatedAt:   &recipe.CreatedAt,
@@ -238,9 +238,9 @@ func (r *mongoRepository) UpdateByID(ctx context.Context, id string, req *recipe
 		CostPercentage:  req.CostPercentage,
 		OtherPercentage: req.OtherPercentage,
 		Price:           req.Price,
-		Type: recipeModule.RecipeTypeEntity{
-			Code: req.Type.Code,
-			Name: req.Type.Name,
+		RecipeType: recipeModule.RecipeTypeEntity{
+			Code: req.RecipeType.Code,
+			Name: req.RecipeType.Name,
 		},
 		Base: utilsModule.Base{
 			UpdatedAt: time.Now(),

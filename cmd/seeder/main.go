@@ -39,5 +39,10 @@ func main() {
 		log.Fatalf("Failed to seed settings: %v", err)
 	}
 
+	// Seed recipe types
+	if err := SeedRecipeTypes(ctx, db); err != nil {
+		log.Fatalf("Failed to seed recipe types: %v", err)
+	}
+
 	log.Println("Database seeding completed successfully!")
 }

@@ -18,16 +18,16 @@ func NewTypeMongo(db *mongo.Database) TypeRepository {
 	return &mongoTypeRepository{db: db}
 }
 
-func (r *mongoTypeRepository) Find(ctx context.Context, query *utilsModule.QueryReq) ([]recipeModule.TypeResponse, error) {
+func (r *mongoTypeRepository) Find(ctx context.Context, query *utilsModule.QueryReq) ([]recipeModule.RecipeTypeResponse, error) {
 	cursor, err := r.db.Collection("recipe_types").Find(ctx, bson.M{})
 	if err != nil {
 		return nil, err
 	}
 	defer cursor.Close(ctx)
 
-	var types []recipeModule.TypeResponse
+	var types []recipeModule.RecipeTypeResponse
 	for cursor.Next(ctx) {
-		var typeResponse recipeModule.TypeResponse
+		var typeResponse recipeModule.RecipeTypeResponse
 		if err := cursor.Decode(&typeResponse); err != nil {
 			return nil, err
 		}
@@ -37,13 +37,13 @@ func (r *mongoTypeRepository) Find(ctx context.Context, query *utilsModule.Query
 	return types, nil
 }
 
-func (r *mongoTypeRepository) FindByCode(ctx context.Context, code string) (*recipeModule.TypeResponse, error) {
+func (r *mongoTypeRepository) FindByCode(ctx context.Context, code string) (*recipeModule.RecipeTypeResponse, error) {
 	result := r.db.Collection("recipe_types").FindOne(ctx, bson.M{"code": code})
 	if result.Err() != nil {
 		return nil, result.Err()
 	}
 
-	var typeResponse recipeModule.TypeResponse
+	var typeResponse recipeModule.RecipeTypeResponse
 	if err := result.Decode(&typeResponse); err != nil {
 		return nil, err
 	}
@@ -51,16 +51,16 @@ func (r *mongoTypeRepository) FindByCode(ctx context.Context, code string) (*rec
 	return &typeResponse, nil
 }
 
-func (r *mongoTypeRepository) FindInCodes(ctx context.Context, codes []string) ([]recipeModule.TypeResponse, error) {
+func (r *mongoTypeRepository) FindInCodes(ctx context.Context, codes []string) ([]recipeModule.RecipeTypeResponse, error) {
 	cursor, err := r.db.Collection("recipe_types").Find(ctx, bson.M{"code": bson.M{"$in": codes}})
 	if err != nil {
 		return nil, err
 	}
 	defer cursor.Close(ctx)
 
-	var types []recipeModule.TypeResponse
+	var types []recipeModule.RecipeTypeResponse
 	for cursor.Next(ctx) {
-		var typeResponse recipeModule.TypeResponse
+		var typeResponse recipeModule.RecipeTypeResponse
 		if err := cursor.Decode(&typeResponse); err != nil {
 			return nil, err
 		}

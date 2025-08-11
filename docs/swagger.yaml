@@ -174,13 +174,13 @@ definitions:
       price:
         minimum: 0
         type: number
-      type:
+      recipeType:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.RecipeTypeRequest'
     required:
     - costPercentage
     - ingredients
     - name
-    - type
+    - recipeType
     type: object
   github_com_hifat_mallow-sale-api_internal_recipe.Response:
     properties:
@@ -202,7 +202,7 @@ definitions:
         type: number
       price:
         type: number
-      type:
+      recipeType:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.RecipeTypePrototype'
       updatedAt:
         type: string
