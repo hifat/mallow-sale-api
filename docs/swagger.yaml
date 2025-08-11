@@ -143,6 +143,20 @@ definitions:
     - quantity
     - unit
     type: object
+  github_com_hifat_mallow-sale-api_internal_recipe.RecipeTypePrototype:
+    properties:
+      code:
+        type: string
+      name:
+        type: string
+    type: object
+  github_com_hifat_mallow-sale-api_internal_recipe.RecipeTypeRequest:
+    properties:
+      code:
+        type: string
+    required:
+    - code
+    type: object
   github_com_hifat_mallow-sale-api_internal_recipe.Request:
     properties:
       costPercentage:
@@ -160,10 +174,13 @@ definitions:
       price:
         minimum: 0
         type: number
+      type:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.RecipeTypeRequest'
     required:
     - costPercentage
     - ingredients
     - name
+    - type
     type: object
   github_com_hifat_mallow-sale-api_internal_recipe.Response:
     properties:
@@ -185,6 +202,8 @@ definitions:
         type: number
       price:
         type: number
+      type:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.RecipeTypePrototype'
       updatedAt:
         type: string
     type: object

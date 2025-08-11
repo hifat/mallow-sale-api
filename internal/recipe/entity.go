@@ -15,6 +15,14 @@ type IngredientEntity struct {
 	Unit        usageUnitModule.Entity `bson:"unit" json:"unit"`
 }
 
+type RecipeTypeEntity struct {
+	utilsModule.Base `bson:"inline"`
+
+	ID   primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	Code string             `bson:"code" json:"code"`
+	Name string             `bson:"name" json:"name"`
+}
+
 type Entity struct {
 	utilsModule.Base `bson:"inline"`
 
@@ -23,6 +31,7 @@ type Entity struct {
 	CostPercentage  float32            `bson:"cost_percentage" json:"costPercentage"`
 	OtherPercentage float32            `bson:"other_percentage" json:"otherPercentage"`
 	Price           float32            `bson:"price" json:"price"`
+	Type            RecipeTypeEntity   `bson:"type" json:"type"`
 	Ingredients     []IngredientEntity `bson:"ingredients" json:"ingredients"`
 	OrderNo         int                `bson:"order_no" json:"orderNo"`
 }

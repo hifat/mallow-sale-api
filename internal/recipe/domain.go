@@ -13,12 +13,18 @@ type IngredientRequest struct {
 	Unit        usageUnitModule.UsageUnitReq `validate:"required" json:"unit"`
 }
 
+type RecipeTypeRequest struct {
+	Code string `validate:"required" json:"code"`
+	Name string `json:"-"`
+}
+
 type Request struct {
 	Name            string              `validate:"required" json:"name"`
 	CostPercentage  float32             `validate:"required" json:"costPercentage"`
 	OtherPercentage float32             `json:"otherPercentage"`
 	Price           float32             `validate:"gte=0" json:"price"`
 	Ingredients     []IngredientRequest `validate:"required,dive" json:"ingredients"`
+	Type            RecipeTypeRequest   `validate:"required" json:"type"`
 	No              int                 `json:"no"`
 }
 
@@ -48,6 +54,11 @@ type IngredientPrototype struct {
 	Unit     usageUnitModule.Prototype `json:"unit"`
 }
 
+type RecipeTypePrototype struct {
+	Code string `json:"code"`
+	Name string `json:"name"`
+}
+
 type Prototype struct {
 	ID              string                `json:"id"`
 	Name            string                `json:"name"`
@@ -57,6 +68,7 @@ type Prototype struct {
 	Ingredients     []IngredientPrototype `json:"ingredients"`
 	CreatedAt       *time.Time            `json:"createdAt"`
 	UpdatedAt       *time.Time            `json:"updatedAt"`
+	Type            RecipeTypePrototype   `json:"type"`
 	No              int                   `json:"no"`
 }
 
@@ -76,4 +88,9 @@ type Response struct {
 type UpdateOrderNoRequest struct {
 	ID      string `json:"id"`
 	OrderNo int    `json:"orderNo"`
+}
+
+type TypeResponse struct {
+	Code string `json:"code"`
+	Name string `json:"name"`
 }

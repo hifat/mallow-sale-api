@@ -7,6 +7,7 @@ import (
 	inventoryHelper "github.com/hifat/mallow-sale-api/internal/inventory/helper"
 	inventoryRepository "github.com/hifat/mallow-sale-api/internal/inventory/repository"
 	recipeModule "github.com/hifat/mallow-sale-api/internal/recipe"
+	recipeHelper "github.com/hifat/mallow-sale-api/internal/recipe/helper"
 	recipeRepository "github.com/hifat/mallow-sale-api/internal/recipe/repository"
 	usageUnitHelper "github.com/hifat/mallow-sale-api/internal/usageUnit/helper"
 	usageUnitRepository "github.com/hifat/mallow-sale-api/internal/usageUnit/repository"
@@ -32,6 +33,7 @@ type service struct {
 	usageUnitRepository usageUnitRepository.Repository
 	usageUnitHelper     usageUnitHelper.Helper
 	inventoryHelper     inventoryHelper.Helper
+	recipeTypeHelper    recipeHelper.TypeHelper
 }
 
 func New(
@@ -41,6 +43,7 @@ func New(
 	usageUnitRepository usageUnitRepository.Repository,
 	usageUnitHelper usageUnitHelper.Helper,
 	inventoryHelper inventoryHelper.Helper,
+	recipeTypeHelper recipeHelper.TypeHelper,
 ) Service {
 	return &service{
 		logger:              logger,
@@ -49,6 +52,7 @@ func New(
 		usageUnitRepository: usageUnitRepository,
 		usageUnitHelper:     usageUnitHelper,
 		inventoryHelper:     inventoryHelper,
+		recipeTypeHelper:    recipeTypeHelper,
 	}
 }
 
@@ -66,6 +70,16 @@ func (s *service) Create(ctx context.Context, req *recipeModule.Request) (*handl
 		}
 
 		req.Ingredients[i].Unit.Name = name
+	}
+
+	getRecipeTypeByCode, err := s.recipeTypeHelper.FindAndGetByCode(ctx, []string{req.Type.Code})
+	if err != nil {
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
+	if getRecipeTypeByCode(req.Type.Code) == nil {
+		return nil, handling.ThrowErrByCode(define.CodeInvalidRecipeType)
 	}
 
 	inventories, err := s.inventoryRepository.FindInIDs(ctx, req.GetInventoryIDs())
@@ -150,6 +164,16 @@ func (s *service) UpdateByID(ctx context.Context, id string, req *recipeModule.R
 		}
 
 		req.Ingredients[i].Unit.Name = name
+	}
+
+	getRecipeTypeByCode, err := s.recipeTypeHelper.FindAndGetByCode(ctx, []string{req.Type.Code})
+	if err != nil {
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
+	if getRecipeTypeByCode(req.Type.Code) == nil {
+		return nil, handling.ThrowErrByCode(define.CodeInvalidRecipeType)
 	}
 
 	inventories, err := s.inventoryRepository.FindInIDs(ctx, req.GetInventoryIDs())

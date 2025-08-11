@@ -23,8 +23,8 @@ func Init(cfg *config.Config, db *mongo.Database) *promotionHandler.Handler {
 	loggerLogger := logger.New()
 	repository := promotionRepository.NewMongo(db)
 	recipeRepositoryRepository := recipeRepository.NewMongo(db)
-	helperHelper := helper.New(recipeRepositoryRepository)
-	serviceService := service.New(loggerLogger, repository, helperHelper)
+	helper := recipeHelper.New(recipeRepositoryRepository)
+	serviceService := service.New(loggerLogger, repository, helper)
 	rest := promotionHandler.NewRest(serviceService)
 	handler := promotionHandler.New(rest)
 	return handler

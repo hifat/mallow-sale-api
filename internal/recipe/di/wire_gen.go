@@ -10,6 +10,7 @@ import (
 	"github.com/hifat/mallow-sale-api/internal/inventory/helper"
 	"github.com/hifat/mallow-sale-api/internal/inventory/repository"
 	"github.com/hifat/mallow-sale-api/internal/recipe/handler"
+	"github.com/hifat/mallow-sale-api/internal/recipe/helper"
 	"github.com/hifat/mallow-sale-api/internal/recipe/repository"
 	"github.com/hifat/mallow-sale-api/internal/recipe/service"
 	"github.com/hifat/mallow-sale-api/internal/usageUnit/helper"
@@ -28,7 +29,9 @@ func Init(cfg *config.Config, db *mongo.Database) *recipeHandler.Handler {
 	usageUnitRepositoryRepository := usageUnitRepository.NewMongo(db)
 	usageUnitHelperHelper := usageUnitHelper.New(loggerLogger, usageUnitRepositoryRepository)
 	helperHelper := helper.New(inventoryRepositoryRepository)
-	serviceService := service.New(loggerLogger, repository, inventoryRepositoryRepository, usageUnitRepositoryRepository, usageUnitHelperHelper, helperHelper)
+	typeRepository := recipeRepository.NewTypeMongo(db)
+	typeHelper := recipeHelper.NewType(typeRepository)
+	serviceService := service.New(loggerLogger, repository, inventoryRepositoryRepository, usageUnitRepositoryRepository, usageUnitHelperHelper, helperHelper, typeHelper)
 	rest := recipeHandler.NewRest(serviceService)
 	handler := recipeHandler.New(rest)
 	return handler

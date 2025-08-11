@@ -1656,12 +1656,35 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_hifat_mallow-sale-api_internal_recipe.RecipeTypePrototype": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_recipe.RecipeTypeRequest": {
+            "type": "object",
+            "required": [
+                "code"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_hifat_mallow-sale-api_internal_recipe.Request": {
             "type": "object",
             "required": [
                 "costPercentage",
                 "ingredients",
-                "name"
+                "name",
+                "type"
             ],
             "properties": {
                 "costPercentage": {
@@ -1685,6 +1708,9 @@ const docTemplate = `{
                 "price": {
                     "type": "number",
                     "minimum": 0
+                },
+                "type": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.RecipeTypeRequest"
                 }
             }
         },
@@ -1717,6 +1743,9 @@ const docTemplate = `{
                 },
                 "price": {
                     "type": "number"
+                },
+                "type": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.RecipeTypePrototype"
                 },
                 "updatedAt": {
                     "type": "string"

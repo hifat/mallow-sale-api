@@ -17,3 +17,9 @@ type Repository interface {
 	Count(ctx context.Context) (int64, error)
 	UpdateNoBatch(ctx context.Context, reqs []recipeModule.UpdateOrderNoRequest) error
 }
+
+type TypeRepository interface {
+	Find(ctx context.Context, query *utilsModule.QueryReq) ([]recipeModule.TypeResponse, error)
+	FindByCode(ctx context.Context, code string) (*recipeModule.TypeResponse, error)
+	FindInCodes(ctx context.Context, codes []string) ([]recipeModule.TypeResponse, error)
+}
