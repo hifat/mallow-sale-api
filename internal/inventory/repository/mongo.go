@@ -208,22 +208,15 @@ func (r *mongoRepository) FindInIDs(ctx context.Context, ids []string) ([]invent
 }
 
 func (r *mongoRepository) UpdateByID(ctx context.Context, id string, req *inventoryModule.Request) error {
-	editedInventory := &inventoryModule.Entity{
-		Name: req.Name,
-		PurchaseUnit: usageUnitModule.Entity{
-			Code: req.PurchaseUnit.Code,
-			Name: req.PurchaseUnit.Name,
-		},
-		YieldPercentage: req.YieldPercentage,
-		Remark:          req.Remark,
-		Base: utilsModule.Base{
-			UpdatedAt: time.Now(),
-		},
-	}
-
 	filter := bson.M{"_id": database.MustObjectIDFromHex(id)}
 	_, err := r.db.Collection("inventories").
-		UpdateOne(ctx, filter, bson.M{"$set": editedInventory})
+		UpdateOne(ctx, filter, bson.M{"$set": bson.M{
+			"name":             req.Name,
+			"purchase_unit":    req.PurchaseUnit,
+			"yield_percentage": req.YieldPercentage,
+			"remark":           req.Remark,
+			"updated_at":       time.Now(),
+		}})
 	if err != nil {
 		return err
 	}
