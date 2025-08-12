@@ -9,8 +9,8 @@ import (
 
 type Helper interface {
 	FindAndGetByID(ctx context.Context, ids []string) (func(id string) *inventoryModule.Response, error)
-	IncreaseStock(ctx context.Context, inventoryID string, purchaseQuantity float32, purchasePrice float32) error
-	DecreaseStock(ctx context.Context, inventoryID string, purchaseQuantity float32, purchasePrice float32) error
+	IncreaseStock(ctx context.Context, inventoryID string, purchaseQuantity float64, purchasePrice float64) error
+	DecreaseStock(ctx context.Context, inventoryID string, purchaseQuantity float64, purchasePrice float64) error
 }
 
 type helper struct {
@@ -40,37 +40,40 @@ func (h *helper) FindAndGetByID(ctx context.Context, ids []string) (func(id stri
 	}, nil
 }
 
-func (h *helper) currentPurchasePrice(inventory inventoryModule.Response, reqPurchasePrice float32) float32 {
-	remainingPricePerUnit := float32(0.0)
+func (h *helper) currentPurchasePrice(inventory inventoryModule.Response, reqPurchasePrice float64, isIncrease bool) float64 {
+	remainingPricePerUnit := 0.0
 	if inventory.PurchasePrice != 0 || inventory.PurchaseQuantity != 0 {
 		remainingPricePerUnit = inventory.PurchasePrice / inventory.PurchaseQuantity
 	}
 
 	remainingPrice := remainingPricePerUnit * inventory.PurchaseQuantity
 	currentPrice := reqPurchasePrice + remainingPrice
+	if !isIncrease {
+		currentPrice = remainingPrice - reqPurchasePrice
+	}
 
 	return currentPrice
 }
 
-func (h *helper) IncreaseStock(ctx context.Context, inventoryID string, reqPurchaseQuantity float32, reqPurchasePrice float32) error {
+func (h *helper) IncreaseStock(ctx context.Context, inventoryID string, reqPurchaseQuantity float64, reqPurchasePrice float64) error {
 	inventory, err := h.inventoryRepository.FindByID(ctx, inventoryID)
 	if err != nil {
 		return err
 	}
 
-	currentPrice := h.currentPurchasePrice(*inventory, reqPurchasePrice)
+	currentPrice := h.currentPurchasePrice(*inventory, reqPurchasePrice, true)
 	currentQuantity := inventory.PurchaseQuantity + reqPurchaseQuantity
 
 	return h.inventoryRepository.UpdateStock(ctx, inventoryID, currentQuantity, currentPrice)
 }
 
-func (h *helper) DecreaseStock(ctx context.Context, inventoryID string, reqPurchaseQuantity float32, reqPurchasePrice float32) error {
+func (h *helper) DecreaseStock(ctx context.Context, inventoryID string, reqPurchaseQuantity float64, reqPurchasePrice float64) error {
 	inventory, err := h.inventoryRepository.FindByID(ctx, inventoryID)
 	if err != nil {
 		return err
 	}
 
-	currentPrice := h.currentPurchasePrice(*inventory, reqPurchasePrice)
+	currentPrice := h.currentPurchasePrice(*inventory, reqPurchasePrice, false)
 	currentQuantity := inventory.PurchaseQuantity - reqPurchaseQuantity
 
 	return h.inventoryRepository.UpdateStock(ctx, inventoryID, currentQuantity, currentPrice)

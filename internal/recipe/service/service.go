@@ -172,9 +172,12 @@ func (s *service) UpdateByID(ctx context.Context, id string, req *recipeModule.R
 		return nil, handling.ThrowErr(err)
 	}
 
-	if getRecipeTypeByCode(req.RecipeType.Code) == nil {
+	recipeType := getRecipeTypeByCode(req.RecipeType.Code)
+	if recipeType == nil {
 		return nil, handling.ThrowErrByCode(define.CodeInvalidRecipeType)
 	}
+
+	req.RecipeType.Name = recipeType.Name
 
 	inventories, err := s.inventoryRepository.FindInIDs(ctx, req.GetInventoryIDs())
 	if err != nil {

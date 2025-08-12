@@ -16,8 +16,8 @@ type Entity struct {
 	SupplierID string                 `bson:"supplier_id" json:"supplierID"`
 	Supplier   *supplierModule.Entity `bson:"supplier" json:"supplier"`
 
-	PurchasePrice    float32                `fake:"{float32}" bson:"purchase_price" json:"purchasePrice"`
-	PurchaseQuantity float32                `fake:"{float32}" bson:"purchase_quantity" json:"purchaseQuantity"`
+	PurchasePrice    float64                `fake:"{float64}" bson:"purchase_price" json:"purchasePrice"`
+	PurchaseQuantity float64                `fake:"{float64}" bson:"purchase_quantity" json:"purchaseQuantity"`
 	PurchaseUnit     usageUnitModule.Entity `bson:"purchase_unit" json:"purchaseUnit"`
 	Remark           string                 `fake:"{sentence}" bson:"remark" json:"remark"`
 }

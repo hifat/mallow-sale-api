@@ -245,7 +245,7 @@ func (r *mongoRepository) Count(ctx context.Context) (int64, error) {
 	return count, nil
 }
 
-func (r *mongoRepository) UpdateStock(ctx context.Context, id string, currentQuantity float32, purchasePrice float32) error {
+func (r *mongoRepository) UpdateStock(ctx context.Context, id string, currentQuantity float64, purchasePrice float64) error {
 	filter := bson.M{"_id": database.MustObjectIDFromHex(id)}
 	update := bson.M{
 		"$set": bson.M{
