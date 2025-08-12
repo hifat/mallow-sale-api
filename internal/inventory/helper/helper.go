@@ -2,9 +2,11 @@ package helper
 
 import (
 	"context"
+	"math"
 
 	inventoryModule "github.com/hifat/mallow-sale-api/internal/inventory"
 	inventoryRepository "github.com/hifat/mallow-sale-api/internal/inventory/repository"
+	"github.com/hifat/mallow-sale-api/pkg/utils"
 )
 
 type Helper interface {
@@ -41,18 +43,36 @@ func (h *helper) FindAndGetByID(ctx context.Context, ids []string) (func(id stri
 }
 
 func (h *helper) currentPurchasePrice(inventory inventoryModule.Response, reqPurchasePrice float64, isIncrease bool) float64 {
-	remainingPricePerUnit := 0.0
-	if inventory.PurchasePrice != 0 || inventory.PurchaseQuantity != 0 {
-		remainingPricePerUnit = inventory.PurchasePrice / inventory.PurchaseQuantity
+	const epsilon = 1e-9 // ค่า tolerance ที่เล็กมาก สำหรับ float64
+
+	// ตรวจสอบกรณีพิเศษก่อน
+	if inventory.PurchaseQuantity == 0 {
+		if isIncrease {
+			return utils.RoundToDecimals(reqPurchasePrice, 3)
+		}
+		return 0
 	}
 
-	remainingPrice := remainingPricePerUnit * inventory.PurchaseQuantity
-	currentPrice := reqPurchasePrice + remainingPrice
-	if !isIncrease {
+	// คำนวณ unit price
+	remainingPricePerUnit := inventory.PurchasePrice / inventory.PurchaseQuantity
+
+	// คำนวณ total remaining price
+	// Round ที่นี่เพื่อป้องกัน accumulating error
+	remainingPrice := utils.RoundToDecimals(remainingPricePerUnit*inventory.PurchaseQuantity, 3)
+
+	var currentPrice float64
+	if isIncrease {
+		currentPrice = reqPurchasePrice + remainingPrice
+	} else {
 		currentPrice = remainingPrice - reqPurchasePrice
 	}
 
-	return currentPrice
+	// ถ้าผลลัพธ์ใกล้ 0 มาก (น้อยกว่า epsilon) ให้ return 0
+	if math.Abs(currentPrice) < epsilon {
+		return 0
+	}
+
+	return utils.RoundToDecimals(currentPrice, 3)
 }
 
 func (h *helper) IncreaseStock(ctx context.Context, inventoryID string, reqPurchaseQuantity float64, reqPurchasePrice float64) error {

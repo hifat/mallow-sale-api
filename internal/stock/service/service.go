@@ -15,6 +15,7 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/define"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
+	"github.com/hifat/mallow-sale-api/pkg/utils"
 )
 
 type Service interface {
@@ -103,6 +104,9 @@ func (s *service) Create(ctx context.Context, req *stockModule.Request) (*handli
 	if err := s.validateStockRequest(ctx, req); err != nil {
 		return nil, err
 	}
+
+	req.PurchasePrice = utils.RoundToDecimals(req.PurchasePrice, 3)
+	req.PurchaseQuantity = utils.RoundToDecimals(req.PurchaseQuantity, 3)
 
 	err := s.stockRepository.Create(ctx, req)
 	if err != nil {
