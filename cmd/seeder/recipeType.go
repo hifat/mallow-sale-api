@@ -17,6 +17,8 @@ func SeedRecipeTypes(ctx context.Context, db *mongo.Database) error {
 		{Code: "FOOD", Name: "Food"},
 		{Code: "DESSERT", Name: "Dessert"},
 		{Code: "DRINK", Name: "Drink"},
+		{Code: "SNACK", Name: "Snack"},
+		{Code: "INGREDIENT", Name: "Ingredient"},
 	}
 
 	// Check if data already exists

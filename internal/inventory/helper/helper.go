@@ -43,21 +43,20 @@ func (h *helper) FindAndGetByID(ctx context.Context, ids []string) (func(id stri
 }
 
 func (h *helper) currentPurchasePrice(inventory inventoryModule.Response, reqPurchasePrice float64, isIncrease bool) float64 {
-	const epsilon = 1e-9 // ค่า tolerance ที่เล็กมาก สำหรับ float64
-
-	// ตรวจสอบกรณีพิเศษก่อน
+	// Check special case before
 	if inventory.PurchaseQuantity == 0 {
 		if isIncrease {
 			return utils.RoundToDecimals(reqPurchasePrice, 3)
 		}
+
 		return 0
 	}
 
-	// คำนวณ unit price
+	// Calculate unit price
 	remainingPricePerUnit := inventory.PurchasePrice / inventory.PurchaseQuantity
 
-	// คำนวณ total remaining price
-	// Round ที่นี่เพื่อป้องกัน accumulating error
+	// Calculate total remaining price
+	// Round here to prevent accumulating error
 	remainingPrice := utils.RoundToDecimals(remainingPricePerUnit*inventory.PurchaseQuantity, 3)
 
 	var currentPrice float64
@@ -67,7 +66,9 @@ func (h *helper) currentPurchasePrice(inventory inventoryModule.Response, reqPur
 		currentPrice = remainingPrice - reqPurchasePrice
 	}
 
-	// ถ้าผลลัพธ์ใกล้ 0 มาก (น้อยกว่า epsilon) ให้ return 0
+	const epsilon = 1e-9 // Small value for float64 tolerance
+
+	// If the result is close to 0 (less than epsilon), return 0
 	if math.Abs(currentPrice) < epsilon {
 		return 0
 	}
