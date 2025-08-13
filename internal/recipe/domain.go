@@ -5,6 +5,7 @@ import (
 
 	inventoryModule "github.com/hifat/mallow-sale-api/internal/inventory"
 	usageUnitModule "github.com/hifat/mallow-sale-api/internal/usageUnit"
+	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 )
 
 type IngredientRequest struct {
@@ -93,4 +94,10 @@ type UpdateOrderNoRequest struct {
 type RecipeTypeResponse struct {
 	Code string `json:"code"`
 	Name string `json:"name"`
+}
+
+type QueryReq struct {
+	utilsModule.QueryReq
+
+	RecipeTypeCode string `form:"recipeTypeCode"`
 }

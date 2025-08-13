@@ -11,7 +11,6 @@ import (
 	recipeRepository "github.com/hifat/mallow-sale-api/internal/recipe/repository"
 	usageUnitHelper "github.com/hifat/mallow-sale-api/internal/usageUnit/helper"
 	usageUnitRepository "github.com/hifat/mallow-sale-api/internal/usageUnit/repository"
-	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 	"github.com/hifat/mallow-sale-api/pkg/define"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
@@ -19,7 +18,7 @@ import (
 
 type Service interface {
 	Create(ctx context.Context, req *recipeModule.Request) (*handling.ResponseItem[*recipeModule.Request], error)
-	Find(ctx context.Context, query *utilsModule.QueryReq) (*handling.ResponseItems[recipeModule.Response], error)
+	Find(ctx context.Context, query *recipeModule.QueryReq) (*handling.ResponseItems[recipeModule.Response], error)
 	FindByID(ctx context.Context, id string) (*handling.ResponseItem[*recipeModule.Response], error)
 	UpdateByID(ctx context.Context, id string, req *recipeModule.Request) (*handling.ResponseItem[*recipeModule.Request], error)
 	DeleteByID(ctx context.Context, id string) (*handling.ResponseItem[*recipeModule.Request], error)
@@ -103,7 +102,7 @@ func (s *service) Create(ctx context.Context, req *recipeModule.Request) (*handl
 	}, nil
 }
 
-func (s *service) Find(ctx context.Context, query *utilsModule.QueryReq) (*handling.ResponseItems[recipeModule.Response], error) {
+func (s *service) Find(ctx context.Context, query *recipeModule.QueryReq) (*handling.ResponseItems[recipeModule.Response], error) {
 	count, err := s.recipeRepository.Count(ctx)
 	if err != nil {
 		s.logger.Error(err)

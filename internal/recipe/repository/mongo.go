@@ -62,7 +62,7 @@ func (r *mongoRepository) Create(ctx context.Context, req *recipeModule.Request)
 	return nil
 }
 
-func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq) ([]recipeModule.Response, error) {
+func (r *mongoRepository) Find(ctx context.Context, query *recipeModule.QueryReq) ([]recipeModule.Response, error) {
 	filter := bson.M{}
 	if query.Search != "" {
 		filter["name"] = bson.M{"$regex": query.Search, "$options": "i"}
@@ -91,6 +91,10 @@ func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq)
 		}
 
 		findOptions.SetProjection(projection)
+	}
+
+	if query.RecipeTypeCode != "" {
+		filter["recipe_type.code"] = query.RecipeTypeCode
 	}
 
 	recipes := make([]recipeModule.Entity, 0)
