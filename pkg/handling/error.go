@@ -56,6 +56,11 @@ func getErrObject(code string) ErrorResponse {
 			Message: define.MsgInvalidRecipeType,
 			Status:  http.StatusBadRequest,
 		},
+		define.CodeInventoryNameAlreadyExists: {
+			Code:    define.CodeInventoryNameAlreadyExists,
+			Message: define.MsgInventoryNameAlreadyExists,
+			Status:  http.StatusBadRequest,
+		},
 	}
 
 	errObj, ok := mapErr[code]

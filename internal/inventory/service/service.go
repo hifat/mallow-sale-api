@@ -40,6 +40,16 @@ func New(
 }
 
 func (s *service) Create(ctx context.Context, req *inventoryModule.Request) (*handling.ResponseItem[*inventoryModule.Request], error) {
+	_, err := s.inventoryRepository.FindByName(ctx, req.Name)
+	if err != nil {
+		if errors.Is(err, define.ErrRecordNotFound) {
+			return nil, handling.ThrowErrByCode(define.CodeInventoryNameAlreadyExists)
+		}
+
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
 	usageUnit, err := s.usageUnitRepository.FindByCode(ctx, req.PurchaseUnit.Code)
 	if err != nil {
 		s.logger.Error(err)

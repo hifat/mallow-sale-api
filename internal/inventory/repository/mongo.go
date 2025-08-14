@@ -85,6 +85,40 @@ func (r *mongoRepository) FindByID(ctx context.Context, id string) (*inventoryMo
 	return res, nil
 }
 
+func (r *mongoRepository) FindByName(ctx context.Context, name string) (*inventoryModule.Response, error) {
+	filter := bson.M{"name": name}
+	var inventory inventoryModule.Entity
+	err := r.db.Collection("inventories").
+		FindOne(ctx, filter).
+		Decode(&inventory)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, define.ErrRecordNotFound
+		}
+
+		return nil, err
+	}
+
+	res := &inventoryModule.Response{
+		Prototype: inventoryModule.Prototype{
+			ID:               inventory.ID.Hex(),
+			Name:             inventory.Name,
+			PurchasePrice:    inventory.PurchasePrice,
+			PurchaseQuantity: inventory.PurchaseQuantity,
+			PurchaseUnit: usageUnitModule.Prototype{
+				Code: inventory.PurchaseUnit.Code,
+				Name: inventory.PurchaseUnit.Name,
+			},
+			YieldPercentage: inventory.YieldPercentage,
+			Remark:          inventory.Remark,
+			CreatedAt:       &inventory.CreatedAt,
+			UpdatedAt:       &inventory.UpdatedAt,
+		},
+	}
+
+	return res, nil
+}
+
 func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq) ([]inventoryModule.Response, error) {
 	filter := bson.M{}
 	if query.Search != "" {
