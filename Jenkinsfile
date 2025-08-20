@@ -13,7 +13,6 @@ pipeline {
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
 
         GO111MODULE='on'
-        SONAR_SCANNER_HOME = tool 'sonarqube-scanner-latest'
     }
 
     stages {
