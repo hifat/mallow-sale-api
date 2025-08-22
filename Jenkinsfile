@@ -19,7 +19,7 @@ pipeline {
         stage('Checkout from SCM') {
             steps {
                git branch: 'main',
-               credentialsId: 'github-credential',
+               credentialsId: 'github-credentials',
                url: 'https://github.com/hifat/mallow-sale-api'
             }
         }
