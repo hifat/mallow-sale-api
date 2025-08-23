@@ -5,20 +5,20 @@ pipeline {
     }
 
     environment {
-        APP_NAME='mallow-sale-api'
-        RELEASE = "1.0.0"
-        DOCKER_USER = "butternoei008"
+        APP_NAME = 'mallow-sale-api'
+        RELEASE = '1.0.0'
+        DOCKER_USER = 'butternoei008'
         DOCKER_PASS = 'docker-hub-account'
-        IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
+        IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
 
-        GO111MODULE='on'
+        GO111MODULE = 'on'
     }
 
     stages {
         stage('Checkout from SCM') {
             steps {
-               git branch: 'main',
+                git branch: 'main',
                credentialsId: 'github-credentials',
                url: 'https://github.com/hifat/mallow-sale-api'
             }
@@ -30,15 +30,10 @@ pipeline {
         }
         stage('Build & Push to registry') {
             steps {
-                script {
-                    docker.withRegistry('', DOCKER_PASS) {
-                        docker_image = docker.build("${IMAGE_NAME}")
-                    }
-
-                    docker.withRegistry('', DOCKER_PASS) {
-                        docker_image.push("${IMAGE_TAG}")
-                        docker_image.push('latest')
-                    }
+                withDockerRegistry(credentialsId: DOCKER_PASS, url: '') {
+                    dockerImage = docker.build("${IMAGE_NAME}")
+                    dockerImage.push("${IMAGE_TAG}")
+                    dockerImage.push('latest')
                 }
             }
         }
