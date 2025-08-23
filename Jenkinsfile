@@ -30,10 +30,12 @@ pipeline {
         }
         stage('Build & Push to registry') {
             steps {
-                withDockerRegistry(credentialsId: DOCKER_PASS, url: '') {
-                    dockerImage = docker.build("${IMAGE_NAME}")
-                    dockerImage.push("${IMAGE_TAG}")
-                    dockerImage.push('latest')
+                script {
+                    withDockerRegistry(credentialsId: DOCKER_PASS, url: '') {
+                        dockerImage = docker.build("${IMAGE_NAME}")
+                        dockerImage.push("${IMAGE_TAG}")
+                        dockerImage.push('latest')
+                    }
                 }
             }
         }
