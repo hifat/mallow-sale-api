@@ -30,6 +30,7 @@ func (r *mongoRepository) Get() (*settingModule.Response, error) {
 		if err == mongo.ErrNoDocuments {
 			return &settingModule.Response{CostPercentage: 0}, nil
 		}
+
 		return nil, err
 	}
 

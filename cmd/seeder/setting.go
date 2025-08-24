@@ -11,8 +11,22 @@ import (
 
 func SeedSettings(ctx context.Context, db *mongo.Database) error {
 	collection := db.Collection("settings")
-	update := bson.M{"$setOnInsert": bson.M{"cost_percentage": 30.0}} // Default value
-	_, err := collection.UpdateOne(ctx, bson.M{}, update, &options.UpdateOptions{Upsert: new(bool)})
+
+	// Check if data already exists
+	count, err := collection.CountDocuments(ctx, bson.M{})
+	if err != nil {
+		return err
+	}
+
+	// If data already exists, skip seeding
+	if count > 0 {
+		log.Println("Settings already seeded, skipping...")
+		return nil
+	}
+
+	update := bson.M{"$setOnInsert": bson.M{"cost_percentage": 30.00}} // Default value
+	isUpsert := true
+	_, err = collection.UpdateOne(ctx, bson.M{}, update, &options.UpdateOptions{Upsert: &isUpsert})
 	if err != nil {
 		return err
 	}
