@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mallow-sale-api-deployment
+  namespace: mallow-sale
+spec:
+  selector:
+    matchLabels:
+      app: mallow-sale-api
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mallow-sale-api
+    spec:
+      volumes:
+        - name: mallow-sale-api-env
+          configMap:
+            name: mallow-sale-api-env
+      containers:
+        - name: mallow-sale-api
+          image: butternoei008/mallow-sale-api:latest
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+            - containerPort: 3000
+              protocol: TCP
+          volumeMounts:
+            - name: mallow-sale-api-env
+              mountPath: /etc/env
+          env:
+            - name: APP_NAME
+              value: "mallow-sale-api"
+            - name: APP_PORT
+              value: "4000"
+            - name: APP_MODE
+              value: "dev"
+            - name: DB_HOST
+              value: "localhost"
+            - name: DB_NAME
+              value: "mallow-sale"
+            - name: DB_USERNAME
+              value: "root"
+            - name: DB_PASSWORD
+              value: "123456"
+            - name: DB_PORT
+              value: "27017"

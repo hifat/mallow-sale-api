@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mallow-sale-api-service
+  namespace: mallow-sale
+spec:
+  selector:
+    app: mallow-sale-api
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
