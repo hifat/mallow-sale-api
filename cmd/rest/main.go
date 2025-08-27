@@ -55,7 +55,12 @@ func configCors() cors.Config {
 // @name Authorization
 // @description Type "Bearer" followed by a space and JWT token.
 func main() {
-	cfg, err := config.LoadConfig("./env/.env")
+	envPath := "./env/.env"
+	if len(os.Args) == 2 {
+		envPath = os.Args[0]
+	}
+
+	cfg, err := config.LoadConfig(envPath)
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
@@ -80,7 +85,7 @@ func main() {
 
 	// Create a server instance for graceful shutdown
 	srv := &http.Server{
-		Addr:           fmt.Sprintf("%s:%s", cfg.App.Host, cfg.App.Port),
+		Addr:           fmt.Sprintf(":%s", cfg.App.Port),
 		Handler:        r,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
