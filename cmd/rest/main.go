@@ -57,7 +57,7 @@ func configCors() cors.Config {
 func main() {
 	envPath := "./env/.env"
 	if len(os.Args) == 2 {
-		envPath = os.Args[0]
+		envPath = os.Args[1]
 	}
 
 	cfg, err := config.LoadConfig(envPath)
