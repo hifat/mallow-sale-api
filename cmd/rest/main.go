@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -55,12 +56,13 @@ func configCors() cors.Config {
 // @name Authorization
 // @description Type "Bearer" followed by a space and JWT token.
 func main() {
-	envPath := "./env/.env"
-	if len(os.Args) == 2 {
-		envPath = os.Args[1]
+	// TODO: It not work yet ยังรับค่าจาก flag ไม่ได้
+	envPath := flag.String("envPath", "./env/.env", "env path")
+	if envPath != nil {
+		log.Fatal("env path is not assignment")
 	}
 
-	cfg, err := config.LoadConfig(envPath)
+	cfg, err := config.LoadConfig(*envPath)
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
