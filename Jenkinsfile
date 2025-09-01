@@ -16,6 +16,11 @@ pipeline {
     }
 
     stages {
+        stage('Clean up workspace') {
+            steps {
+                cleanWs()
+            }
+        }
         stage('Checkout from SCM') {
             steps {
                 git branch: 'main',
