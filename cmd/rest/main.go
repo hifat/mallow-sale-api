@@ -56,11 +56,8 @@ func configCors() cors.Config {
 // @name Authorization
 // @description Type "Bearer" followed by a space and JWT token.
 func main() {
-	// TODO: It not work yet ยังรับค่าจาก flag ไม่ได้
 	envPath := flag.String("envPath", "./env/.env", "env path")
-	if envPath != nil {
-		log.Fatal("env path is not assignment")
-	}
+	flag.Parse()
 
 	cfg, err := config.LoadConfig(*envPath)
 	if err != nil {
