@@ -8,14 +8,14 @@ pipeline {
         APP_NAME = 'mallow-sale-api'
         RELEASE = '1.0.0'
         DOCKER_USER = 'butternoei008'
-        DOCKER_PASS = 'docker-hub-account'
+        DOCKER_ACCOUNT = 'docker-hub-account'
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
-        JENKINS_HOST = 'http://localhost:8081'
+        JENKINS_HOST = 'host.docker.internal:8081'
+        JENKINS_API_TOKEN = credentials('jenkins-api-token')
 
         GO111MODULE = 'on'
     }
-
 
     stages {
         stage('Clean up workspace') {
@@ -41,11 +41,20 @@ pipeline {
         stage('Build & Push to registry') {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: DOCKER_PASS, url: '') {
+                    withDockerRegistry(credentialsId: DOCKER_ACCOUNT, url: '') {
                         dockerImage = docker.build("${IMAGE_NAME}")
                         dockerImage.push("${IMAGE_TAG}")
                         dockerImage.push('latest')
                     }
+                }
+            }
+        }
+
+        stage('Cleanup Artifacts') {
+            steps {
+                script {
+                    sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
+                    sh "docker rmi ${IMAGE_NAME}:latest"
                 }
             }
         }
@@ -61,15 +70,6 @@ pipeline {
                             --data 'IMAGE_TAG=${IMAGE_TAG}' \
                             '${JENKINS_HOST}/job/mls-api-cd/buildWithParameters?token=jenkins-mls-token'
                     """
-                }
-            }
-        }
-
-        stage('Cleanup Artifacts') {
-            steps {
-                script {
-                    sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
-                    sh "docker rmi ${IMAGE_NAME}:latest"
                 }
             }
         }
