@@ -11,9 +11,11 @@ pipeline {
         DOCKER_PASS = 'docker-hub-account'
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+        JENKINS_HOST = 'http://localhost:8081'
 
         GO111MODULE = 'on'
     }
+
 
     stages {
         stage('Clean up workspace') {
@@ -21,6 +23,7 @@ pipeline {
                 cleanWs()
             }
         }
+
         stage('Checkout from SCM') {
             steps {
                 git branch: 'main',
@@ -28,11 +31,13 @@ pipeline {
                url: 'https://github.com/hifat/mallow-sale-api'
             }
         }
+
         stage('Unit Test') {
             steps {
                 sh 'go test ./...'
             }
         }
+
         stage('Build & Push to registry') {
             steps {
                 script {
@@ -44,6 +49,22 @@ pipeline {
                 }
             }
         }
+
+        stage('Trigger CD Pipeline') {
+            steps {
+                script {
+                    sh """
+                        curl -v -k --user butter:${JENKINS_API_TOKEN} \
+                            -X POST \
+                            -H 'cache-control: no-cache' \
+                            -H 'content-type: application/x-www-form-urlencoded' \
+                            --data 'IMAGE_TAG=${IMAGE_TAG}' \
+                            '${JENKINS_HOST}/job/mls-api-cd/buildWithParameters?token=jenkins-mls-token'
+                    """
+                }
+            }
+        }
+
         stage('Cleanup Artifacts') {
             steps {
                 script {
