@@ -7,13 +7,17 @@ pipeline {
     environment {
         APP_NAME = 'mallow-sale-api'
         RELEASE = '1.0.0'
-        DOCKER_USER = 'butternoei008'
-        DOCKER_ACCOUNT = 'docker-hub-account'
-        IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
-        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
-        JENKINS_HOST = 'host.docker.internal:8081'
-        JENKINS_API_TOKEN = credentials('jenkins-api-token')
 
+        DOCKER_ACCOUNT = 'docker-hub-account'
+        IMAGE_NAME = "${DOCKER_ACCOUNT_USR}/${APP_NAME}"
+        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+
+        JENKINS_HOST = 'host.docker.internal:8081'
+        JENKINS_USER = credentials('jenkins-account')
+        JENKINS_API_TOKEN = credentials('jenkins-api-token')
+        CD_TRIGGER_TOKEN = credentials('cd-mls-api-trigger-token')
+
+        // Go environment
         GO111MODULE = 'on'
     }
 
@@ -32,29 +36,32 @@ pipeline {
             }
         }
 
-        stage('Unit Test') {
-            steps {
-                sh 'go test ./...'
-            }
-        }
-
-        stage('Build & Push to registry') {
-            steps {
-                script {
-                    withDockerRegistry(credentialsId: DOCKER_ACCOUNT, url: '') {
-                        dockerImage = docker.build("${IMAGE_NAME}")
-                        dockerImage.push("${IMAGE_TAG}")
-                        dockerImage.push('latest')
+        stage('Quality Checks') {
+            parallel {
+                stage('Unit Tests') {
+                    steps {
+                        sh '''
+                            go test ./...
+                        '''
                     }
                 }
             }
         }
 
-        stage('Cleanup Artifacts') {
+        stage('Build & Push Docker Image') {
             steps {
                 script {
-                    sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
-                    sh "docker rmi ${IMAGE_NAME}:latest"
+                    sh """
+                        docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+                        docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest
+                    """
+
+                    withDockerRegistry(credentialsId: DOCKER_ACCOUNT, url: '') {
+                        sh """
+                            docker push ${IMAGE_NAME}:${IMAGE_TAG}
+                            docker push ${IMAGE_NAME}:latest
+                        """
+                    }
                 }
             }
         }
@@ -62,16 +69,56 @@ pipeline {
         stage('Trigger CD Pipeline') {
             steps {
                 script {
-                    sh """
-                        curl -v -k --user butter:${JENKINS_API_TOKEN} \
-                            -X POST \
-                            -H 'cache-control: no-cache' \
-                            -H 'content-type: application/x-www-form-urlencoded' \
-                            --data 'IMAGE_TAG=${IMAGE_TAG}' \
-                            '${JENKINS_HOST}/job/mls-api-cd/buildWithParameters?token=jenkins-mls-token'
-                    """
+                    echo 'Triggering CD pipeline...'
+
+                    curlResponse = sh(
+                        script: """
+                            curl -w "%{http_code}" -o /tmp/cd_response.txt -s \
+                                --user '${JENKINS_USER_USR}:${JENKINS_USER_PSW}' \
+                                -X POST \
+                                -H 'Cache-Control: no-cache' \
+                                -H 'Content-Type: application/x-www-form-urlencoded' \
+                                --data 'IMAGE_TAG=${IMAGE_TAG}' \
+                                '${JENKINS_HOST}/job/mls-api-cd/buildWithParameters?token=${CD_TRIGGER_TOKEN}'
+                        """,
+                        returnStdout: true
+                    ).trim()
+
+                    if (curlResponse != '201' && curlResponse != '200') {
+                        error "CD pipeline trigger failed with HTTP code: ${curlResponse}"
+                    } else {
+                        echo '✅ CD pipeline triggered successfully'
+                    }
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            script {
+                sh """
+                    docker rmi ${IMAGE_NAME}:${IMAGE_TAG} 2>/dev/null || echo 'Image ${IMAGE_NAME}:${IMAGE_TAG} not found'
+                    docker rmi ${IMAGE_NAME}:latest 2>/dev/null || echo 'Image ${IMAGE_NAME}:latest not found'
+
+                    # Clean up unused Docker resources
+                    docker system prune -f 2>/dev/null || true
+                """
+            }
+        }
+
+        success {
+            echo '✅ Pipeline completed successfully!'
+        // Add notification here if needed
+        }
+
+        failure {
+            echo '❌ Pipeline failed!'
+        // Add notification here (Slack, email, etc.)
+        }
+
+        unstable {
+            echo '⚠️ Pipeline completed with warnings'
         }
     }
 }
