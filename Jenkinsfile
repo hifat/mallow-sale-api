@@ -13,8 +13,7 @@ pipeline {
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
 
         JENKINS_HOST = 'host.docker.internal:8081'
-        JENKINS_USER = credentials('jenkins-account')
-        JENKINS_API_TOKEN = credentials('jenkins-api-token')
+        JENKINS_ACCOUNT = credentials('jenkins-account')
         CD_TRIGGER_TOKEN = credentials('cd-mls-api-trigger-token')
 
         // Go environment
@@ -74,7 +73,7 @@ pipeline {
                     curlResponse = sh(
                         script: """
                             curl -w "%{http_code}" -o /tmp/cd_response.txt -s \
-                                --user '${JENKINS_USER_USR}:${JENKINS_USER_PSW}' \
+                                --user '${JENKINS_ACCOUNT_USR}:${JENKINS_ACCOUNT_PSW}' \
                                 -X POST \
                                 -H 'Cache-Control: no-cache' \
                                 -H 'Content-Type: application/x-www-form-urlencoded' \
