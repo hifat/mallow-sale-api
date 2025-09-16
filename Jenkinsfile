@@ -8,7 +8,7 @@ pipeline {
         APP_NAME = 'mallow-sale-api'
         RELEASE = '1.0.0'
 
-        DOCKER_ACCOUNT = 'docker-hub-account'
+        DOCKER_ACCOUNT = credentials('docker-hub-account')
         IMAGE_NAME = "${DOCKER_ACCOUNT_USR}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
 
