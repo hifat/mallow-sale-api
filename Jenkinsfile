@@ -8,7 +8,8 @@ pipeline {
         APP_NAME = 'mallow-sale-api'
         RELEASE = '1.0.0'
 
-        DOCKER_ACCOUNT = credentials('docker-hub-account')
+        DOCKER_ACCOUNT_CRED = 'docker-hub-account'
+        DOCKER_ACCOUNT = credentials(DOCKER_ACCOUNT_CRED)
         IMAGE_NAME = "${DOCKER_ACCOUNT_USR}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
 
@@ -55,7 +56,7 @@ pipeline {
                         docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest
                     """
 
-                    withDockerRegistry(credentialsId: DOCKER_ACCOUNT, url: '') {
+                    withDockerRegistry(credentialsId: DOCKER_ACCOUNT_CRED, url: '') {
                         sh """
                             docker push ${IMAGE_NAME}:${IMAGE_TAG}
                             docker push ${IMAGE_NAME}:latest
