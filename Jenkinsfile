@@ -9,7 +9,7 @@ pipeline {
         RELEASE = '1.0.0'
 
         DOCKER_ACCOUNT_CRED = 'docker-hub-account'
-        DOCKER_ACCOUNT = credentials(DOCKER_ACCOUNT_CRED)
+        DOCKER_ACCOUNT = credentials("${DOCKER_ACCOUNT_CRED}")
         IMAGE_NAME = "${DOCKER_ACCOUNT_USR}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
 
