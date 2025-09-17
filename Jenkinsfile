@@ -80,6 +80,17 @@ pipeline {
                     }
                 }
             }
+            post {
+                success {
+                    sh """
+                        docker rmi ${IMAGE_NAME}:${IMAGE_TAG} 2>/dev/null || echo 'Image ${IMAGE_NAME}:${IMAGE_TAG} not found'
+                        docker rmi ${IMAGE_NAME}:latest 2>/dev/null || echo 'Image ${IMAGE_NAME}:latest not found'
+
+                        # Clean up unused Docker resources
+                        docker system prune -f 2>/dev/null || true
+                    """
+                }
+            }
         }
 
         stage('Trigger CD Pipeline') {
@@ -111,20 +122,6 @@ pipeline {
     }
 
     post {
-        always {
-            script {
-                if (currentBuild.rawBuild.getPreviousBuild()?.getAction(org.jenkinsci.plugins.workflow.actions.StageAction)?.getStageFlowNodes()?.find { it.displayName == 'Build & Push Docker Image' }?.isSuccess()) {
-                    sh """
-                        docker rmi ${IMAGE_NAME}:${IMAGE_TAG} 2>/dev/null || echo 'Image ${IMAGE_NAME}:${IMAGE_TAG} not found'
-                        docker rmi ${IMAGE_NAME}:latest 2>/dev/null || echo 'Image ${IMAGE_NAME}:latest not found'
-
-                        # Clean up unused Docker resources
-                        docker system prune -f 2>/dev/null || true
-                    """
-                }
-            }
-        }
-
         success {
             echo '✅ Pipeline completed successfully!'
         // Add notification here if needed
