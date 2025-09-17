@@ -38,6 +38,16 @@ pipeline {
 
         stage('Quality Checks') {
             parallel {
+                stage('SonarQube Analysis') {
+                    withSonarQubeEnv(credentialsId: 'sonarqube-token') {
+                        sh """
+                            ${SONAR_SCANNER_HOME}/bin/sonar-scanner \
+                                -Dsonar.projectKey=${APP_NAME} \
+                                -Dsonar.sources=. \
+                                -Dsonar.exclusions=**/*_test.go,**/vendor/**,**/mock/**
+                        """
+                    }
+                }
                 stage('Unit Tests') {
                     steps {
                         sh '''
