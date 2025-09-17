@@ -17,6 +17,8 @@ pipeline {
         JENKINS_ACCOUNT = credentials('jenkins-account')
         CD_TRIGGER_TOKEN = credentials('cd-mls-api-trigger-token')
 
+        SONAR_SCANNER_HOME = tool 'sonarqube-scanner'
+
         // Go environment
         GO111MODULE = 'on'
     }
