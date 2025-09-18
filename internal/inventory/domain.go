@@ -7,7 +7,7 @@ import (
 )
 
 type Prototype struct {
-	ID               string                    `json:"id"`
+	ID               string                    `fake:"{uuid}" json:"id"`
 	Name             string                    `fake:"{name}" json:"name"`
 	PurchasePrice    float64                   `fake:"{float64}" json:"purchasePrice"`
 	PurchaseQuantity float64                   `fake:"{float64}" json:"purchaseQuantity"`

@@ -114,18 +114,23 @@ func (s *service) FindByID(ctx context.Context, id string) (*handling.ResponseIt
 func (s *service) UpdateByID(ctx context.Context, id string, req *inventoryModule.Request) (*handling.ResponseItem[*inventoryModule.Request], error) {
 	_, err := s.inventoryRepo.FindByID(ctx, id)
 	if err != nil {
-		s.logger.Error(err)
+		if !errors.Is(err, define.ErrRecordNotFound) {
+			s.logger.Error(err)
+		}
+
 		return nil, handling.ThrowErr(err)
 	}
 
 	usageUnit, err := s.usageUnitRepo.FindByCode(ctx, req.PurchaseUnit.Code)
 	if err != nil {
-		if errors.Is(err, define.ErrRecordNotFound) {
-			return nil, handling.ThrowErrByCode(define.CodeInvalidUsageUnit)
+		if !errors.Is(err, define.ErrRecordNotFound) {
+			s.logger.Error(err)
+			return nil, handling.ThrowErr(err)
 		}
+	}
 
-		s.logger.Error(err)
-		return nil, handling.ThrowErr(err)
+	if usageUnit == nil {
+		return nil, handling.ThrowErrByCode(define.CodeInvalidUsageUnit)
 	}
 
 	req.PurchaseUnit.Name = usageUnit.Name

@@ -449,3 +449,233 @@ func (s *testInventoryServiceSuite) TestInventoryService_FindByID() {
 		s.Require().Equal(&mockInventory, res.Item)
 	})
 }
+
+func (s *testInventoryServiceSuite) TestInventoryService_UpdateByID() {
+	s.T().Parallel()
+
+	s.Run("failed - find inventory by id other error", func() {
+		mockReq := inventoryModule.Request{}
+		if err := gofakeit.Struct(&mockReq); err != nil {
+			s.T().Fatal(err)
+		}
+
+		mockID := "mock-id"
+
+		ctx := context.Background()
+
+		mockErr := errors.New("mock err")
+		s.mockInventoryRepo.EXPECT().
+			FindByID(ctx, mockID).
+			Return(nil, mockErr).
+			Times(1)
+
+		s.mockLogger.EXPECT().
+			Error(mockErr).
+			Times(1)
+
+		res, err := s.underTest.UpdateByID(ctx, mockID, &mockReq)
+		s.Require().Nil(res)
+		s.Require().NotNil(err)
+		s.Require().IsType(handling.ErrorResponse{}, err)
+
+		resErr := err.(handling.ErrorResponse)
+
+		s.Require().Equal(define.CodeInternalServerError, resErr.Code)
+		s.Require().Equal(define.MsgInternalServerError, resErr.Message)
+		s.Require().Equal(http.StatusInternalServerError, resErr.Status)
+	})
+
+	s.Run("failed - find inventory by id record not found", func() {
+		mockReq := inventoryModule.Request{}
+		if err := gofakeit.Struct(&mockReq); err != nil {
+			s.T().Fatal(err)
+		}
+
+		mockID := "mock-id"
+
+		ctx := context.Background()
+
+		s.mockInventoryRepo.EXPECT().
+			FindByID(ctx, mockID).
+			Return(nil, define.ErrRecordNotFound).
+			Times(1)
+
+		res, err := s.underTest.UpdateByID(ctx, mockID, &mockReq)
+		s.Require().Nil(res)
+		s.Require().NotNil(err)
+		s.Require().IsType(handling.ErrorResponse{}, err)
+
+		resErr := err.(handling.ErrorResponse)
+
+		s.Require().Equal(define.CodeRecordNotFound, resErr.Code)
+		s.Require().Equal(define.MsgRecordNotFound, resErr.Message)
+		s.Require().Equal(http.StatusNotFound, resErr.Status)
+	})
+
+	s.Run("failed - find usage unit by code other error", func() {
+		mockReq := inventoryModule.Request{}
+		if err := gofakeit.Struct(&mockReq); err != nil {
+			s.T().Fatal(err)
+		}
+
+		mockID := "mock-id"
+
+		ctx := context.Background()
+
+		mockInventory := inventoryModule.Response{}
+		if err := gofakeit.Struct(&mockInventory); err != nil {
+			s.T().Fatal(err)
+		}
+
+		s.mockInventoryRepo.EXPECT().
+			FindByID(ctx, mockID).
+			Return(&mockInventory, nil).
+			Times(1)
+
+		mockErr := errors.New("mock-err")
+		s.mockUsageUnitRepo.EXPECT().
+			FindByCode(ctx, mockReq.PurchaseUnit.Code).
+			Return(nil, mockErr).
+			Times(1)
+
+		s.mockLogger.EXPECT().
+			Error(mockErr).
+			Times(1)
+
+		res, err := s.underTest.UpdateByID(ctx, mockID, &mockReq)
+		s.Require().Nil(res)
+		s.Require().NotNil(err)
+		s.Require().IsType(handling.ErrorResponse{}, err)
+
+		resErr := err.(handling.ErrorResponse)
+
+		s.Require().Equal(define.CodeInternalServerError, resErr.Code)
+		s.Require().Equal(define.MsgInternalServerError, resErr.Message)
+		s.Require().Equal(http.StatusInternalServerError, resErr.Status)
+	})
+
+	s.Run("failed - invalid usage unit code", func() {
+		mockReq := inventoryModule.Request{}
+		if err := gofakeit.Struct(&mockReq); err != nil {
+			s.T().Fatal(err)
+		}
+
+		mockID := "mock-id"
+
+		ctx := context.Background()
+
+		mockInventory := inventoryModule.Response{}
+		if err := gofakeit.Struct(&mockInventory); err != nil {
+			s.T().Fatal(err)
+		}
+
+		s.mockInventoryRepo.EXPECT().
+			FindByID(ctx, mockID).
+			Return(&mockInventory, nil).
+			Times(1)
+
+		s.mockUsageUnitRepo.EXPECT().
+			FindByCode(ctx, mockReq.PurchaseUnit.Code).
+			Return(nil, define.ErrRecordNotFound).
+			Times(1)
+
+		res, err := s.underTest.UpdateByID(ctx, mockID, &mockReq)
+		s.Require().Nil(res)
+		s.Require().NotNil(err)
+		s.Require().IsType(handling.ErrorResponse{}, err)
+
+		resErr := err.(handling.ErrorResponse)
+
+		s.Require().Equal(define.CodeInvalidUsageUnit, resErr.Code)
+		s.Require().Equal(define.MsgInvalidUsageUnit, resErr.Message)
+		s.Require().Equal(http.StatusBadRequest, resErr.Status)
+	})
+
+	s.Run("failed - update inventory by id other error", func() {
+		mockReq := inventoryModule.Request{}
+		if err := gofakeit.Struct(&mockReq); err != nil {
+			s.T().Fatal(err)
+		}
+
+		mockID := "mock-id"
+
+		ctx := context.Background()
+
+		mockInventory := inventoryModule.Response{}
+		if err := gofakeit.Struct(&mockInventory); err != nil {
+			s.T().Fatal(err)
+		}
+
+		s.mockInventoryRepo.EXPECT().
+			FindByID(ctx, mockID).
+			Return(&mockInventory, nil).
+			Times(1)
+
+		mockUsageUnit := usageUnitModule.Prototype{}
+
+		s.mockUsageUnitRepo.EXPECT().
+			FindByCode(ctx, mockReq.PurchaseUnit.Code).
+			Return(&mockUsageUnit, nil).
+			Times(1)
+
+		mockErr := errors.New("mock-err")
+		s.mockInventoryRepo.EXPECT().
+			UpdateByID(ctx, mockID, &mockReq).
+			Return(mockErr).
+			Times(1)
+
+		s.mockLogger.EXPECT().
+			Error(mockErr).
+			Times(1)
+
+		res, err := s.underTest.UpdateByID(ctx, mockID, &mockReq)
+		s.Require().Nil(res)
+		s.Require().NotNil(err)
+		s.Require().IsType(handling.ErrorResponse{}, err)
+
+		resErr := err.(handling.ErrorResponse)
+
+		s.Require().Equal(define.CodeInternalServerError, resErr.Code)
+		s.Require().Equal(define.MsgInternalServerError, resErr.Message)
+		s.Require().Equal(http.StatusInternalServerError, resErr.Status)
+	})
+
+	s.Run("succeed - update inventory by id", func() {
+		mockReq := inventoryModule.Request{}
+		if err := gofakeit.Struct(&mockReq); err != nil {
+			s.T().Fatal(err)
+		}
+
+		mockID := "mock-id"
+
+		ctx := context.Background()
+
+		mockInventory := inventoryModule.Response{}
+		if err := gofakeit.Struct(&mockInventory); err != nil {
+			s.T().Fatal(err)
+		}
+
+		s.mockInventoryRepo.EXPECT().
+			FindByID(ctx, mockID).
+			Return(&mockInventory, nil).
+			Times(1)
+
+		mockUsageUnit := usageUnitModule.Prototype{}
+
+		s.mockUsageUnitRepo.EXPECT().
+			FindByCode(ctx, mockReq.PurchaseUnit.Code).
+			Return(&mockUsageUnit, nil).
+			Times(1)
+
+		s.mockInventoryRepo.EXPECT().
+			UpdateByID(ctx, mockID, &mockReq).
+			Return(nil).
+			Times(1)
+
+		res, err := s.underTest.UpdateByID(ctx, mockID, &mockReq)
+		s.Require().NotNil(res)
+		s.Require().Nil(err)
+
+		s.Require().Equal(&mockReq, res.Item)
+	})
+}
