@@ -149,7 +149,10 @@ func (s *service) UpdateByID(ctx context.Context, id string, req *inventoryModul
 func (s *service) DeleteByID(ctx context.Context, id string) error {
 	_, err := s.inventoryRepo.FindByID(ctx, id)
 	if err != nil {
-		s.logger.Error(err)
+		if !errors.Is(err, define.ErrRecordNotFound) {
+			s.logger.Error(err)
+		}
+
 		return handling.ThrowErr(err)
 	}
 

@@ -679,3 +679,117 @@ func (s *testInventoryServiceSuite) TestInventoryService_UpdateByID() {
 		s.Require().Equal(&mockReq, res.Item)
 	})
 }
+
+func (s *testInventoryServiceSuite) TestInventoryService_DeleteByID() {
+	s.Run("failed - find inventory by id other error", func() {
+		mockID := "mock-id"
+
+		ctx := context.Background()
+
+		mockErr := errors.New("mock err")
+		s.mockInventoryRepo.EXPECT().
+			FindByID(ctx, mockID).
+			Return(nil, mockErr).
+			Times(1)
+
+		s.mockLogger.EXPECT().
+			Error(mockErr).
+			Times(1)
+
+		err := s.underTest.DeleteByID(ctx, mockID)
+		s.Require().NotNil(err)
+		s.Require().IsType(handling.ErrorResponse{}, err)
+
+		resErr := err.(handling.ErrorResponse)
+
+		s.Require().Equal(define.CodeInternalServerError, resErr.Code)
+		s.Require().Equal(define.MsgInternalServerError, resErr.Message)
+		s.Require().Equal(http.StatusInternalServerError, resErr.Status)
+	})
+
+	s.Run("failed - find inventory by id record not found", func() {
+		mockReq := inventoryModule.Request{}
+		if err := gofakeit.Struct(&mockReq); err != nil {
+			s.T().Fatal(err)
+		}
+
+		mockID := "mock-id"
+
+		ctx := context.Background()
+
+		s.mockInventoryRepo.EXPECT().
+			FindByID(ctx, mockID).
+			Return(nil, define.ErrRecordNotFound).
+			Times(1)
+
+		err := s.underTest.DeleteByID(ctx, mockID)
+		s.Require().NotNil(err)
+		s.Require().IsType(handling.ErrorResponse{}, err)
+
+		resErr := err.(handling.ErrorResponse)
+
+		s.Require().Equal(define.CodeRecordNotFound, resErr.Code)
+		s.Require().Equal(define.MsgRecordNotFound, resErr.Message)
+		s.Require().Equal(http.StatusNotFound, resErr.Status)
+	})
+
+	s.Run("failed - delete inventory by id other error", func() {
+		mockReq := inventoryModule.Request{}
+		if err := gofakeit.Struct(&mockReq); err != nil {
+			s.T().Fatal(err)
+		}
+
+		mockID := "mock-id"
+
+		ctx := context.Background()
+
+		s.mockInventoryRepo.EXPECT().
+			FindByID(ctx, mockID).
+			Return(&inventoryModule.Response{}, nil).
+			Times(1)
+
+		mockErr := errors.New("mock-err")
+		s.mockInventoryRepo.EXPECT().
+			DeleteByID(ctx, mockID).
+			Return(mockErr).
+			Times(1)
+
+		s.mockLogger.EXPECT().
+			Error(mockErr).
+			Times(1)
+
+		err := s.underTest.DeleteByID(ctx, mockID)
+		s.Require().NotNil(err)
+		s.Require().IsType(handling.ErrorResponse{}, err)
+
+		resErr := err.(handling.ErrorResponse)
+
+		s.Require().Equal(define.CodeInternalServerError, resErr.Code)
+		s.Require().Equal(define.MsgInternalServerError, resErr.Message)
+		s.Require().Equal(http.StatusInternalServerError, resErr.Status)
+	})
+
+	s.Run("succeed - delete inventory by id", func() {
+		mockReq := inventoryModule.Request{}
+		if err := gofakeit.Struct(&mockReq); err != nil {
+			s.T().Fatal(err)
+		}
+
+		mockID := "mock-id"
+
+		ctx := context.Background()
+
+		s.mockInventoryRepo.EXPECT().
+			FindByID(ctx, mockID).
+			Return(&inventoryModule.Response{}, nil).
+			Times(1)
+
+		s.mockInventoryRepo.EXPECT().
+			DeleteByID(ctx, mockID).
+			Return(nil).
+			Times(1)
+
+		err := s.underTest.DeleteByID(ctx, mockID)
+		s.Require().Nil(err)
+	})
+}
