@@ -7,7 +7,8 @@ import (
 	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 )
 
-type Repository interface {
+//go:generate mockgen -source=./repository.go -destination=./mock/repository.go -package=mockInventoryRepository
+type IRepository interface {
 	Create(ctx context.Context, req *inventoryModule.Request) error
 	Find(ctx context.Context, query *utilsModule.QueryReq) ([]inventoryModule.Response, error)
 	FindByID(ctx context.Context, id string) (*inventoryModule.Response, error)

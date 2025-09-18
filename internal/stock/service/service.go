@@ -28,9 +28,9 @@ type Service interface {
 
 type service struct {
 	stockRepository     stockRepository.Repository
-	inventoryRepository inventoryRepository.Repository
+	inventoryRepository inventoryRepository.IRepository
 	supplierRepository  supplierRepository.Repository
-	usageUnitRepository usageUnitRepository.Repository
+	usageUnitRepository usageUnitRepository.IRepository
 	inventoryHelper     inventoryHelper.Helper
 	supplierHelper      supplierHelper.Helper
 	usageUnitHelper     usageUnitHelper.Helper
@@ -39,9 +39,9 @@ type service struct {
 
 func New(
 	stockRepository stockRepository.Repository,
-	inventoryRepository inventoryRepository.Repository,
+	inventoryRepository inventoryRepository.IRepository,
 	supplierRepository supplierRepository.Repository,
-	usageUnitRepository usageUnitRepository.Repository,
+	usageUnitRepository usageUnitRepository.IRepository,
 	inventoryHelper inventoryHelper.Helper,
 	supplierHelper supplierHelper.Helper,
 	usageUnitHelper usageUnitHelper.Helper,

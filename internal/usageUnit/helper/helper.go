@@ -15,12 +15,12 @@ type Helper interface {
 
 type helper struct {
 	logger              logger.Logger
-	usageUnitRepository usageUnitRepository.Repository
+	usageUnitRepository usageUnitRepository.IRepository
 }
 
 func New(
 	logger logger.Logger,
-	usageUnitRepository usageUnitRepository.Repository,
+	usageUnitRepository usageUnitRepository.IRepository,
 ) Helper {
 	return &helper{
 		logger:              logger,

@@ -13,7 +13,7 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 )
 
-type Service interface {
+type IService interface {
 	Create(ctx context.Context, req *inventoryModule.Request) (*handling.ResponseItem[*inventoryModule.Request], error)
 	Find(ctx context.Context, query *utilsModule.QueryReq) (*handling.ResponseItems[inventoryModule.Response], error)
 	FindByID(ctx context.Context, id string) (*handling.ResponseItem[*inventoryModule.Response], error)
@@ -22,25 +22,25 @@ type Service interface {
 }
 
 type service struct {
-	logger              logger.Logger
-	inventoryRepository inventoryRepository.Repository
-	usageUnitRepository usageUnitRepository.Repository
+	logger        logger.Logger
+	inventoryRepo inventoryRepository.IRepository
+	usageUnitRepo usageUnitRepository.IRepository
 }
 
 func New(
 	logger logger.Logger,
-	inventoryRepository inventoryRepository.Repository,
-	usageUnitRepository usageUnitRepository.Repository,
-) Service {
+	inventoryRepo inventoryRepository.IRepository,
+	usageUnitRepo usageUnitRepository.IRepository,
+) IService {
 	return &service{
-		logger:              logger,
-		inventoryRepository: inventoryRepository,
-		usageUnitRepository: usageUnitRepository,
+		logger:        logger,
+		inventoryRepo: inventoryRepo,
+		usageUnitRepo: usageUnitRepo,
 	}
 }
 
 func (s *service) Create(ctx context.Context, req *inventoryModule.Request) (*handling.ResponseItem[*inventoryModule.Request], error) {
-	inventory, err := s.inventoryRepository.FindByName(ctx, req.Name)
+	inventory, err := s.inventoryRepo.FindByName(ctx, req.Name)
 	if err != nil {
 		if !errors.Is(err, define.ErrRecordNotFound) {
 			s.logger.Error(err)
@@ -53,7 +53,7 @@ func (s *service) Create(ctx context.Context, req *inventoryModule.Request) (*ha
 		return nil, handling.ThrowErrByCode(define.CodeInventoryNameAlreadyExists)
 	}
 
-	usageUnit, err := s.usageUnitRepository.FindByCode(ctx, req.PurchaseUnit.Code)
+	usageUnit, err := s.usageUnitRepo.FindByCode(ctx, req.PurchaseUnit.Code)
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
@@ -61,7 +61,7 @@ func (s *service) Create(ctx context.Context, req *inventoryModule.Request) (*ha
 
 	req.PurchaseUnit.Name = usageUnit.Name
 
-	err = s.inventoryRepository.Create(ctx, req)
+	err = s.inventoryRepo.Create(ctx, req)
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
@@ -73,13 +73,13 @@ func (s *service) Create(ctx context.Context, req *inventoryModule.Request) (*ha
 }
 
 func (s *service) Find(ctx context.Context, query *utilsModule.QueryReq) (*handling.ResponseItems[inventoryModule.Response], error) {
-	count, err := s.inventoryRepository.Count(ctx)
+	count, err := s.inventoryRepo.Count(ctx)
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
 
-	inventories, err := s.inventoryRepository.Find(ctx, query)
+	inventories, err := s.inventoryRepo.Find(ctx, query)
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
@@ -94,7 +94,7 @@ func (s *service) Find(ctx context.Context, query *utilsModule.QueryReq) (*handl
 }
 
 func (s *service) FindByID(ctx context.Context, id string) (*handling.ResponseItem[*inventoryModule.Response], error) {
-	inventory, err := s.inventoryRepository.FindByID(ctx, id)
+	inventory, err := s.inventoryRepo.FindByID(ctx, id)
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
@@ -106,13 +106,13 @@ func (s *service) FindByID(ctx context.Context, id string) (*handling.ResponseIt
 }
 
 func (s *service) UpdateByID(ctx context.Context, id string, req *inventoryModule.Request) (*handling.ResponseItem[*inventoryModule.Request], error) {
-	_, err := s.inventoryRepository.FindByID(ctx, id)
+	_, err := s.inventoryRepo.FindByID(ctx, id)
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
 
-	usageUnit, err := s.usageUnitRepository.FindByCode(ctx, req.PurchaseUnit.Code)
+	usageUnit, err := s.usageUnitRepo.FindByCode(ctx, req.PurchaseUnit.Code)
 	if err != nil {
 		if errors.Is(err, define.ErrRecordNotFound) {
 			return nil, handling.ThrowErrByCode(define.CodeInvalidUsageUnit)
@@ -124,7 +124,7 @@ func (s *service) UpdateByID(ctx context.Context, id string, req *inventoryModul
 
 	req.PurchaseUnit.Name = usageUnit.Name
 
-	err = s.inventoryRepository.UpdateByID(ctx, id, req)
+	err = s.inventoryRepo.UpdateByID(ctx, id, req)
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
@@ -136,13 +136,13 @@ func (s *service) UpdateByID(ctx context.Context, id string, req *inventoryModul
 }
 
 func (s *service) DeleteByID(ctx context.Context, id string) error {
-	_, err := s.inventoryRepository.FindByID(ctx, id)
+	_, err := s.inventoryRepo.FindByID(ctx, id)
 	if err != nil {
 		s.logger.Error(err)
 		return handling.ThrowErr(err)
 	}
 
-	err = s.inventoryRepository.DeleteByID(ctx, id)
+	err = s.inventoryRepo.DeleteByID(ctx, id)
 	if err != nil {
 		s.logger.Error(err)
 		return handling.ThrowErr(err)

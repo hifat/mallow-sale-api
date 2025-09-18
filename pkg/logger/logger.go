@@ -2,8 +2,10 @@ package logger
 
 import (
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
+//go:generate mockgen -source=./logger.go -destination=./mock/logger.go -package=mockLogger
 type Logger interface {
 	Info(args ...interface{})
 	Infof(template string, args ...interface{})
@@ -13,14 +15,30 @@ type Logger interface {
 	Sync()
 }
 
+var log *zap.Logger
+
 type zapLogger struct {
 	sugar *zap.SugaredLogger
 }
 
+func init() {
+	// object key support cloud run logging
+	config := zap.NewProductionConfig()
+	config.EncoderConfig.TimeKey = "receiveTimestamp"
+	config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	config.EncoderConfig.StacktraceKey = ""
+	config.EncoderConfig.LevelKey = "severity"
+
+	var err error
+	log, err = config.Build(zap.AddCallerSkip(1))
+	if err != nil {
+		panic(err)
+	}
+}
+
 func New() Logger {
-	z, _ := zap.NewProduction()
 	return &zapLogger{
-		sugar: z.Sugar().WithOptions(zap.AddCallerSkip(1)),
+		sugar: log.Sugar(),
 	}
 }
 

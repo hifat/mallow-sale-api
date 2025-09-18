@@ -28,8 +28,8 @@ type Service interface {
 type service struct {
 	logger              logger.Logger
 	recipeRepository    recipeRepository.Repository
-	inventoryRepository inventoryRepository.Repository
-	usageUnitRepository usageUnitRepository.Repository
+	inventoryRepository inventoryRepository.IRepository
+	usageUnitRepository usageUnitRepository.IRepository
 	usageUnitHelper     usageUnitHelper.Helper
 	inventoryHelper     inventoryHelper.Helper
 	recipeTypeHelper    recipeHelper.RecipeTypeHelper
@@ -38,8 +38,8 @@ type service struct {
 func New(
 	logger logger.Logger,
 	recipeRepository recipeRepository.Repository,
-	inventoryRepository inventoryRepository.Repository,
-	usageUnitRepository usageUnitRepository.Repository,
+	inventoryRepository inventoryRepository.IRepository,
+	usageUnitRepository usageUnitRepository.IRepository,
 	usageUnitHelper usageUnitHelper.Helper,
 	inventoryHelper inventoryHelper.Helper,
 	recipeTypeHelper recipeHelper.RecipeTypeHelper,

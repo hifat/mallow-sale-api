@@ -16,10 +16,10 @@ type Helper interface {
 }
 
 type helper struct {
-	inventoryRepository inventoryRepository.Repository
+	inventoryRepository inventoryRepository.IRepository
 }
 
-func New(inventoryRepository inventoryRepository.Repository) Helper {
+func New(inventoryRepository inventoryRepository.IRepository) Helper {
 	return &helper{
 		inventoryRepository: inventoryRepository,
 	}
