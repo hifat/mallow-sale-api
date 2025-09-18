@@ -8,8 +8,8 @@ pipeline {
         APP_NAME = 'mallow-sale-api'
         RELEASE = '1.0.0'
 
-        DOCKER_ACCOUNT_CRED = 'docker-hub-account'
-        DOCKER_ACCOUNT = credentials("${DOCKER_ACCOUNT_CRED}")
+        DOCKER_ACCOUNT_NAME = 'docker-hub-account'
+        DOCKER_ACCOUNT = credentials("${DOCKER_ACCOUNT_NAME}")
         IMAGE_NAME = "${DOCKER_ACCOUNT_USR}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
 
@@ -18,6 +18,7 @@ pipeline {
         CD_TRIGGER_TOKEN = credentials('cd-mls-api-trigger-token')
 
         SONAR_SCANNER_HOME = tool 'sonarqube-scanner'
+        SONAR_TOKEN_NAME = 'sonarqube-token'
 
         // Go environment
         GO111MODULE = 'on'
@@ -40,16 +41,26 @@ pipeline {
 
         stage('Quality Checks') {
             parallel {
-                stage('SonarQube Analysis') {
-                    steps {
-                        script {
-                            withSonarQubeEnv(credentialsId: 'sonarqube-token') {
-                                sh """
-                                    ${SONAR_SCANNER_HOME}/bin/sonar-scanner \
-                                        -Dsonar.projectKey=${APP_NAME} \
-                                        -Dsonar.sources=. \
-                                        -Dsonar.exclusions=**/*_test.go,**/vendor/**,**/mock/**,**/docs/**
-                                """
+                steps {
+                    stage('SonarQube Analysis') {
+                        steps {
+                            script {
+                                withSonarQubeEnv(credentialsId: SONAR_TOKEN_NAME) {
+                                    sh """
+                                        ${SONAR_SCANNER_HOME}/bin/sonar-scanner \
+                                            -Dsonar.projectKey=${APP_NAME} \
+                                            -Dsonar.sources=. \
+                                            -Dsonar.exclusions=**/*_test.go,**/vendor/**,**/mock/**,**/docs/**
+                                    """
+                                }
+                            }
+                        }
+                    }
+                    stage('SonarQube Quality Gates') {
+                        steps {
+                            script {
+                                waitForQualityGate abortPipeline: false,
+                                credentialsId: SONAR_TOKEN_NAME
                             }
                         }
                     }
@@ -72,7 +83,7 @@ pipeline {
                         docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest
                     """
 
-                    withDockerRegistry(credentialsId: DOCKER_ACCOUNT_CRED, url: '') {
+                    withDockerRegistry(credentialsId: DOCKER_ACCOUNT_NAME, url: '') {
                         sh """
                             docker push ${IMAGE_NAME}:${IMAGE_TAG}
                             docker push ${IMAGE_NAME}:latest

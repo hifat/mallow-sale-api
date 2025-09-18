@@ -10,12 +10,12 @@ services:
          MONGO_INITDB_ROOT_PASSWORD: 123456
       volumes:
          - ./data/mongo:/data/db
-  
+
    jenkins:
-      build: 
+      build:
          context: .
          dockerfile: Dockerfile.jenkins
-      restart: always
+      # restart: always
       container_name: jenkins
       ports:
          - 8081:8080
@@ -23,3 +23,14 @@ services:
       volumes:
          - ./data/jenkins_home:/var/jenkins_home
          - /var/run/docker.sock:/var/run/docker.sock
+
+   sonarqube:
+      image: sonarqube:community
+      # restart: always
+      container_name: sonarqube
+      ports:
+         - 9000:9000
+      volumes:
+         - ./data/sonarqube/data:/opt/sonarqube/data
+         - ./data/sonarqube/logs:/opt/sonarqube/logs
+         - ./data/sonarqube/extensions:/opt/sonarqube/extensions
