@@ -41,26 +41,28 @@ pipeline {
 
         stage('Quality Checks') {
             parallel {
-                steps {
-                    stage('SonarQube Analysis') {
-                        steps {
-                            script {
-                                withSonarQubeEnv(credentialsId: SONAR_TOKEN_NAME) {
-                                    sh """
-                                        ${SONAR_SCANNER_HOME}/bin/sonar-scanner \
-                                            -Dsonar.projectKey=${APP_NAME} \
-                                            -Dsonar.sources=. \
-                                            -Dsonar.exclusions=**/*_test.go,**/vendor/**,**/mock/**,**/docs/**
-                                    """
+                stage('SonarQube') {
+                    stages {
+                        stage('Analysis') {
+                            steps {
+                                script {
+                                    withSonarQubeEnv(credentialsId: SONAR_TOKEN_NAME) {
+                                        sh """
+                                            ${SONAR_SCANNER_HOME}/bin/sonar-scanner \
+                                                -Dsonar.projectKey=${APP_NAME} \
+                                                -Dsonar.sources=. \
+                                                -Dsonar.exclusions=**/*_test.go,**/vendor/**,**/mock/**,**/docs/**
+                                        """
+                                    }
                                 }
                             }
                         }
-                    }
-                    stage('SonarQube Quality Gates') {
-                        steps {
-                            script {
-                                waitForQualityGate abortPipeline: false,
-                                credentialsId: SONAR_TOKEN_NAME
+                        stage('Quality Gate') {
+                            steps {
+                                script {
+                                    waitForQualityGate abortPipeline: false,
+                                    credentialsId: SONAR_TOKEN_NAME
+                                }
                             }
                         }
                     }
