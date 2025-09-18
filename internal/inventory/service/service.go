@@ -99,7 +99,10 @@ func (s *service) Find(ctx context.Context, query *utilsModule.QueryReq) (*handl
 func (s *service) FindByID(ctx context.Context, id string) (*handling.ResponseItem[*inventoryModule.Response], error) {
 	inventory, err := s.inventoryRepo.FindByID(ctx, id)
 	if err != nil {
-		s.logger.Error(err)
+		if !errors.Is(err, define.ErrRecordNotFound) {
+			s.logger.Error(err)
+		}
+
 		return nil, handling.ThrowErr(err)
 	}
 

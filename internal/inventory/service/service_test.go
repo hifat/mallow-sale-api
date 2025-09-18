@@ -378,3 +378,74 @@ func (s *testInventoryServiceSuite) TestInventoryService_Find() {
 		s.Require().Equal(total, res.Meta.Total)
 	})
 }
+
+func (s *testInventoryServiceSuite) TestInventoryService_FindByID() {
+	s.T().Parallel()
+
+	s.Run("failed - find inventory by id other error", func() {
+		ctx := context.Background()
+		mockID := "mock-id"
+
+		mockErr := errors.New("mock err")
+		s.mockInventoryRepo.EXPECT().
+			FindByID(ctx, mockID).
+			Return(nil, mockErr).
+			Times(1)
+
+		s.mockLogger.EXPECT().
+			Error(mockErr).
+			Times(1)
+
+		res, err := s.underTest.FindByID(ctx, mockID)
+		s.Require().Nil(res)
+		s.Require().NotNil(err)
+		s.Require().IsType(handling.ErrorResponse{}, err)
+
+		resErr := err.(handling.ErrorResponse)
+
+		s.Require().Equal(define.CodeInternalServerError, resErr.Code)
+		s.Require().Equal(define.MsgInternalServerError, resErr.Message)
+		s.Require().Equal(http.StatusInternalServerError, resErr.Status)
+	})
+
+	s.Run("failed - find inventory by id not found", func() {
+		ctx := context.Background()
+		mockID := "mock-id"
+
+		s.mockInventoryRepo.EXPECT().
+			FindByID(ctx, mockID).
+			Return(nil, define.ErrRecordNotFound).
+			Times(1)
+
+		res, err := s.underTest.FindByID(ctx, mockID)
+		s.Require().Nil(res)
+		s.Require().NotNil(err)
+		s.Require().IsType(handling.ErrorResponse{}, err)
+
+		resErr := err.(handling.ErrorResponse)
+
+		s.Require().Equal(define.CodeRecordNotFound, resErr.Code)
+		s.Require().Equal(define.MsgRecordNotFound, resErr.Message)
+		s.Require().Equal(http.StatusNotFound, resErr.Status)
+	})
+
+	s.Run("succeed - find inventory by id", func() {
+		ctx := context.Background()
+		mockID := "mock-id"
+
+		mockInventory := inventoryModule.Response{}
+		if err := gofakeit.Struct(&mockInventory); err != nil {
+			s.T().Fatal(err)
+		}
+
+		s.mockInventoryRepo.EXPECT().
+			FindByID(ctx, mockID).
+			Return(&mockInventory, nil).
+			Times(1)
+
+		res, err := s.underTest.FindByID(ctx, mockID)
+		s.Require().Nil(err)
+		s.Require().NotNil(res)
+		s.Require().Equal(&mockInventory, res.Item)
+	})
+}
