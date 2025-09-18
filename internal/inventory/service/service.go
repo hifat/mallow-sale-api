@@ -46,7 +46,6 @@ func (s *service) Create(ctx context.Context, req *inventoryModule.Request) (*ha
 			s.logger.Error(err)
 			return nil, handling.ThrowErr(err)
 		}
-
 	}
 
 	if inventory != nil {
@@ -55,8 +54,12 @@ func (s *service) Create(ctx context.Context, req *inventoryModule.Request) (*ha
 
 	usageUnit, err := s.usageUnitRepo.FindByCode(ctx, req.PurchaseUnit.Code)
 	if err != nil {
-		s.logger.Error(err)
-		return nil, handling.ThrowErr(err)
+		if !errors.Is(err, define.ErrRecordNotFound) {
+			s.logger.Error(err)
+			return nil, handling.ThrowErr(err)
+		}
+
+		return nil, handling.ThrowErrByCode(define.CodeInvalidUsageUnit)
 	}
 
 	req.PurchaseUnit.Name = usageUnit.Name

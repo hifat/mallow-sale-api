@@ -3,6 +3,7 @@ module github.com/hifat/mallow-sale-api
 go 1.23.2
 
 require (
+	github.com/brianvoe/gofakeit/v7 v7.6.0
 	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-gonic/gin v1.10.1
 	github.com/google/wire v0.6.0
