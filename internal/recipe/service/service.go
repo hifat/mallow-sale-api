@@ -31,7 +31,7 @@ type service struct {
 	inventoryRepository inventoryRepository.IRepository
 	usageUnitRepository usageUnitRepository.IRepository
 	usageUnitHelper     usageUnitHelper.Helper
-	inventoryHelper     inventoryHelper.Helper
+	inventoryHelper     inventoryHelper.IHelper
 	recipeTypeHelper    recipeHelper.RecipeTypeHelper
 }
 
@@ -41,7 +41,7 @@ func New(
 	inventoryRepository inventoryRepository.IRepository,
 	usageUnitRepository usageUnitRepository.IRepository,
 	usageUnitHelper usageUnitHelper.Helper,
-	inventoryHelper inventoryHelper.Helper,
+	inventoryHelper inventoryHelper.IHelper,
 	recipeTypeHelper recipeHelper.RecipeTypeHelper,
 ) Service {
 	return &service{

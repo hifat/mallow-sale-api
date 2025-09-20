@@ -31,7 +31,7 @@ type service struct {
 	inventoryRepository inventoryRepository.IRepository
 	supplierRepository  supplierRepository.Repository
 	usageUnitRepository usageUnitRepository.IRepository
-	inventoryHelper     inventoryHelper.Helper
+	inventoryHelper     inventoryHelper.IHelper
 	supplierHelper      supplierHelper.Helper
 	usageUnitHelper     usageUnitHelper.Helper
 	logger              logger.Logger
@@ -42,7 +42,7 @@ func New(
 	inventoryRepository inventoryRepository.IRepository,
 	supplierRepository supplierRepository.Repository,
 	usageUnitRepository usageUnitRepository.IRepository,
-	inventoryHelper inventoryHelper.Helper,
+	inventoryHelper inventoryHelper.IHelper,
 	supplierHelper supplierHelper.Helper,
 	usageUnitHelper usageUnitHelper.Helper,
 	logger logger.Logger,
