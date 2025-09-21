@@ -7,7 +7,7 @@ import (
 	recipeRepository "github.com/hifat/mallow-sale-api/internal/recipe/repository"
 )
 
-type Helper interface {
+type IHelper interface {
 	FindAndGetByID(ctx context.Context, ids []string) (func(id string) *recipeModule.Response, error)
 }
 
@@ -15,7 +15,7 @@ type helper struct {
 	recipeRepository recipeRepository.IRepository
 }
 
-func New(recipeRepository recipeRepository.IRepository) Helper {
+func New(recipeRepository recipeRepository.IRepository) IHelper {
 	return &helper{
 		recipeRepository: recipeRepository,
 	}

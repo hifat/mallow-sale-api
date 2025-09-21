@@ -32,9 +32,9 @@ type service struct {
 	supplierRepository  supplierRepository.IRepository
 	usageUnitRepository usageUnitRepository.IRepository
 	inventoryHelper     inventoryHelper.IHelper
-	supplierHelper      supplierHelper.Helper
-	usageUnitHelper     usageUnitHelper.Helper
-	logger              logger.Logger
+	supplierHelper      supplierHelper.IHelper
+	usageUnitHelper     usageUnitHelper.IHelper
+	logger              logger.ILogger
 }
 
 func New(
@@ -43,9 +43,9 @@ func New(
 	supplierRepository supplierRepository.IRepository,
 	usageUnitRepository usageUnitRepository.IRepository,
 	inventoryHelper inventoryHelper.IHelper,
-	supplierHelper supplierHelper.Helper,
-	usageUnitHelper usageUnitHelper.Helper,
-	logger logger.Logger,
+	supplierHelper supplierHelper.IHelper,
+	usageUnitHelper usageUnitHelper.IHelper,
+	logger logger.ILogger,
 ) IService {
 	return &service{
 		stockRepository:     stockRepository,

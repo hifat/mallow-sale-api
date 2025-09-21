@@ -7,7 +7,7 @@ import (
 	supplierRepository "github.com/hifat/mallow-sale-api/internal/supplier/repository"
 )
 
-type Helper interface {
+type IHelper interface {
 	FindAndGetByID(ctx context.Context, ids []string) (func(id string) *supplierModule.Response, error)
 }
 
@@ -15,7 +15,7 @@ type helper struct {
 	supplierRepository supplierRepository.IRepository
 }
 
-func New(supplierRepository supplierRepository.IRepository) Helper {
+func New(supplierRepository supplierRepository.IRepository) IHelper {
 	return &helper{
 		supplierRepository: supplierRepository,
 	}

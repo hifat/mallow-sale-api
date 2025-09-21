@@ -6,7 +6,7 @@ import (
 )
 
 //go:generate mockgen -source=./logger.go -destination=./mock/logger.go -package=mockLogger
-type Logger interface {
+type ILogger interface {
 	Info(args ...interface{})
 	Infof(template string, args ...interface{})
 	Error(args ...interface{})
@@ -36,7 +36,7 @@ func init() {
 	}
 }
 
-func New() Logger {
+func New() ILogger {
 	return &zapLogger{
 		sugar: log.Sugar(),
 	}

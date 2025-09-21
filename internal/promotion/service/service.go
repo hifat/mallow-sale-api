@@ -21,15 +21,15 @@ type IService interface {
 }
 
 type service struct {
-	logger              logger.Logger
+	logger              logger.ILogger
 	promotionRepository promotionRepository.IRepository
-	recipeHelper        recipeHelper.Helper
+	recipeHelper        recipeHelper.IHelper
 }
 
 func New(
-	logger logger.Logger,
+	logger logger.ILogger,
 	promotionRepository promotionRepository.IRepository,
-	recipeHelper recipeHelper.Helper,
+	recipeHelper recipeHelper.IHelper,
 ) IService {
 	return &service{
 		logger:              logger,

@@ -26,21 +26,21 @@ type IService interface {
 }
 
 type service struct {
-	logger              logger.Logger
+	logger              logger.ILogger
 	recipeRepository    recipeRepository.IRepository
 	inventoryRepository inventoryRepository.IRepository
 	usageUnitRepository usageUnitRepository.IRepository
-	usageUnitHelper     usageUnitHelper.Helper
+	usageUnitHelper     usageUnitHelper.IHelper
 	inventoryHelper     inventoryHelper.IHelper
 	recipeTypeHelper    recipeHelper.RecipeTypeHelper
 }
 
 func New(
-	logger logger.Logger,
+	logger logger.ILogger,
 	recipeRepository recipeRepository.IRepository,
 	inventoryRepository inventoryRepository.IRepository,
 	usageUnitRepository usageUnitRepository.IRepository,
-	usageUnitHelper usageUnitHelper.Helper,
+	usageUnitHelper usageUnitHelper.IHelper,
 	inventoryHelper inventoryHelper.IHelper,
 	recipeTypeHelper recipeHelper.RecipeTypeHelper,
 ) IService {

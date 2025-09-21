@@ -22,13 +22,13 @@ type IService interface {
 }
 
 type service struct {
-	logger        logger.Logger
+	logger        logger.ILogger
 	inventoryRepo inventoryRepository.IRepository
 	usageUnitRepo usageUnitRepository.IRepository
 }
 
 func New(
-	logger logger.Logger,
+	logger logger.ILogger,
 	inventoryRepo inventoryRepository.IRepository,
 	usageUnitRepo usageUnitRepository.IRepository,
 ) IService {

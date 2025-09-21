@@ -12,10 +12,10 @@ type IService interface {
 
 type service struct {
 	repo   settingModule.IRepository
-	logger logger.Logger
+	logger logger.ILogger
 }
 
-func New(repo settingModule.IRepository, logger logger.Logger) IService {
+func New(repo settingModule.IRepository, logger logger.ILogger) IService {
 	return &service{repo: repo, logger: logger}
 }
 

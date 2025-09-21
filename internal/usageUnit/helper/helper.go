@@ -8,20 +8,19 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 )
 
-type Helper interface {
-	// Returns a function that maps usage unit codes to their names
+type IHelper interface {
 	GetNameByCode(ctx context.Context, findInCodes []string) (func(code string) (name string), error)
 }
 
 type helper struct {
-	logger              logger.Logger
+	logger              logger.ILogger
 	usageUnitRepository usageUnitRepository.IRepository
 }
 
 func New(
-	logger logger.Logger,
+	logger logger.ILogger,
 	usageUnitRepository usageUnitRepository.IRepository,
-) Helper {
+) IHelper {
 	return &helper{
 		logger:              logger,
 		usageUnitRepository: usageUnitRepository,

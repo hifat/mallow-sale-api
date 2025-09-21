@@ -20,12 +20,12 @@ type IService interface {
 
 type service struct {
 	supplierRepository supplierRepository.IRepository
-	logger             logger.Logger
+	logger             logger.ILogger
 }
 
 func New(
 	supplierRepository supplierRepository.IRepository,
-	logger logger.Logger,
+	logger logger.ILogger,
 ) IService {
 	return &service{
 		supplierRepository: supplierRepository,
