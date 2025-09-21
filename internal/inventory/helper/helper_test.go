@@ -159,3 +159,133 @@ func (s *testInventoryHelperSuite) TestInventoryHelper_calPurchasePrice() {
 		s.Require().Equal(utils.RoundToDecimals(inventory.PurchasePrice-reqPurchasePrice, 3), currentPrice)
 	})
 }
+
+func (s *testInventoryHelperSuite) TestInventoryHelper_IncreaseStock() {
+	s.T().Parallel()
+
+	reqPurchaseQuantity := float64(44)
+	reqPurchasePrice := float64(55)
+
+	s.Run("failed - find inventory by id error", func() {
+		ctx := context.Background()
+		inventoryID := "mock-id"
+
+		mockErr := errors.New("mock-err")
+		s.mockInventoryRepo.EXPECT().
+			FindByID(ctx, inventoryID).
+			Return(nil, mockErr).
+			Times(1)
+
+		err := s.underTest.IncreaseStock(ctx, inventoryID, reqPurchaseQuantity, reqPurchasePrice)
+		s.Require().NotNil(err)
+		s.Require().Equal(mockErr.Error(), err.Error())
+	})
+
+	s.Run("failed - update inventory stock error", func() {
+		ctx := context.Background()
+		inventoryID := "mock-id"
+
+		s.mockInventoryRepo.EXPECT().
+			FindByID(ctx, inventoryID).
+			Return(&inventoryModule.Response{}, nil).
+			Times(1)
+
+		mockErr := errors.New("mock-err")
+		s.mockInventoryRepo.EXPECT().
+			UpdateStock(ctx, inventoryID, reqPurchaseQuantity, reqPurchasePrice).
+			Return(mockErr).
+			Times(1)
+
+		err := s.underTest.IncreaseStock(ctx, inventoryID, reqPurchaseQuantity, reqPurchasePrice)
+		s.Require().NotNil(err)
+		s.Require().Equal(mockErr.Error(), err.Error())
+	})
+
+	s.Run("succeed - update inventory stock", func() {
+		ctx := context.Background()
+		inventoryID := "mock-id"
+
+		s.mockInventoryRepo.EXPECT().
+			FindByID(ctx, inventoryID).
+			Return(&inventoryModule.Response{}, nil).
+			Times(1)
+
+		s.mockInventoryRepo.EXPECT().
+			UpdateStock(ctx, inventoryID, reqPurchaseQuantity, reqPurchasePrice).
+			Return(nil).
+			Times(1)
+
+		err := s.underTest.IncreaseStock(ctx, inventoryID, reqPurchaseQuantity, reqPurchasePrice)
+		s.Require().Nil(err)
+	})
+}
+
+func (s *testInventoryHelperSuite) TestInventoryHelper_DecreaseStock() {
+	s.T().Parallel()
+
+	reqPurchasePrice := float64(40)
+	reqPurchaseQuantity := float64(50)
+
+	s.Run("failed - find inventory by id error", func() {
+		ctx := context.Background()
+		inventoryID := "mock-id"
+
+		mockErr := errors.New("mock-err")
+		s.mockInventoryRepo.EXPECT().
+			FindByID(ctx, inventoryID).
+			Return(nil, mockErr).
+			Times(1)
+
+		err := s.underTest.DecreaseStock(ctx, inventoryID, reqPurchaseQuantity, reqPurchasePrice)
+		s.Require().NotNil(err)
+		s.Require().Equal(mockErr.Error(), err.Error())
+	})
+
+	s.Run("failed - update inventory stock error", func() {
+		ctx := context.Background()
+		inventoryID := "mock-id"
+
+		s.mockInventoryRepo.EXPECT().
+			FindByID(ctx, inventoryID).
+			Return(&inventoryModule.Response{
+				Prototype: inventoryModule.Prototype{
+					PurchasePrice:    50,
+					PurchaseQuantity: 60,
+				},
+			}, nil).
+			Times(1)
+
+		mockErr := errors.New("mock-err")
+		s.mockInventoryRepo.EXPECT().
+			UpdateStock(ctx, inventoryID, float64(10), float64(10)).
+			Return(mockErr).
+			Times(1)
+
+		err := s.underTest.DecreaseStock(ctx, inventoryID, reqPurchaseQuantity, reqPurchasePrice)
+		s.Require().NotNil(err)
+		s.Require().Equal(mockErr.Error(), err.Error())
+	})
+
+	s.Run("succeed - update inventory stock", func() {
+		ctx := context.Background()
+		inventoryID := "mock-id"
+
+		s.mockInventoryRepo.EXPECT().
+			FindByID(ctx, inventoryID).
+			Return(&inventoryModule.Response{
+				Prototype: inventoryModule.Prototype{
+					PurchasePrice:    50,
+					PurchaseQuantity: 60,
+				},
+			}, nil).
+			Times(1)
+
+		s.mockInventoryRepo.EXPECT().
+			UpdateStock(ctx, inventoryID, float64(10), float64(10)).
+			Return(nil).
+			Times(1)
+
+		err := s.underTest.DecreaseStock(ctx, inventoryID, reqPurchaseQuantity, reqPurchasePrice)
+		s.Require().Nil(err)
+	})
+}
