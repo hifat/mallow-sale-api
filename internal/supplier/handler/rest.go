@@ -9,10 +9,10 @@ import (
 )
 
 type Rest struct {
-	supplierService supplierService.Service
+	supplierService supplierService.IService
 }
 
-func NewRest(supplierService supplierService.Service) *Rest {
+func NewRest(supplierService supplierService.IService) *Rest {
 	return &Rest{supplierService: supplierService}
 }
 

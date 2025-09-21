@@ -19,7 +19,7 @@ type mongoRepository struct {
 	db *mongo.Database
 }
 
-func NewMongo(db *mongo.Database) Repository {
+func NewMongo(db *mongo.Database) IRepository {
 	return &mongoRepository{db: db}
 }
 
@@ -108,10 +108,10 @@ func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq)
 					Code: promotion.Type.Code,
 					Name: promotion.Type.Name,
 				},
-				Name:     promotion.Name,
-				Detail:   promotion.Detail,
-				Discount: promotion.Discount,
-				Price:    promotion.Price,
+				Name:      promotion.Name,
+				Detail:    promotion.Detail,
+				Discount:  promotion.Discount,
+				Price:     promotion.Price,
 				CreatedAt: promotion.CreatedAt.Format(time.RFC3339),
 				UpdatedAt: promotion.UpdatedAt.Format(time.RFC3339),
 			},
@@ -138,16 +138,16 @@ func (r *mongoRepository) FindByID(ctx context.Context, id string) (*promotionMo
 
 	response := &promotionModule.Response{
 		ProtoType: promotionModule.ProtoType{
-			ID:       promotion.ID.Hex(),
-			Type:     promotionModule.PromotionTypeResponse{
+			ID: promotion.ID.Hex(),
+			Type: promotionModule.PromotionTypeResponse{
 				ID:   promotion.Type.ID.Hex(),
 				Code: promotion.Type.Code,
 				Name: promotion.Type.Name,
 			},
-			Name:     promotion.Name,
-			Detail:   promotion.Detail,
-			Discount: promotion.Discount,
-			Price:    promotion.Price,
+			Name:      promotion.Name,
+			Detail:    promotion.Detail,
+			Discount:  promotion.Discount,
+			Price:     promotion.Price,
 			CreatedAt: promotion.CreatedAt.Format(time.RFC3339),
 			UpdatedAt: promotion.UpdatedAt.Format(time.RFC3339),
 		},

@@ -12,10 +12,10 @@ type Helper interface {
 }
 
 type helper struct {
-	supplierRepository supplierRepository.Repository
+	supplierRepository supplierRepository.IRepository
 }
 
-func New(supplierRepository supplierRepository.Repository) Helper {
+func New(supplierRepository supplierRepository.IRepository) Helper {
 	return &helper{
 		supplierRepository: supplierRepository,
 	}

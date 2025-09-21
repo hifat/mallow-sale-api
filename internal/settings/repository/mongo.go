@@ -13,7 +13,7 @@ type mongoRepository struct {
 	db *mongo.Database
 }
 
-func NewMongo(db *mongo.Database) settingModule.Repository {
+func NewMongo(db *mongo.Database) settingModule.IRepository {
 	return &mongoRepository{db: db}
 }
 

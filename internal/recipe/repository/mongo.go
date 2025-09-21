@@ -21,7 +21,7 @@ type mongoRepository struct {
 	db *mongo.Database
 }
 
-func NewMongo(db *mongo.Database) Repository {
+func NewMongo(db *mongo.Database) IRepository {
 	return &mongoRepository{db: db}
 }
 

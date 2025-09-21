@@ -12,10 +12,10 @@ type Helper interface {
 }
 
 type helper struct {
-	recipeRepository recipeRepository.Repository
+	recipeRepository recipeRepository.IRepository
 }
 
-func New(recipeRepository recipeRepository.Repository) Helper {
+func New(recipeRepository recipeRepository.IRepository) Helper {
 	return &helper{
 		recipeRepository: recipeRepository,
 	}

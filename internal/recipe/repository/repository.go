@@ -7,7 +7,7 @@ import (
 	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 )
 
-type Repository interface {
+type IRepository interface {
 	Create(ctx context.Context, recipe *recipeModule.Request) error
 	Find(ctx context.Context, query *recipeModule.QueryReq) ([]recipeModule.Response, error)
 	FindInIDs(ctx context.Context, ids []string) ([]recipeModule.Response, error)

@@ -12,7 +12,7 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 )
 
-type Service interface {
+type IService interface {
 	Create(ctx context.Context, req *promotionModule.Request) (*handling.ResponseItem[*promotionModule.Request], error)
 	Find(ctx context.Context, query *utilsModule.QueryReq) (*handling.ResponseItems[promotionModule.Response], error)
 	FindByID(ctx context.Context, id string) (*handling.ResponseItem[*promotionModule.Response], error)
@@ -22,15 +22,15 @@ type Service interface {
 
 type service struct {
 	logger              logger.Logger
-	promotionRepository promotionRepository.Repository
+	promotionRepository promotionRepository.IRepository
 	recipeHelper        recipeHelper.Helper
 }
 
 func New(
 	logger logger.Logger,
-	promotionRepository promotionRepository.Repository,
+	promotionRepository promotionRepository.IRepository,
 	recipeHelper recipeHelper.Helper,
-) Service {
+) IService {
 	return &service{
 		logger:              logger,
 		promotionRepository: promotionRepository,

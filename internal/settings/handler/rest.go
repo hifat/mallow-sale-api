@@ -10,10 +10,10 @@ import (
 )
 
 type Rest struct {
-	service settingService.Service
+	service settingService.IService
 }
 
-func NewRest(service settingService.Service) *Rest {
+func NewRest(service settingService.IService) *Rest {
 	return &Rest{service: service}
 }
 

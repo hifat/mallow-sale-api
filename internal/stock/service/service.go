@@ -18,7 +18,7 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/utils"
 )
 
-type Service interface {
+type IService interface {
 	Create(ctx context.Context, req *stockModule.Request) (*handling.ResponseItem[*stockModule.Request], error)
 	Find(ctx context.Context, query *utilsModule.QueryReq) (*handling.ResponseItems[stockModule.Response], error)
 	FindByID(ctx context.Context, id string) (*handling.ResponseItem[*stockModule.Response], error)
@@ -27,9 +27,9 @@ type Service interface {
 }
 
 type service struct {
-	stockRepository     stockRepository.Repository
+	stockRepository     stockRepository.IRepository
 	inventoryRepository inventoryRepository.IRepository
-	supplierRepository  supplierRepository.Repository
+	supplierRepository  supplierRepository.IRepository
 	usageUnitRepository usageUnitRepository.IRepository
 	inventoryHelper     inventoryHelper.IHelper
 	supplierHelper      supplierHelper.Helper
@@ -38,15 +38,15 @@ type service struct {
 }
 
 func New(
-	stockRepository stockRepository.Repository,
+	stockRepository stockRepository.IRepository,
 	inventoryRepository inventoryRepository.IRepository,
-	supplierRepository supplierRepository.Repository,
+	supplierRepository supplierRepository.IRepository,
 	usageUnitRepository usageUnitRepository.IRepository,
 	inventoryHelper inventoryHelper.IHelper,
 	supplierHelper supplierHelper.Helper,
 	usageUnitHelper usageUnitHelper.Helper,
 	logger logger.Logger,
-) Service {
+) IService {
 	return &service{
 		stockRepository:     stockRepository,
 		inventoryRepository: inventoryRepository,

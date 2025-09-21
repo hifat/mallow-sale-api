@@ -8,10 +8,10 @@ import (
 )
 
 type Rest struct {
-	recipeService recipeService.Service
+	recipeService recipeService.IService
 }
 
-func NewRest(recipeService recipeService.Service) *Rest {
+func NewRest(recipeService recipeService.IService) *Rest {
 	return &Rest{recipeService: recipeService}
 }
 

@@ -5,17 +5,17 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 )
 
-type Service interface {
+type IService interface {
 	Update(costPercentage float32) error
 	Get() (*settingModule.Response, error)
 }
 
 type service struct {
-	repo   settingModule.Repository
+	repo   settingModule.IRepository
 	logger logger.Logger
 }
 
-func New(repo settingModule.Repository, logger logger.Logger) Service {
+func New(repo settingModule.IRepository, logger logger.Logger) IService {
 	return &service{repo: repo, logger: logger}
 }
 

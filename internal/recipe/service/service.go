@@ -16,7 +16,7 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 )
 
-type Service interface {
+type IService interface {
 	Create(ctx context.Context, req *recipeModule.Request) (*handling.ResponseItem[*recipeModule.Request], error)
 	Find(ctx context.Context, query *recipeModule.QueryReq) (*handling.ResponseItems[recipeModule.Response], error)
 	FindByID(ctx context.Context, id string) (*handling.ResponseItem[*recipeModule.Response], error)
@@ -27,7 +27,7 @@ type Service interface {
 
 type service struct {
 	logger              logger.Logger
-	recipeRepository    recipeRepository.Repository
+	recipeRepository    recipeRepository.IRepository
 	inventoryRepository inventoryRepository.IRepository
 	usageUnitRepository usageUnitRepository.IRepository
 	usageUnitHelper     usageUnitHelper.Helper
@@ -37,13 +37,13 @@ type service struct {
 
 func New(
 	logger logger.Logger,
-	recipeRepository recipeRepository.Repository,
+	recipeRepository recipeRepository.IRepository,
 	inventoryRepository inventoryRepository.IRepository,
 	usageUnitRepository usageUnitRepository.IRepository,
 	usageUnitHelper usageUnitHelper.Helper,
 	inventoryHelper inventoryHelper.IHelper,
 	recipeTypeHelper recipeHelper.RecipeTypeHelper,
-) Service {
+) IService {
 	return &service{
 		logger:              logger,
 		recipeRepository:    recipeRepository,
