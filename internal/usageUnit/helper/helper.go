@@ -4,7 +4,6 @@ import (
 	"context"
 
 	usageUnitRepository "github.com/hifat/mallow-sale-api/internal/usageUnit/repository"
-	"github.com/hifat/mallow-sale-api/pkg/handling"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 )
 
@@ -13,24 +12,24 @@ type IHelper interface {
 }
 
 type helper struct {
-	logger              logger.ILogger
-	usageUnitRepository usageUnitRepository.IRepository
+	logger        logger.ILogger
+	usageUnitRepo usageUnitRepository.IRepository
 }
 
 func New(
 	logger logger.ILogger,
-	usageUnitRepository usageUnitRepository.IRepository,
+	usageUnitRepo usageUnitRepository.IRepository,
 ) IHelper {
 	return &helper{
-		logger:              logger,
-		usageUnitRepository: usageUnitRepository,
+		logger:        logger,
+		usageUnitRepo: usageUnitRepo,
 	}
 }
 
 func (h *helper) GetNameByCode(ctx context.Context, findInCodes []string) (func(code string) (name string), error) {
-	usageUnits, err := h.usageUnitRepository.FindInCodes(ctx, findInCodes)
+	usageUnits, err := h.usageUnitRepo.FindInCodes(ctx, findInCodes)
 	if err != nil {
-		return nil, handling.ThrowErr(err)
+		return nil, err
 	}
 
 	mapUsageUnit := make(map[string]string)

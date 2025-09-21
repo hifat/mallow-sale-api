@@ -7,6 +7,6 @@ type UsageUnitReq struct {
 }
 
 type Prototype struct {
-	Code string `json:"code"`
-	Name string `json:"name"`
+	Code string `fake:"{lettern:5}" json:"code"`
+	Name string `fake:"{name}" json:"name"`
 }
