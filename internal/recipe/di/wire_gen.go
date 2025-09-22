@@ -23,16 +23,16 @@ import (
 // Injectors from wire.go:
 
 func Init(cfg *config.Config, db *mongo.Database) *recipeHandler.Handler {
-	loggerLogger := logger.New()
-	repository := recipeRepository.NewMongo(db)
-	inventoryRepositoryRepository := inventoryRepository.NewMongo(db)
-	usageUnitRepositoryRepository := usageUnitRepository.NewMongo(db)
-	usageUnitHelperHelper := usageUnitHelper.New(loggerLogger, usageUnitRepositoryRepository)
-	helperHelper := helper.New(inventoryRepositoryRepository)
+	iLogger := logger.New()
+	iRepository := recipeRepository.NewMongo(db)
+	inventoryRepositoryIRepository := inventoryRepository.NewMongo(db)
+	usageUnitRepositoryIRepository := usageUnitRepository.NewMongo(db)
+	iHelper := usageUnitHelper.New(iLogger, usageUnitRepositoryIRepository)
+	helperIHelper := helper.New(inventoryRepositoryIRepository)
 	typeRepository := recipeRepository.NewTypeMongo(db)
 	recipeTypeHelper := recipeHelper.NewRecipeTypeHelper(typeRepository)
-	serviceService := service.New(loggerLogger, repository, inventoryRepositoryRepository, usageUnitRepositoryRepository, usageUnitHelperHelper, helperHelper, recipeTypeHelper)
-	rest := recipeHandler.NewRest(serviceService)
+	iService := service.New(iLogger, iRepository, inventoryRepositoryIRepository, usageUnitRepositoryIRepository, iHelper, helperIHelper, recipeTypeHelper)
+	rest := recipeHandler.NewRest(iService)
 	handler := recipeHandler.New(rest)
 	return handler
 }

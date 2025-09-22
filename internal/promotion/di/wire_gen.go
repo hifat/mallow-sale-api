@@ -20,12 +20,12 @@ import (
 // Injectors from wire.go:
 
 func Init(cfg *config.Config, db *mongo.Database) *promotionHandler.Handler {
-	loggerLogger := logger.New()
-	repository := promotionRepository.NewMongo(db)
-	recipeRepositoryRepository := recipeRepository.NewMongo(db)
-	helper := recipeHelper.New(recipeRepositoryRepository)
-	serviceService := service.New(loggerLogger, repository, helper)
-	rest := promotionHandler.NewRest(serviceService)
+	iLogger := logger.New()
+	iRepository := promotionRepository.NewMongo(db)
+	recipeRepositoryIRepository := recipeRepository.NewMongo(db)
+	iHelper := recipeHelper.New(recipeRepositoryIRepository)
+	iService := service.New(iLogger, iRepository, iHelper)
+	rest := promotionHandler.NewRest(iService)
 	handler := promotionHandler.New(rest)
 	return handler
 }

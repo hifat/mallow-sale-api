@@ -7,6 +7,7 @@ import (
 	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 )
 
+//go:generate mockgen -source=./repository.go -destination=./mock/repository.go -package=mockSupplierRepository
 type IRepository interface {
 	Create(ctx context.Context, req *supplierModule.Request) error
 	Find(ctx context.Context, query *utilsModule.QueryReq) ([]supplierModule.Response, error)

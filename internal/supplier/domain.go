@@ -3,14 +3,14 @@ package supplierModule
 import "time"
 
 type Request struct {
-	Name   string `validate:"required" json:"name"`
-	ImgUrl string `json:"imgUrl"`
+	Name   string `fake:"{name}" validate:"required" json:"name"`
+	ImgUrl string `fake:"{url}" json:"imgUrl"`
 }
 
 type Prototype struct {
-	ID        string     `json:"id"`
-	Name      string     `json:"name"`
-	ImgUrl    string     `json:"imgUrl"`
+	ID        string     `fake:"{uuid}" json:"id"`
+	Name      string     `fake:"{name}" json:"name"`
+	ImgUrl    string     `fake:"{url}" json:"imgUrl"`
 	CreatedAt *time.Time `json:"createdAt"`
 	UpdatedAt *time.Time `json:"updatedAt"`
 }

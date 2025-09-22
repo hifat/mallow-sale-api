@@ -24,16 +24,16 @@ import (
 // Injectors from wire.go:
 
 func Init(cfg *config.Config, db *mongo.Database) *stockHandler.Handler {
-	repository := stockRepository.NewMongo(db)
-	inventoryRepositoryRepository := inventoryRepository.NewMongo(db)
-	supplierRepositoryRepository := supplierRepository.NewMongo(db)
-	usageUnitRepositoryRepository := usageUnitRepository.NewMongo(db)
-	helperHelper := helper.New(inventoryRepositoryRepository)
-	supplierHelperHelper := supplierHelper.New(supplierRepositoryRepository)
-	loggerLogger := logger.New()
-	usageUnitHelperHelper := usageUnitHelper.New(loggerLogger, usageUnitRepositoryRepository)
-	service := stockService.New(repository, inventoryRepositoryRepository, supplierRepositoryRepository, usageUnitRepositoryRepository, helperHelper, supplierHelperHelper, usageUnitHelperHelper, loggerLogger)
-	rest := stockHandler.NewRest(service)
+	iRepository := stockRepository.NewMongo(db)
+	inventoryRepositoryIRepository := inventoryRepository.NewMongo(db)
+	supplierRepositoryIRepository := supplierRepository.NewMongo(db)
+	usageUnitRepositoryIRepository := usageUnitRepository.NewMongo(db)
+	iHelper := helper.New(inventoryRepositoryIRepository)
+	supplierHelperIHelper := supplierHelper.New(supplierRepositoryIRepository)
+	iLogger := logger.New()
+	usageUnitHelperIHelper := usageUnitHelper.New(iLogger, usageUnitRepositoryIRepository)
+	iService := stockService.New(iRepository, inventoryRepositoryIRepository, supplierRepositoryIRepository, usageUnitRepositoryIRepository, iHelper, supplierHelperIHelper, usageUnitHelperIHelper, iLogger)
+	rest := stockHandler.NewRest(iService)
 	handler := stockHandler.New(rest)
 	return handler
 }

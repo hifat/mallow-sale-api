@@ -17,9 +17,9 @@ import (
 // Injectors from wire.go:
 
 func InitializeSettingsRest(db *mongo.Database) *settingsHandler.Rest {
-	repository := settingRepository.NewMongo(db)
-	loggerLogger := logger.New()
-	service := settingService.New(repository, loggerLogger)
-	rest := settingsHandler.NewRest(service)
+	iRepository := settingRepository.NewMongo(db)
+	iLogger := logger.New()
+	iService := settingService.New(iRepository, iLogger)
+	rest := settingsHandler.NewRest(iService)
 	return rest
 }
