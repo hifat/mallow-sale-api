@@ -97,7 +97,7 @@ func main() {
 			log.Fatalf("Failed to start server: %v", err)
 		}
 
-		fmt.Sprintf("Listening on port: %s", cfg.App.Port)
+		log.Printf("\nListening on port: %s", cfg.App.Port)
 	}()
 
 	// Wait for interrupt signal to gracefully shutdown the server
