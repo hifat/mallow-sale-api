@@ -14,7 +14,7 @@ Mallow Sale API is a Go-based REST API service for managing recipes and inventor
 
 ## Quick Start
 
-1. Create a `.env` file and modify it (if you don't change any configuration, you can use the default values)
+1. Create a `.env` file and modify it and change `DB_HOST` to `host.docker.internal`
 
 ```sh
 cp ./env/.env.example ./env/.env
