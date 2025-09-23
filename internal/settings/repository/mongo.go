@@ -13,19 +13,13 @@ type mongoRepository struct {
 	db *mongo.Database
 }
 
-func NewMongo(db *mongo.Database) settingModule.IRepository {
+func NewMongo(db *mongo.Database) IRepository {
 	return &mongoRepository{db: db}
 }
 
-func (r *mongoRepository) Update(costPercentage float32) error {
-	update := bson.M{"$set": bson.M{"cost_percentage": costPercentage}}
-	_, err := r.db.Collection("settings").UpdateOne(context.Background(), bson.M{}, update, &options.UpdateOptions{Upsert: new(bool)})
-	return err
-}
-
-func (r *mongoRepository) Get() (*settingModule.Response, error) {
+func (r *mongoRepository) Find(ctx context.Context) (*settingModule.Response, error) {
 	var settings settingModule.Entity
-	err := r.db.Collection("settings").FindOne(context.Background(), bson.M{}).Decode(&settings)
+	err := r.db.Collection("settings").FindOne(ctx, bson.M{}).Decode(&settings)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return &settingModule.Response{CostPercentage: 0}, nil
@@ -37,4 +31,10 @@ func (r *mongoRepository) Get() (*settingModule.Response, error) {
 	return &settingModule.Response{
 		CostPercentage: settings.CostPercentage,
 	}, nil
+}
+
+func (r *mongoRepository) Update(ctx context.Context, costPercentage float32) error {
+	update := bson.M{"$set": bson.M{"cost_percentage": costPercentage}}
+	_, err := r.db.Collection("settings").UpdateOne(ctx, bson.M{}, update, &options.UpdateOptions{Upsert: new(bool)})
+	return err
 }

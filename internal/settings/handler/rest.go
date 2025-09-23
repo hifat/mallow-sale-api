@@ -32,10 +32,12 @@ func (h *Rest) Update(c *gin.Context) {
 		handling.ResponseFormErr(c, err)
 		return
 	}
-	if err := h.service.Update(req.CostPercentage); err != nil {
+
+	if err := h.service.Update(c.Request.Context(), req.CostPercentage); err != nil {
 		handling.ResponseErr(c, err)
 		return
 	}
+
 	handling.ResponseSuccess(c, nil)
 }
 
@@ -47,10 +49,11 @@ func (h *Rest) Update(c *gin.Context) {
 // @Failure      500 {object} handling.ErrorResponse
 // @Router       /settings [get]
 func (h *Rest) Get(c *gin.Context) {
-	settings, err := h.service.Get()
+	res, err := h.service.Find(c.Request.Context())
 	if err != nil {
 		handling.ResponseErr(c, err)
 		return
 	}
-	c.JSON(http.StatusOK, settings)
+
+	c.JSON(http.StatusOK, res)
 }

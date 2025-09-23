@@ -1,38 +1,46 @@
 package settingService
 
 import (
+	"context"
+
 	settingModule "github.com/hifat/mallow-sale-api/internal/settings"
+	settingRepository "github.com/hifat/mallow-sale-api/internal/settings/repository"
+	"github.com/hifat/mallow-sale-api/pkg/handling"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 )
 
 type IService interface {
-	Update(costPercentage float32) error
-	Get() (*settingModule.Response, error)
+	Update(ctx context.Context, costPercentage float32) error
+	Find(ctx context.Context) (*handling.ResponseItem[*settingModule.Response], error)
 }
 
 type service struct {
-	repo   settingModule.IRepository
-	logger logger.ILogger
+	settingRepo settingRepository.IRepository
+	logger      logger.ILogger
 }
 
-func New(repo settingModule.IRepository, logger logger.ILogger) IService {
-	return &service{repo: repo, logger: logger}
+func New(settingRepo settingRepository.IRepository, logger logger.ILogger) IService {
+	return &service{settingRepo: settingRepo, logger: logger}
 }
 
-func (s *service) Update(costPercentage float32) error {
-	err := s.repo.Update(costPercentage)
+func (s *service) Update(ctx context.Context, costPercentage float32) error {
+	err := s.settingRepo.Update(ctx, costPercentage)
 	if err != nil {
 		s.logger.Error(err)
+		return handling.ThrowErr(err)
 	}
 
-	return err
+	return nil
 }
 
-func (s *service) Get() (*settingModule.Response, error) {
-	settings, err := s.repo.Get()
+func (s *service) Find(ctx context.Context) (*handling.ResponseItem[*settingModule.Response], error) {
+	setting, err := s.settingRepo.Find(ctx)
 	if err != nil {
 		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
 	}
 
-	return settings, err
+	return &handling.ResponseItem[*settingModule.Response]{
+		Item: setting,
+	}, nil
 }
