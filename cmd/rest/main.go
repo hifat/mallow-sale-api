@@ -96,6 +96,8 @@ func main() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("Failed to start server: %v", err)
 		}
+
+		fmt.Sprintf("Listening on port: %s", cfg.App.Port)
 	}()
 
 	// Wait for interrupt signal to gracefully shutdown the server

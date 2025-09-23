@@ -35,6 +35,16 @@ services:
          - '50000:50000'
       networks:
          - jenkins
+   
+   sonarqube:
+      image: sonarqube:community
+      container_name: sonarqube
+      ports:
+         - 9000:9000
+      volumes:
+         - ./data/sonarqube/data:/opt/sonarqube/data
+         - ./data/sonarqube/logs:/opt/sonarqube/logs
+         - ./data/sonarqube/extensions:/opt/sonarqube/extensions
 
 networks:
    jenkins:

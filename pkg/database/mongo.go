@@ -33,8 +33,6 @@ func NewMongo(cfg config.DB) (*mongo.Database, func(), error) {
 		uri += fmt.Sprintf("&ssl=%s", cfg.SSLMode)
 	}
 
-	fmt.Printf("Connecting to MongoDB: %s\n", uri)
-
 	clientOpts := options.Client().
 		ApplyURI(uri).
 		SetServerSelectionTimeout(5 * time.Second).

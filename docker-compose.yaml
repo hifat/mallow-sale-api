@@ -11,26 +11,14 @@ services:
       volumes:
          - ./data/mongo:/data/db
 
-   jenkins:
-      build:
+   mls-api:
+      build: 
          context: .
-         dockerfile: Dockerfile.jenkins
-      # restart: always
-      container_name: jenkins
+         dockerfile: Dockerfile
+      container_name: mallow-sale-api
       ports:
-         - 8081:8080
-         - 50000:50000
+         - 4001:4000
       volumes:
-         - ./data/jenkins_home:/var/jenkins_home
-         - /var/run/docker.sock:/var/run/docker.sock
-
-   sonarqube:
-      image: sonarqube:community
-      # restart: always
-      container_name: sonarqube
-      ports:
-         - 9000:9000
-      volumes:
-         - ./data/sonarqube/data:/opt/sonarqube/data
-         - ./data/sonarqube/logs:/opt/sonarqube/logs
-         - ./data/sonarqube/extensions:/opt/sonarqube/extensions
+         - ./env:/app/env
+      command: ["--envPath", "/app/env/.env"]
+      restart: always

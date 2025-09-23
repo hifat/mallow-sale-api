@@ -15,4 +15,4 @@ COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 USER nonroot
 
-ENTRYPOINT ["/rest", "--envPath", "/env/.env"]
+ENTRYPOINT ["/rest"]
