@@ -25,3 +25,5 @@ cp ./env/.env.example ./env/.env
 ```sh
 docker compose up
 ```
+
+3. See the Swagger `http://localhost:4000/swagger/index.html#/`
