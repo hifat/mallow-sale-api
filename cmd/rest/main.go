@@ -75,14 +75,12 @@ func main() {
 	r.Use(gin.Recovery())
 	r.Use(cors.New(configCors()))
 
-	// Add Swagger documentation route
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	v1 := r.Group("/api/v1")
 
 	router.RegisterAll(v1, cfg, db)
 
-	// Create a server instance for graceful shutdown
 	srv := &http.Server{
 		Addr:           fmt.Sprintf(":%s", cfg.App.Port),
 		Handler:        r,
@@ -91,7 +89,6 @@ func main() {
 		MaxHeaderBytes: 1 << 20,
 	}
 
-	// Start server in a goroutine
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("Failed to start server: %v", err)
@@ -100,14 +97,11 @@ func main() {
 		log.Printf("\nListening on port: %s", cfg.App.Port)
 	}()
 
-	// Wait for interrupt signal to gracefully shutdown the server
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	log.Println("Shutting down server...")
 
-	// The context is used to inform the server it has 5 seconds to finish
-	// the request it is currently handling
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
