@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"sync"
 
 	inventoryHelper "github.com/hifat/mallow-sale-api/internal/inventory/helper"
 	inventoryRepository "github.com/hifat/mallow-sale-api/internal/inventory/repository"
@@ -56,33 +57,56 @@ func New(
 }
 
 func (s *service) Create(ctx context.Context, req *recipeModule.Request) (*handling.ResponseItem[*recipeModule.Request], error) {
-	getUsageUnitName, err := s.usageUnitHelper.GetNameByCode(ctx, req.GetUsageUnitCodes())
-	if err != nil {
-		s.logger.Error(err)
-		return nil, handling.ThrowErr(err)
-	}
+	maxWorkers := 2
+	errCh := make(chan error, maxWorkers)
 
-	for i, v := range req.Ingredients {
-		name := getUsageUnitName(v.Unit.Code)
-		if name == "" {
-			return nil, handling.ThrowErrByCode(define.CodeInvalidUsageUnit)
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		getUsageUnitName, err := s.usageUnitHelper.GetNameByCode(ctx, req.GetUsageUnitCodes())
+		if err != nil {
+			s.logger.Error(err)
+			errCh <- err
 		}
 
-		req.Ingredients[i].Unit.Name = name
-	}
+		for i, v := range req.Ingredients {
+			name := getUsageUnitName(v.Unit.Code)
+			if name == "" {
+				errCh <- handling.ThrowErrByCode(define.CodeInvalidUsageUnit)
+			}
 
-	getRecipeTypeByCode, err := s.recipeTypeHelper.FindAndGetByCode(ctx, []string{req.RecipeType.Code})
-	if err != nil {
-		s.logger.Error(err)
-		return nil, handling.ThrowErr(err)
-	}
+			req.Ingredients[i].Unit.Name = name
+		}
+	}()
 
-	recipeType := getRecipeTypeByCode(req.RecipeType.Code)
-	if recipeType == nil {
-		return nil, handling.ThrowErrByCode(define.CodeInvalidRecipeType)
-	}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		getRecipeTypeByCode, err := s.recipeTypeHelper.FindAndGetByCode(ctx, []string{req.RecipeType.Code})
+		if err != nil {
+			s.logger.Error(err)
+			errCh <- err
+		}
 
-	req.RecipeType.Name = recipeType.Name
+		recipeType := getRecipeTypeByCode(req.RecipeType.Code)
+		if recipeType == nil {
+			errCh <- handling.ThrowErrByCode(define.CodeInvalidRecipeType)
+		}
+
+		req.RecipeType.Name = recipeType.Name
+	}()
+
+	go func() {
+		wg.Wait()
+		close(errCh)
+	}()
+
+	for err := range errCh {
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	inventories, err := s.inventoryRepository.FindInIDs(ctx, req.GetInventoryIDs())
 	if err != nil {
