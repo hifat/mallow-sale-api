@@ -68,6 +68,11 @@ func (s *testInventoryServiceSuite) TestInventoryService_Create() {
 			Error(mockErr).
 			Times(1)
 
+		s.mockUsageUnitRepo.EXPECT().
+			FindByCode(gomock.Any(), gomock.Any()).
+			Return(&usageUnitModule.Prototype{}, nil).
+			Times(1)
+
 		res, err := s.underTest.Create(ctx, &mockReq)
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
@@ -98,6 +103,11 @@ func (s *testInventoryServiceSuite) TestInventoryService_Create() {
 			Return(&mockRes, nil).
 			Times(1)
 
+		s.mockUsageUnitRepo.EXPECT().
+			FindByCode(gomock.Any(), gomock.Any()).
+			Return(&usageUnitModule.Prototype{}, nil).
+			Times(1)
+
 		res, err := s.underTest.Create(ctx, &mockReq)
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
@@ -105,8 +115,8 @@ func (s *testInventoryServiceSuite) TestInventoryService_Create() {
 
 		resErr := err.(handling.ErrorResponse)
 
-		s.Require().Equal(define.CodeInventoryNameAlreadyExists, resErr.Code)
-		s.Require().Equal(define.MsgInventoryNameAlreadyExists, resErr.Message)
+		s.Require().Equal(define.CodeDuplicatedInventoryName, resErr.Code)
+		s.Require().Equal(define.MsgDuplicatedInventoryName, resErr.Message)
 		s.Require().Equal(http.StatusBadRequest, resErr.Status)
 	})
 
@@ -122,11 +132,6 @@ func (s *testInventoryServiceSuite) TestInventoryService_Create() {
 			FindByName(ctx, mockReq.Name).
 			Return(nil, define.ErrRecordNotFound).
 			Times(1)
-
-		mockUsageUnitRes := usageUnitModule.Prototype{}
-		if err := gofakeit.Struct(&mockUsageUnitRes); err != nil {
-			s.T().Fatal(err)
-		}
 
 		mockErr := errors.New("mock err")
 		s.mockUsageUnitRepo.EXPECT().

@@ -56,9 +56,9 @@ func getErrObject(code string) ErrorResponse {
 			Message: define.MsgInvalidRecipeType,
 			Status:  http.StatusBadRequest,
 		},
-		define.CodeInventoryNameAlreadyExists: {
-			Code:    define.CodeInventoryNameAlreadyExists,
-			Message: define.MsgInventoryNameAlreadyExists,
+		define.CodeDuplicatedInventoryName: {
+			Code:    define.CodeDuplicatedInventoryName,
+			Message: define.MsgDuplicatedInventoryName,
 			Status:  http.StatusBadRequest,
 		},
 	}

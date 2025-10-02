@@ -3,6 +3,7 @@ package inventoryService
 import (
 	"context"
 	"errors"
+	"sync"
 
 	inventoryModule "github.com/hifat/mallow-sale-api/internal/inventory"
 	inventoryRepository "github.com/hifat/mallow-sale-api/internal/inventory/repository"
@@ -40,31 +41,55 @@ func New(
 }
 
 func (s *service) Create(ctx context.Context, req *inventoryModule.Request) (*handling.ResponseItem[*inventoryModule.Request], error) {
-	inventory, err := s.inventoryRepo.FindByName(ctx, req.Name)
-	if err != nil {
-		if !errors.Is(err, define.ErrRecordNotFound) {
-			s.logger.Error(err)
-			return nil, handling.ThrowErr(err)
+	numWorkers := 2
+	errCh := make(chan error, numWorkers)
+
+	var wg sync.WaitGroup
+	wg.Add(numWorkers)
+	go func() {
+		defer wg.Done()
+		inventory, err := s.inventoryRepo.FindByName(ctx, req.Name)
+		if err != nil {
+			if !errors.Is(err, define.ErrRecordNotFound) {
+				s.logger.Error(err)
+				errCh <- handling.ThrowErr(err)
+				return
+			}
+		}
+
+		if inventory != nil {
+			errCh <- handling.ThrowErrByCode(define.CodeDuplicatedInventoryName)
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		usageUnit, err := s.usageUnitRepo.FindByCode(ctx, req.PurchaseUnit.Code)
+		if err != nil {
+			if !errors.Is(err, define.ErrRecordNotFound) {
+				s.logger.Error(err)
+				errCh <- handling.ThrowErr(err)
+			}
+
+			errCh <- handling.ThrowErrByCode(define.CodeInvalidUsageUnit)
+			return
+		}
+
+		req.PurchaseUnit.Name = usageUnit.Name
+	}()
+
+	go func() {
+		wg.Wait()
+		close(errCh)
+	}()
+
+	for err := range errCh {
+		if err != nil {
+			return nil, err
 		}
 	}
 
-	if inventory != nil {
-		return nil, handling.ThrowErrByCode(define.CodeInventoryNameAlreadyExists)
-	}
-
-	usageUnit, err := s.usageUnitRepo.FindByCode(ctx, req.PurchaseUnit.Code)
-	if err != nil {
-		if !errors.Is(err, define.ErrRecordNotFound) {
-			s.logger.Error(err)
-			return nil, handling.ThrowErr(err)
-		}
-
-		return nil, handling.ThrowErrByCode(define.CodeInvalidUsageUnit)
-	}
-
-	req.PurchaseUnit.Name = usageUnit.Name
-
-	err = s.inventoryRepo.Create(ctx, req)
+	err := s.inventoryRepo.Create(ctx, req)
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
