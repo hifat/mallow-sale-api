@@ -8,6 +8,7 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/utils"
 )
 
+//go:generate mockgen -source=./helper.go -destination=./mock/helper.go -package=mockInventoryHelper
 type IHelper interface {
 	FindAndGetByID(ctx context.Context, ids []string) (func(id string) *inventoryModule.Response, error)
 	IncreaseStock(ctx context.Context, inventoryID string, purchaseQuantity float64, purchasePrice float64) error

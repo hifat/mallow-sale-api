@@ -7,6 +7,7 @@ import (
 	recipeRepository "github.com/hifat/mallow-sale-api/internal/recipe/repository"
 )
 
+//go:generate mockgen -source=./helper.go -destination=./mock/helper.go -package=mockRecipeHelper
 type IHelper interface {
 	FindAndGetByID(ctx context.Context, ids []string) (func(id string) *recipeModule.Response, error)
 }

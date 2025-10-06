@@ -18,7 +18,7 @@ type testUsageUnitHelperSuite struct {
 	suite.Suite
 
 	mockLogger        *mockLogger.MockLogger
-	mockUsageUnitRepo *mockUsageUnitRepository.MockRepository
+	mockUsageUnitRepo *mockUsageUnitRepository.MockIRepository
 
 	underTest IHelper
 }
@@ -27,7 +27,7 @@ func (s *testUsageUnitHelperSuite) SetupSuite() {
 	ctrl := gomock.NewController(s.T())
 
 	s.mockLogger = mockLogger.NewMockLogger(ctrl)
-	s.mockUsageUnitRepo = mockUsageUnitRepository.NewMockRepository(ctrl)
+	s.mockUsageUnitRepo = mockUsageUnitRepository.NewMockIRepository(ctrl)
 
 	s.underTest = &helper{
 		logger:        s.mockLogger,

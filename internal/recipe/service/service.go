@@ -6,10 +6,10 @@ import (
 	"sync"
 
 	inventoryHelper "github.com/hifat/mallow-sale-api/internal/inventory/helper"
-	inventoryRepository "github.com/hifat/mallow-sale-api/internal/inventory/repository"
+	inventoryRepo "github.com/hifat/mallow-sale-api/internal/inventory/repository"
 	recipeModule "github.com/hifat/mallow-sale-api/internal/recipe"
 	recipeHelper "github.com/hifat/mallow-sale-api/internal/recipe/helper"
-	recipeRepository "github.com/hifat/mallow-sale-api/internal/recipe/repository"
+	recipeRepo "github.com/hifat/mallow-sale-api/internal/recipe/repository"
 	usageUnitHelper "github.com/hifat/mallow-sale-api/internal/usageUnit/helper"
 	usageUnitRepository "github.com/hifat/mallow-sale-api/internal/usageUnit/repository"
 	"github.com/hifat/mallow-sale-api/pkg/define"
@@ -27,32 +27,32 @@ type IService interface {
 }
 
 type service struct {
-	logger              logger.ILogger
-	recipeRepository    recipeRepository.IRepository
-	inventoryRepository inventoryRepository.IRepository
-	usageUnitRepository usageUnitRepository.IRepository
-	usageUnitHelper     usageUnitHelper.IHelper
-	inventoryHelper     inventoryHelper.IHelper
-	recipeTypeHelper    recipeHelper.RecipeTypeHelper
+	logger           logger.ILogger
+	recipeRepo       recipeRepo.IRepository
+	inventoryRepo    inventoryRepo.IRepository
+	usageUnitRepo    usageUnitRepository.IRepository
+	usageUnitHelper  usageUnitHelper.IHelper
+	inventoryHelper  inventoryHelper.IHelper
+	recipeTypeHelper recipeHelper.IRecipeTypeHelper
 }
 
 func New(
 	logger logger.ILogger,
-	recipeRepository recipeRepository.IRepository,
-	inventoryRepository inventoryRepository.IRepository,
-	usageUnitRepository usageUnitRepository.IRepository,
+	recipeRepo recipeRepo.IRepository,
+	inventoryRepo inventoryRepo.IRepository,
+	usageUnitRepo usageUnitRepository.IRepository,
 	usageUnitHelper usageUnitHelper.IHelper,
 	inventoryHelper inventoryHelper.IHelper,
-	recipeTypeHelper recipeHelper.RecipeTypeHelper,
+	recipeTypeHelper recipeHelper.IRecipeTypeHelper,
 ) IService {
 	return &service{
-		logger:              logger,
-		recipeRepository:    recipeRepository,
-		inventoryRepository: inventoryRepository,
-		usageUnitRepository: usageUnitRepository,
-		usageUnitHelper:     usageUnitHelper,
-		inventoryHelper:     inventoryHelper,
-		recipeTypeHelper:    recipeTypeHelper,
+		logger:           logger,
+		recipeRepo:       recipeRepo,
+		inventoryRepo:    inventoryRepo,
+		usageUnitRepo:    usageUnitRepo,
+		usageUnitHelper:  usageUnitHelper,
+		inventoryHelper:  inventoryHelper,
+		recipeTypeHelper: recipeTypeHelper,
 	}
 }
 
@@ -108,7 +108,7 @@ func (s *service) Create(ctx context.Context, req *recipeModule.Request) (*handl
 		}
 	}
 
-	inventories, err := s.inventoryRepository.FindInIDs(ctx, req.GetInventoryIDs())
+	inventories, err := s.inventoryRepo.FindInIDs(ctx, req.GetInventoryIDs())
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
@@ -118,7 +118,7 @@ func (s *service) Create(ctx context.Context, req *recipeModule.Request) (*handl
 		return nil, handling.ThrowErrByCode(define.CodeInvalidInventoryID)
 	}
 
-	err = s.recipeRepository.Create(ctx, req)
+	err = s.recipeRepo.Create(ctx, req)
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
@@ -130,13 +130,13 @@ func (s *service) Create(ctx context.Context, req *recipeModule.Request) (*handl
 }
 
 func (s *service) Find(ctx context.Context, query *recipeModule.QueryReq) (*handling.ResponseItems[recipeModule.Response], error) {
-	count, err := s.recipeRepository.Count(ctx)
+	count, err := s.recipeRepo.Count(ctx)
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
 
-	recipes, err := s.recipeRepository.Find(ctx, query)
+	recipes, err := s.recipeRepo.Find(ctx, query)
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
@@ -151,7 +151,7 @@ func (s *service) Find(ctx context.Context, query *recipeModule.QueryReq) (*hand
 }
 
 func (s *service) FindByID(ctx context.Context, id string) (*handling.ResponseItem[*recipeModule.Response], error) {
-	recipe, err := s.recipeRepository.FindByID(ctx, id)
+	recipe, err := s.recipeRepo.FindByID(ctx, id)
 	if err != nil {
 		return nil, handling.ThrowErr(err)
 	}
@@ -205,7 +205,7 @@ func (s *service) UpdateByID(ctx context.Context, id string, req *recipeModule.R
 
 	req.RecipeType.Name = recipeType.Name
 
-	inventories, err := s.inventoryRepository.FindInIDs(ctx, req.GetInventoryIDs())
+	inventories, err := s.inventoryRepo.FindInIDs(ctx, req.GetInventoryIDs())
 	if err != nil {
 		return nil, handling.ThrowErr(err)
 	}
@@ -214,7 +214,7 @@ func (s *service) UpdateByID(ctx context.Context, id string, req *recipeModule.R
 		return nil, handling.ThrowErrByCode(define.CodeInvalidInventoryID)
 	}
 
-	err = s.recipeRepository.UpdateByID(ctx, id, req)
+	err = s.recipeRepo.UpdateByID(ctx, id, req)
 	if err != nil {
 		return nil, handling.ThrowErr(err)
 	}
@@ -233,7 +233,7 @@ func (s *service) UpdateNoBatch(ctx context.Context, reqs []recipeModule.UpdateO
 		orderNoSet[req.OrderNo] = struct{}{}
 	}
 
-	err := s.recipeRepository.UpdateNoBatch(ctx, reqs)
+	err := s.recipeRepo.UpdateNoBatch(ctx, reqs)
 	if err != nil {
 		return handling.ThrowErr(err)
 	}
@@ -242,7 +242,7 @@ func (s *service) UpdateNoBatch(ctx context.Context, reqs []recipeModule.UpdateO
 }
 
 func (s *service) DeleteByID(ctx context.Context, id string) (*handling.ResponseItem[*recipeModule.Request], error) {
-	_, err := s.recipeRepository.FindByID(ctx, id)
+	_, err := s.recipeRepo.FindByID(ctx, id)
 	if err != nil {
 		if !errors.Is(err, define.ErrRecordNotFound) {
 			s.logger.Error(err)
@@ -251,7 +251,7 @@ func (s *service) DeleteByID(ctx context.Context, id string) (*handling.Response
 		return nil, handling.ThrowErr(err)
 	}
 
-	err = s.recipeRepository.DeleteByID(ctx, id)
+	err = s.recipeRepo.DeleteByID(ctx, id)
 	if err != nil {
 		return nil, handling.ThrowErr(err)
 	}

@@ -7,6 +7,7 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 )
 
+//go:generate mockgen -source=./helper.go -destination=./mock/helper.go -package=mockUsageUnitHelper
 type IHelper interface {
 	GetNameByCode(ctx context.Context, findInCodes []string) (func(code string) (name string), error)
 }

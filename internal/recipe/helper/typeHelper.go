@@ -7,7 +7,8 @@ import (
 	recipeRepository "github.com/hifat/mallow-sale-api/internal/recipe/repository"
 )
 
-type RecipeTypeHelper interface {
+//go:generate mockgen -source=./typeHelper.go -destination=./mock/typeHelper.go -package=mockRecipeHelper
+type IRecipeTypeHelper interface {
 	FindAndGetByCode(ctx context.Context, codes []string) (func(id string) *recipeModule.RecipeTypeResponse, error)
 }
 
@@ -15,7 +16,7 @@ type recipeTypeHelper struct {
 	recipeTypeRepository recipeRepository.TypeRepository
 }
 
-func NewRecipeTypeHelper(recipeTypeRepository recipeRepository.TypeRepository) RecipeTypeHelper {
+func NewRecipeTypeHelper(recipeTypeRepository recipeRepository.TypeRepository) IRecipeTypeHelper {
 	return &recipeTypeHelper{
 		recipeTypeRepository: recipeTypeRepository,
 	}

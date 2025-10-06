@@ -17,31 +17,31 @@ import (
 	gomock "go.uber.org/mock/gomock"
 )
 
-// MockRepository is a mock of Repository interface.
-type MockRepository struct {
+// MockIRepository is a mock of IRepository interface.
+type MockIRepository struct {
 	ctrl     *gomock.Controller
-	recorder *MockRepositoryMockRecorder
+	recorder *MockIRepositoryMockRecorder
 }
 
-// MockRepositoryMockRecorder is the mock recorder for MockRepository.
-type MockRepositoryMockRecorder struct {
-	mock *MockRepository
+// MockIRepositoryMockRecorder is the mock recorder for MockIRepository.
+type MockIRepositoryMockRecorder struct {
+	mock *MockIRepository
 }
 
-// NewMockRepository creates a new mock instance.
-func NewMockRepository(ctrl *gomock.Controller) *MockRepository {
-	mock := &MockRepository{ctrl: ctrl}
-	mock.recorder = &MockRepositoryMockRecorder{mock}
+// NewMockIRepository creates a new mock instance.
+func NewMockIRepository(ctrl *gomock.Controller) *MockIRepository {
+	mock := &MockIRepository{ctrl: ctrl}
+	mock.recorder = &MockIRepositoryMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
+func (m *MockIRepository) EXPECT() *MockIRepositoryMockRecorder {
 	return m.recorder
 }
 
 // FindByCode mocks base method.
-func (m *MockRepository) FindByCode(ctx context.Context, code string) (*usageUnitModule.Prototype, error) {
+func (m *MockIRepository) FindByCode(ctx context.Context, code string) (*usageUnitModule.Prototype, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindByCode", ctx, code)
 	ret0, _ := ret[0].(*usageUnitModule.Prototype)
@@ -50,13 +50,13 @@ func (m *MockRepository) FindByCode(ctx context.Context, code string) (*usageUni
 }
 
 // FindByCode indicates an expected call of FindByCode.
-func (mr *MockRepositoryMockRecorder) FindByCode(ctx, code any) *gomock.Call {
+func (mr *MockIRepositoryMockRecorder) FindByCode(ctx, code any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByCode", reflect.TypeOf((*MockRepository)(nil).FindByCode), ctx, code)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByCode", reflect.TypeOf((*MockIRepository)(nil).FindByCode), ctx, code)
 }
 
 // FindInCodes mocks base method.
-func (m *MockRepository) FindInCodes(ctx context.Context, codes []string) ([]usageUnitModule.Prototype, error) {
+func (m *MockIRepository) FindInCodes(ctx context.Context, codes []string) ([]usageUnitModule.Prototype, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindInCodes", ctx, codes)
 	ret0, _ := ret[0].([]usageUnitModule.Prototype)
@@ -65,7 +65,7 @@ func (m *MockRepository) FindInCodes(ctx context.Context, codes []string) ([]usa
 }
 
 // FindInCodes indicates an expected call of FindInCodes.
-func (mr *MockRepositoryMockRecorder) FindInCodes(ctx, codes any) *gomock.Call {
+func (mr *MockIRepositoryMockRecorder) FindInCodes(ctx, codes any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindInCodes", reflect.TypeOf((*MockRepository)(nil).FindInCodes), ctx, codes)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindInCodes", reflect.TypeOf((*MockIRepository)(nil).FindInCodes), ctx, codes)
 }

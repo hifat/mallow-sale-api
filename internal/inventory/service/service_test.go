@@ -24,7 +24,7 @@ type testInventoryServiceSuite struct {
 
 	mockLogger        *mockLogger.MockLogger
 	mockInventoryRepo *mockInventoryRepository.MockIRepository
-	mockUsageUnitRepo *mockUsageUnitRepository.MockRepository
+	mockUsageUnitRepo *mockUsageUnitRepository.MockIRepository
 
 	underTest IService
 }
@@ -34,7 +34,7 @@ func (s *testInventoryServiceSuite) SetupSuite() {
 
 	s.mockLogger = mockLogger.NewMockLogger(ctrl)
 	s.mockInventoryRepo = mockInventoryRepository.NewMockIRepository(ctrl)
-	s.mockUsageUnitRepo = mockUsageUnitRepository.NewMockRepository(ctrl)
+	s.mockUsageUnitRepo = mockUsageUnitRepository.NewMockIRepository(ctrl)
 
 	s.underTest = &service{
 		logger:        s.mockLogger,
