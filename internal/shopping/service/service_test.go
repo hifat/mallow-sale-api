@@ -7,10 +7,10 @@ import (
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v7"
-	inventoryModule "github.com/hifat/mallow-sale-api/internal/inventory"
-	mockInventoryRepository "github.com/hifat/mallow-sale-api/internal/inventory/repository/mock"
 	shoppingModule "github.com/hifat/mallow-sale-api/internal/shopping"
 	mockShoppingRepository "github.com/hifat/mallow-sale-api/internal/shopping/repository/mock"
+	usageUnitModule "github.com/hifat/mallow-sale-api/internal/usageUnit"
+	mockUsageUnitRepository "github.com/hifat/mallow-sale-api/internal/usageUnit/repository/mock"
 	"github.com/hifat/mallow-sale-api/pkg/define"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 	mockLogger "github.com/hifat/mallow-sale-api/pkg/logger/mock"
@@ -21,9 +21,9 @@ import (
 type testShoppingServiceSuite struct {
 	suite.Suite
 
-	mockLogger        *mockLogger.MockLogger
-	mockInventoryRepo *mockInventoryRepository.MockIRepository
-	mockShoppingRepo  *mockShoppingRepository.MockIRepository
+	mockLogger       *mockLogger.MockLogger
+	mockShoppingRepo *mockShoppingRepository.MockIRepository
+	mockUsageUniRepo *mockUsageUnitRepository.MockIRepository
 
 	underTest IService
 }
@@ -32,13 +32,13 @@ func (s *testShoppingServiceSuite) SetupSuite() {
 	ctrl := gomock.NewController(s.T())
 
 	s.mockLogger = mockLogger.NewMockLogger(ctrl)
-	s.mockInventoryRepo = mockInventoryRepository.NewMockIRepository(ctrl)
 	s.mockShoppingRepo = mockShoppingRepository.NewMockIRepository(ctrl)
+	s.mockUsageUniRepo = mockUsageUnitRepository.NewMockIRepository(ctrl)
 
 	s.underTest = &service{
 		logger:        s.mockLogger,
-		inventoryRepo: s.mockInventoryRepo,
 		shoppingRepo:  s.mockShoppingRepo,
+		usageUnitRepo: s.mockUsageUniRepo,
 	}
 }
 
@@ -49,24 +49,24 @@ func TestInventoryServiceSuite(t *testing.T) {
 func (s *testShoppingServiceSuite) TestInventoryService_Create() {
 	s.T().Parallel()
 
-	s.Run("failed - find inventories in ids failed other error", func() {
+	s.Run("failed - find usage unit by code", func() {
 		ctx := context.Background()
-		mockInvIDs := []string{"1", "2"}
-		mockErr := errors.New("mock-err")
-
-		s.mockInventoryRepo.EXPECT().
-			FindInIDs(ctx, mockInvIDs).
-			Return(nil, mockErr)
-
-		s.mockLogger.EXPECT().
-			Error(mockErr)
 
 		req := shoppingModule.Request{}
 		if err := gofakeit.Struct(&req); err != nil {
 			s.T().Fatal(err)
 		}
 
-		err := s.underTest.Create(&req)
+		mockErr := errors.New("mock-err")
+		s.mockUsageUniRepo.EXPECT().
+			FindByCode(ctx, req.PurchaseUnit.Code).
+			Return(nil, mockErr)
+
+		s.mockLogger.EXPECT().
+			Error(mockErr)
+
+		res, err := s.underTest.Create(ctx, &req)
+		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
 
@@ -77,58 +77,63 @@ func (s *testShoppingServiceSuite) TestInventoryService_Create() {
 		s.Require().Equal(http.StatusInternalServerError, resErr.Status)
 	})
 
-	s.Run("failed - invalid some inventory ids", func() {
+	s.Run("failed - invalid usage unit code", func() {
 		ctx := context.Background()
-		mockInvIDs := []string{"1", "2"}
-
-		mockInvs := make([]inventoryModule.Response, 3)
-		gofakeit.Slice(&mockInvs)
-
-		s.mockInventoryRepo.EXPECT().
-			FindInIDs(ctx, mockInvIDs).
-			Return(mockInvs, nil)
 
 		req := shoppingModule.Request{}
 		if err := gofakeit.Struct(&req); err != nil {
 			s.T().Fatal(err)
 		}
 
-		err := s.underTest.Create(&req)
+		mockUsgUnit := usageUnitModule.Prototype{}
+		if err := gofakeit.Struct(&mockUsgUnit); err != nil {
+			s.T().Fatal(err)
+		}
+
+		mockErr := define.ErrRecordNotFound
+		s.mockUsageUniRepo.EXPECT().
+			FindByCode(ctx, req.PurchaseUnit.Code).
+			Return(nil, mockErr)
+
+		res, err := s.underTest.Create(ctx, &req)
+		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
 
 		resErr := err.(handling.ErrorResponse)
 
-		s.Require().Equal(define.CodeInvalidInventoryID, resErr.Code)
-		s.Require().Equal(define.MsgInvalidInventoryID, resErr.Message)
+		s.Require().Equal(define.CodeInvalidUsageUnit, resErr.Code)
+		s.Require().Equal(define.MsgInvalidUsageUnit, resErr.Message)
 		s.Require().Equal(http.StatusBadRequest, resErr.Status)
 	})
 
 	s.Run("failed - created shopping", func() {
 		ctx := context.Background()
-		mockInvIDs := []string{"1", "2", "3"}
-
-		mockInvs := make([]inventoryModule.Response, 3)
-		gofakeit.Slice(&mockInvs)
-
-		s.mockInventoryRepo.EXPECT().
-			FindInIDs(ctx, mockInvIDs).
-			Return(mockInvs, nil)
 
 		req := shoppingModule.Request{}
 		if err := gofakeit.Struct(&req); err != nil {
 			s.T().Fatal(err)
 		}
 
+		mockUsgUnit := usageUnitModule.Prototype{}
+		if err := gofakeit.Struct(&mockUsgUnit); err != nil {
+			s.T().Fatal(err)
+		}
+
+		s.mockUsageUniRepo.EXPECT().
+			FindByCode(ctx, req.PurchaseUnit.Code).
+			Return(&mockUsgUnit, nil)
+
 		mockErr := errors.New("mock-err")
 		s.mockShoppingRepo.EXPECT().
-			Create(&req).
+			Create(ctx, &req).
 			Return(mockErr)
 
 		s.mockLogger.EXPECT().
 			Error(mockErr)
 
-		err := s.underTest.Create(&req)
+		res, err := s.underTest.Create(ctx, &req)
+		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
 
@@ -141,32 +146,31 @@ func (s *testShoppingServiceSuite) TestInventoryService_Create() {
 
 	s.Run("succeed - created shopping", func() {
 		ctx := context.Background()
-		mockInvIDs := []string{}
-
-		mockInvs := make([]inventoryModule.Response, 3)
-		gofakeit.Slice(&mockInvs)
-
-		s.mockInventoryRepo.EXPECT().
-			FindInIDs(ctx, mockInvIDs).
-			Return(mockInvs, nil)
 
 		req := shoppingModule.Request{}
 		if err := gofakeit.Struct(&req); err != nil {
 			s.T().Fatal(err)
 		}
 
+		mockUsgUnit := usageUnitModule.Prototype{}
+		if err := gofakeit.Struct(&mockUsgUnit); err != nil {
+			s.T().Fatal(err)
+		}
+
+		s.mockUsageUniRepo.EXPECT().
+			FindByCode(ctx, req.PurchaseUnit.Code).
+			Return(&mockUsgUnit, nil)
+
 		s.mockShoppingRepo.EXPECT().
-			Create(&req).
+			Create(ctx, &req).
 			Return(nil)
 
-		err := s.underTest.Create(&req)
-		s.Require().NotNil(err)
-		s.Require().IsType(handling.ErrorResponse{}, err)
+		res, err := s.underTest.Create(ctx, &req)
+		s.Require().Nil(err)
+		s.Require().IsType(&handling.SuccessResponse{}, res)
 
-		resErr := err.(handling.ErrorResponse)
-
-		s.Require().Equal(define.CodeInternalServerError, resErr.Code)
-		s.Require().Equal(define.MsgInternalServerError, resErr.Message)
-		s.Require().Equal(http.StatusInternalServerError, resErr.Status)
+		s.Require().Equal(define.CodeCreated, res.Code)
+		s.Require().Equal(define.MsgCreated, res.Message)
+		s.Require().Equal(http.StatusCreated, res.Status)
 	})
 }

@@ -44,11 +44,8 @@ func (r *mongoRepository) Create(ctx context.Context, req *inventoryModule.Reque
 
 	_, err := r.db.Collection("inventories").
 		InsertOne(ctx, newInventory)
-	if err != nil {
-		return err
-	}
 
-	return nil
+	return err
 }
 
 func (r *mongoRepository) FindByID(ctx context.Context, id string) (*inventoryModule.Response, error) {

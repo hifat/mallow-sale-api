@@ -10,6 +10,7 @@
 package mockShoppingRepository
 
 import (
+	context "context"
 	reflect "reflect"
 
 	shoppingModule "github.com/hifat/mallow-sale-api/internal/shopping"
@@ -40,43 +41,43 @@ func (m *MockIRepository) EXPECT() *MockIRepositoryMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockIRepository) Create(req *shoppingModule.Request) error {
+func (m *MockIRepository) Create(ctx context.Context, req *shoppingModule.Request) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", req)
+	ret := m.ctrl.Call(m, "Create", ctx, req)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockIRepositoryMockRecorder) Create(req any) *gomock.Call {
+func (mr *MockIRepositoryMockRecorder) Create(ctx, req any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockIRepository)(nil).Create), req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockIRepository)(nil).Create), ctx, req)
 }
 
 // Delete mocks base method.
-func (m *MockIRepository) Delete(id string) error {
+func (m *MockIRepository) Delete(ctx context.Context, id string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Delete", id)
+	ret := m.ctrl.Call(m, "Delete", ctx, id)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Delete indicates an expected call of Delete.
-func (mr *MockIRepositoryMockRecorder) Delete(id any) *gomock.Call {
+func (mr *MockIRepositoryMockRecorder) Delete(ctx, id any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockIRepository)(nil).Delete), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockIRepository)(nil).Delete), ctx, id)
 }
 
 // UpdateIsComplete mocks base method.
-func (m *MockIRepository) UpdateIsComplete(req *shoppingModule.UpdateIsComplete) error {
+func (m *MockIRepository) UpdateIsComplete(ctx context.Context, req *shoppingModule.UpdateIsComplete) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateIsComplete", req)
+	ret := m.ctrl.Call(m, "UpdateIsComplete", ctx, req)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // UpdateIsComplete indicates an expected call of UpdateIsComplete.
-func (mr *MockIRepositoryMockRecorder) UpdateIsComplete(req any) *gomock.Call {
+func (mr *MockIRepositoryMockRecorder) UpdateIsComplete(ctx, req any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateIsComplete", reflect.TypeOf((*MockIRepository)(nil).UpdateIsComplete), req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateIsComplete", reflect.TypeOf((*MockIRepository)(nil).UpdateIsComplete), ctx, req)
 }

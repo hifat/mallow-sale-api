@@ -8,6 +8,7 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/define"
 )
 
+// TODO: Reflector, It duplicated prop
 type ErrorResponse struct {
 	Code    string `json:"code"`
 	Message string `json:"message"`
@@ -16,8 +17,10 @@ type ErrorResponse struct {
 }
 
 type SuccessResponse struct {
+	Code    string `json:"code"`
 	Message string `json:"message"`
-	Data    any    `json:"data,omitempty"`
+
+	Status int `json:"-"`
 }
 
 func (e ErrorResponse) Error() string {

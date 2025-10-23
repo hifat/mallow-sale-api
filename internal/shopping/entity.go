@@ -8,7 +8,7 @@ import (
 type Entity struct {
 	utilsModule.Base
 
-	InventoryName    string                 `fake:"{name}" bson:"name"`
+	Name             string                 `fake:"{name}" bson:"name"`
 	PurchaseQuantity float64                `fake:"{float64}" bson:"purchase_quantity"`
 	PurchaseUnit     usageUnitModule.Entity `bson:"purchase_unit"`
 	IsComplete       bool                   `bson:"is_complete"`
