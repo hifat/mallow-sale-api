@@ -89,9 +89,23 @@ func (s *service) UpdateIsComplete(ctx context.Context, id string, req *shopping
 }
 
 func (s *service) Delete(ctx context.Context, id string) (*handling.Response, error) {
+	_, err := s.shoppingRepo.FindByID(ctx, id)
+	if err != nil {
+		if !errors.Is(define.ErrRecordNotFound, err) {
+			s.logger.Error(err)
+		}
+
+		return nil, handling.ThrowErr(err)
+	}
+
+	if err := s.shoppingRepo.Delete(ctx, id); err != nil {
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
 	return &handling.Response{
-		Message: define.MsgUpdated,
-		Code:    define.CodeUpdated,
+		Message: define.MsgDeleted,
+		Code:    define.CodeDeleted,
 		Status:  http.StatusOK,
 	}, nil
 }
