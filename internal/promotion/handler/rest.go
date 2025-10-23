@@ -123,7 +123,7 @@ func (r *Rest) UpdateByID(c *gin.Context) {
 // @Accept 		json
 // @Produce 	json
 // @Param 		id 	path string true "Promotion ID"
-// @Success 	200 {object} handling.SuccessResponse
+// @Success 	200 {object} handling.Response
 // @Failure 	404 {object} handling.ErrorResponse
 // @Failure 	500 {object} handling.ErrorResponse
 // @Router 		/promotions/{id} [delete]
@@ -135,5 +135,5 @@ func (r *Rest) DeleteByID(c *gin.Context) {
 		return
 	}
 
-	handling.ResponseSuccess(c, handling.SuccessResponse{Message: "Promotion deleted successfully"})
+	handling.ResponseSuccess(c, handling.Response{Message: "Promotion deleted successfully"})
 }

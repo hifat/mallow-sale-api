@@ -112,7 +112,7 @@ func (r *Rest) UpdateByID(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        id path string true "stockID"
-// @Success      200 {object} handling.SuccessResponse
+// @Success      200 {object} handling.Response
 // @Failure      404 {object} handling.ErrorResponse
 // @Failure      500 {object} handling.ErrorResponse
 // @Router       /stocks/{id} [delete]
@@ -123,5 +123,5 @@ func (r *Rest) DeleteByID(c *gin.Context) {
 		handling.ResponseErr(c, err)
 		return
 	}
-	handling.ResponseSuccess(c, handling.SuccessResponse{Message: "Deleted successfully"})
+	handling.ResponseSuccess(c, handling.Response{Message: "Deleted successfully"})
 }

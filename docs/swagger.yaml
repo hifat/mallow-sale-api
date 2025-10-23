@@ -430,7 +430,7 @@ definitions:
       meta:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse'
     type: object
-  github_com_hifat_mallow-sale-api_pkg_handling.SuccessResponse:
+  github_com_hifat_mallow-sale-api_pkg_handling.Response:
     properties:
       data: {}
       message:
@@ -538,7 +538,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.SuccessResponse'
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.Response'
         "400":
           description: Bad Request
           schema:
@@ -715,7 +715,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.SuccessResponse'
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.Response'
         "404":
           description: Not Found
           schema:
@@ -884,7 +884,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.SuccessResponse'
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.Response'
         "404":
           description: Not Found
           schema:
@@ -983,7 +983,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.SuccessResponse'
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.Response'
         "400":
           description: Bad Request
           schema:
@@ -1029,7 +1029,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.SuccessResponse'
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.Response'
         "400":
           description: Bad Request
           schema:
@@ -1126,7 +1126,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.SuccessResponse'
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.Response'
         "404":
           description: Not Found
           schema:
@@ -1291,7 +1291,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.SuccessResponse'
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.Response'
         "404":
           description: Not Found
           schema:

@@ -16,9 +16,10 @@ type ErrorResponse struct {
 	Status int `json:"-"`
 }
 
-type SuccessResponse struct {
+type Response struct {
 	Code    string `json:"code"`
 	Message string `json:"message"`
+	Data    any    `json:"data,omitempty"`
 
 	Status int `json:"-"`
 }

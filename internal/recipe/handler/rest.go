@@ -121,7 +121,7 @@ func (r *Rest) UpdateByID(c *gin.Context) {
 // @Accept 		json
 // @Produce 	json
 // @Param 		id 	path string true "Recipe ID"
-// @Success 	200 {object} handling.SuccessResponse
+// @Success 	200 {object} handling.Response
 // @Failure 	404 {object} handling.ErrorResponse
 // @Failure 	500 {object} handling.ErrorResponse
 // @Router 		/recipes/{id} [delete]
@@ -142,7 +142,7 @@ func (r *Rest) DeleteByID(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        body body []recipeModule.UpdateOrderNoRequest true "Array of recipe id and orderNo"
-// @Success      200 {object} handling.SuccessResponse
+// @Success      200 {object} handling.Response
 // @Failure      400 {object} handling.ErrorResponse
 // @Failure      500 {object} handling.ErrorResponse
 // @Router       /recipes/order-no [patch]

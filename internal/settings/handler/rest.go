@@ -22,7 +22,7 @@ func NewRest(service settingService.IService) *Rest {
 // @Accept       json
 // @Produce      json
 // @Param        settings body settingModule.Request true "Settings data"
-// @Success      200 {object} handling.SuccessResponse
+// @Success      200 {object} handling.Response
 // @Failure      400 {object} handling.ErrorResponse
 // @Failure      500 {object} handling.ErrorResponse
 // @Router       /settings [put]

@@ -122,7 +122,7 @@ func (r *Rest) UpdateByID(c *gin.Context) {
 // @Accept 		json
 // @Produce 	json
 // @Param 		id 	path string true "Inventory ID"
-// @Success 	200 {object} handling.SuccessResponse
+// @Success 	200 {object} handling.Response
 // @Failure 	400 {object} handling.ErrorResponse
 // @Failure 	404 {object} handling.ErrorResponse
 // @Failure 	500 {object} handling.ErrorResponse

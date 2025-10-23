@@ -265,7 +265,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.SuccessResponse"
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.Response"
                         }
                     },
                     "400": {
@@ -536,7 +536,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.SuccessResponse"
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.Response"
                         }
                     },
                     "404": {
@@ -697,7 +697,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.SuccessResponse"
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.Response"
                         }
                     },
                     "400": {
@@ -843,7 +843,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.SuccessResponse"
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.Response"
                         }
                     },
                     "404": {
@@ -914,7 +914,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.SuccessResponse"
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.Response"
                         }
                     },
                     "400": {
@@ -1167,7 +1167,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.SuccessResponse"
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.Response"
                         }
                     },
                     "404": {
@@ -1420,7 +1420,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.SuccessResponse"
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.Response"
                         }
                     },
                     "404": {
@@ -2097,7 +2097,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_hifat_mallow-sale-api_pkg_handling.SuccessResponse": {
+        "github_com_hifat_mallow-sale-api_pkg_handling.Response": {
             "type": "object",
             "properties": {
                 "data": {},

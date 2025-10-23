@@ -167,7 +167,7 @@ func (s *testShoppingServiceSuite) TestInventoryService_Create() {
 
 		res, err := s.underTest.Create(ctx, &req)
 		s.Require().Nil(err)
-		s.Require().IsType(&handling.SuccessResponse{}, res)
+		s.Require().IsType(&handling.Response{}, res)
 
 		s.Require().Equal(define.CodeCreated, res.Code)
 		s.Require().Equal(define.MsgCreated, res.Message)

@@ -14,9 +14,9 @@ import (
 )
 
 type IService interface {
-	Create(ctx context.Context, req *shoppingModule.Request) (*handling.SuccessResponse, error)
-	UpdateIsComplete(ctx context.Context, req *shoppingModule.UpdateIsComplete) error
-	Delete(ctx context.Context, id string) error
+	Create(ctx context.Context, req *shoppingModule.Request) (*handling.Response, error)
+	UpdateIsComplete(ctx context.Context, req *shoppingModule.UpdateIsComplete) (*handling.Response, error)
+	Delete(ctx context.Context, id string) (*handling.Response, error)
 }
 
 type service struct {
@@ -33,7 +33,7 @@ func New(logger logger.ILogger, shoppingRepo shoppingRepository.IRepository, usa
 	}
 }
 
-func (s *service) Create(ctx context.Context, req *shoppingModule.Request) (*handling.SuccessResponse, error) {
+func (s *service) Create(ctx context.Context, req *shoppingModule.Request) (*handling.Response, error) {
 	usageUnit, err := s.usageUnitRepo.FindByCode(ctx, req.PurchaseUnit.Code)
 	if err != nil {
 		if errors.Is(err, define.ErrRecordNotFound) {
@@ -52,17 +52,25 @@ func (s *service) Create(ctx context.Context, req *shoppingModule.Request) (*han
 		return nil, handling.ThrowErr(err)
 	}
 
-	return &handling.SuccessResponse{
+	return &handling.Response{
 		Message: define.MsgCreated,
 		Code:    define.CodeCreated,
 		Status:  http.StatusCreated,
 	}, nil
 }
 
-func (s *service) UpdateIsComplete(ctx context.Context, req *shoppingModule.UpdateIsComplete) error {
-	return nil
+func (s *service) UpdateIsComplete(ctx context.Context, req *shoppingModule.UpdateIsComplete) (*handling.Response, error) {
+	return &handling.Response{
+		Message: define.MsgUpdated,
+		Code:    define.CodeUpdated,
+		Status:  http.StatusOK,
+	}, nil
 }
 
-func (s *service) Delete(ctx context.Context, id string) error {
-	return nil
+func (s *service) Delete(ctx context.Context, id string) (*handling.Response, error) {
+	return &handling.Response{
+		Message: define.MsgUpdated,
+		Code:    define.CodeUpdated,
+		Status:  http.StatusOK,
+	}, nil
 }
