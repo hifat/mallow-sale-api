@@ -49,7 +49,7 @@ func TestInventoryServiceSuite(t *testing.T) {
 func (s *testShoppingServiceSuite) TestInventoryService_Create() {
 	s.T().Parallel()
 
-	s.Run("failed - find usage unit by code", func() {
+	s.Run("failed - find usage unit by code other error", func() {
 		ctx := context.Background()
 
 		req := shoppingModule.Request{}
@@ -77,7 +77,7 @@ func (s *testShoppingServiceSuite) TestInventoryService_Create() {
 		s.Require().Equal(http.StatusInternalServerError, resErr.Status)
 	})
 
-	s.Run("failed - invalid usage unit code", func() {
+	s.Run("failed - invalid usage unit code not found", func() {
 		ctx := context.Background()
 
 		req := shoppingModule.Request{}
@@ -172,5 +172,134 @@ func (s *testShoppingServiceSuite) TestInventoryService_Create() {
 		s.Require().Equal(define.CodeCreated, res.Code)
 		s.Require().Equal(define.MsgCreated, res.Message)
 		s.Require().Equal(http.StatusCreated, res.Status)
+	})
+}
+
+func (s *testShoppingServiceSuite) TestInventoryService_UpdateIsComplete() {
+	s.T().Parallel()
+
+	s.Run("failed - find shopping by id other error", func() {
+		ctx := context.Background()
+		mockShpID := "mock-shp-id"
+
+		mockErr := errors.New("mock-err")
+		s.mockShoppingRepo.EXPECT().
+			FindByID(ctx, mockShpID).
+			Return(nil, mockErr)
+
+		s.mockLogger.EXPECT().
+			Error(mockErr)
+
+		mockReq := shoppingModule.ReqUpdateIsComplete{
+			IsComplete: true,
+		}
+
+		res, err := s.underTest.UpdateIsComplete(ctx, mockShpID, &mockReq)
+		s.Require().Nil(res)
+		s.Require().NotNil(err)
+		s.Require().IsType(handling.ErrorResponse{}, err)
+
+		resErr := err.(handling.ErrorResponse)
+
+		s.Require().Equal(define.CodeInternalServerError, resErr.Code)
+		s.Require().Equal(define.MsgInternalServerError, resErr.Message)
+		s.Require().Equal(http.StatusInternalServerError, resErr.Status)
+	})
+
+	s.Run("failed - find shopping by id error not found", func() {
+		ctx := context.Background()
+		mockShpID := "mock-shp-id"
+
+		mockErr := define.ErrRecordNotFound
+		s.mockShoppingRepo.EXPECT().
+			FindByID(ctx, mockShpID).
+			Return(nil, mockErr)
+
+		mockReq := shoppingModule.ReqUpdateIsComplete{
+			IsComplete: true,
+		}
+
+		res, err := s.underTest.UpdateIsComplete(ctx, mockShpID, &mockReq)
+		s.Require().Nil(res)
+		s.Require().NotNil(err)
+		s.Require().IsType(handling.ErrorResponse{}, err)
+
+		resErr := err.(handling.ErrorResponse)
+
+		s.Require().Equal(define.CodeRecordNotFound, resErr.Code)
+		s.Require().Equal(define.MsgRecordNotFound, resErr.Message)
+		s.Require().Equal(http.StatusNotFound, resErr.Status)
+	})
+
+	s.Run("failed - updated shopping is complete", func() {
+		ctx := context.Background()
+		mockShpID := "mock-shp-id"
+
+		mockShp := shoppingModule.Response{}
+		if err := gofakeit.Struct(&mockShp); err != nil {
+			s.T().Fatal(err)
+		}
+
+		mockShp.ID = mockShpID
+
+		s.mockShoppingRepo.EXPECT().
+			FindByID(ctx, mockShpID).
+			Return(&mockShp, nil)
+
+		mockReq := shoppingModule.ReqUpdateIsComplete{
+			IsComplete: true,
+		}
+
+		mockErr := errors.New("mock-err")
+		s.mockShoppingRepo.EXPECT().
+			UpdateIsComplete(ctx, mockShpID, &mockReq).
+			Return(mockErr)
+
+		s.mockLogger.EXPECT().
+			Error(mockErr)
+
+		res, err := s.underTest.UpdateIsComplete(ctx, mockShpID, &mockReq)
+		s.Require().Nil(res)
+		s.Require().NotNil(err)
+		s.Require().IsType(handling.ErrorResponse{}, err)
+
+		resErr := err.(handling.ErrorResponse)
+
+		s.Require().Equal(define.CodeInternalServerError, resErr.Code)
+		s.Require().Equal(define.MsgInternalServerError, resErr.Message)
+		s.Require().Equal(http.StatusInternalServerError, resErr.Status)
+	})
+
+	s.Run("succeed - updated shopping is complete", func() {
+		ctx := context.Background()
+		mockShpID := "mock-shp-id"
+
+		mockShp := shoppingModule.Response{}
+		if err := gofakeit.Struct(&mockShp); err != nil {
+			s.T().Fatal(err)
+		}
+
+		mockShp.ID = mockShpID
+
+		s.mockShoppingRepo.EXPECT().
+			FindByID(ctx, mockShpID).
+			Return(&mockShp, nil)
+
+		mockReq := shoppingModule.ReqUpdateIsComplete{
+			IsComplete: true,
+		}
+
+		s.mockShoppingRepo.EXPECT().
+			UpdateIsComplete(ctx, mockShpID, &mockReq).
+			Return(nil)
+
+		res, err := s.underTest.UpdateIsComplete(ctx, mockShpID, &mockReq)
+		s.Require().Nil(err)
+		s.Require().NotNil(res)
+		s.Require().IsType(&handling.Response{}, res)
+
+		s.Require().Equal(define.CodeUpdated, res.Code)
+		s.Require().Equal(define.MsgUpdated, res.Message)
+		s.Require().Equal(http.StatusOK, res.Status)
 	})
 }

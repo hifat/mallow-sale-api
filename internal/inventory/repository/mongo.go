@@ -154,21 +154,13 @@ func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq)
 	}
 	defer cur.Close(ctx)
 
-	var inventories []inventoryModule.Entity
+	inventories := []inventoryModule.Response{}
 	for cur.Next(ctx) {
 		var inventory inventoryModule.Entity
 		if err := cur.Decode(&inventory); err != nil {
 			return nil, err
 		}
-		inventories = append(inventories, inventory)
-	}
-	if err := cur.Err(); err != nil {
-		return nil, err
-	}
-
-	res := make([]inventoryModule.Response, len(inventories))
-	for i, inventory := range inventories {
-		res[i] = inventoryModule.Response{
+		inventories = append(inventories, inventoryModule.Response{
 			Prototype: inventoryModule.Prototype{
 				ID:               inventory.ID.Hex(),
 				Name:             inventory.Name,
@@ -183,10 +175,13 @@ func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq)
 				CreatedAt:       &inventory.CreatedAt,
 				UpdatedAt:       &inventory.UpdatedAt,
 			},
-		}
+		})
+	}
+	if err := cur.Err(); err != nil {
+		return nil, err
 	}
 
-	return res, nil
+	return inventories, nil
 }
 
 func (r *mongoRepository) FindInIDs(ctx context.Context, ids []string) ([]inventoryModule.Response, error) {
@@ -248,11 +243,8 @@ func (r *mongoRepository) UpdateByID(ctx context.Context, id string, req *invent
 			"remark":           req.Remark,
 			"updated_at":       time.Now(),
 		}})
-	if err != nil {
-		return err
-	}
 
-	return nil
+	return err
 }
 
 func (r *mongoRepository) DeleteByID(ctx context.Context, id string) error {

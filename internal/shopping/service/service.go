@@ -14,8 +14,9 @@ import (
 )
 
 type IService interface {
+	Find(ctx context.Context) (*handling.ResponseItems[shoppingModule.Response], error)
 	Create(ctx context.Context, req *shoppingModule.Request) (*handling.Response, error)
-	UpdateIsComplete(ctx context.Context, req *shoppingModule.UpdateIsComplete) (*handling.Response, error)
+	UpdateIsComplete(ctx context.Context, id string, req *shoppingModule.ReqUpdateIsComplete) (*handling.Response, error)
 	Delete(ctx context.Context, id string) (*handling.Response, error)
 }
 
@@ -31,6 +32,12 @@ func New(logger logger.ILogger, shoppingRepo shoppingRepository.IRepository, usa
 		shoppingRepo,
 		usageUnitRepo,
 	}
+}
+
+func (s *service) Find(ctx context.Context) (*handling.ResponseItems[shoppingModule.Response], error) {
+	return &handling.ResponseItems[shoppingModule.Response]{
+		Items: []shoppingModule.Response{},
+	}, nil
 }
 
 func (s *service) Create(ctx context.Context, req *shoppingModule.Request) (*handling.Response, error) {
@@ -59,7 +66,21 @@ func (s *service) Create(ctx context.Context, req *shoppingModule.Request) (*han
 	}, nil
 }
 
-func (s *service) UpdateIsComplete(ctx context.Context, req *shoppingModule.UpdateIsComplete) (*handling.Response, error) {
+func (s *service) UpdateIsComplete(ctx context.Context, id string, req *shoppingModule.ReqUpdateIsComplete) (*handling.Response, error) {
+	_, err := s.shoppingRepo.FindByID(ctx, id)
+	if err != nil {
+		if !errors.Is(define.ErrRecordNotFound, err) {
+			s.logger.Error(err)
+		}
+
+		return nil, handling.ThrowErr(err)
+	}
+
+	if err := s.shoppingRepo.UpdateIsComplete(ctx, id, req); err != nil {
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
 	return &handling.Response{
 		Message: define.MsgUpdated,
 		Code:    define.CodeUpdated,

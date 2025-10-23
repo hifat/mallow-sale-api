@@ -8,6 +8,13 @@ type Request struct {
 	PurchaseUnit     usageUnitModule.UsageUnitReq `json:"purchaseUnit"`
 }
 
-type UpdateIsComplete struct {
+type Response struct {
+	ID               string                    `json:"id"`
+	Name             string                    `fake:"{name}" json:"name"`
+	PurchaseQuantity float64                   `fake:"{float64}" json:"purchaseQuantity"`
+	PurchaseUnit     usageUnitModule.Prototype `json:"purchaseUnit"`
+}
+
+type ReqUpdateIsComplete struct {
 	IsComplete bool `json:"is_complete"`
 }

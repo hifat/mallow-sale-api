@@ -68,16 +68,46 @@ func (mr *MockIRepositoryMockRecorder) Delete(ctx, id any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockIRepository)(nil).Delete), ctx, id)
 }
 
-// UpdateIsComplete mocks base method.
-func (m *MockIRepository) UpdateIsComplete(ctx context.Context, req *shoppingModule.UpdateIsComplete) error {
+// Find mocks base method.
+func (m *MockIRepository) Find(ctx context.Context) ([]shoppingModule.Response, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateIsComplete", ctx, req)
+	ret := m.ctrl.Call(m, "Find", ctx)
+	ret0, _ := ret[0].([]shoppingModule.Response)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Find indicates an expected call of Find.
+func (mr *MockIRepositoryMockRecorder) Find(ctx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Find", reflect.TypeOf((*MockIRepository)(nil).Find), ctx)
+}
+
+// FindByID mocks base method.
+func (m *MockIRepository) FindByID(ctx context.Context, id string) (*shoppingModule.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindByID", ctx, id)
+	ret0, _ := ret[0].(*shoppingModule.Response)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindByID indicates an expected call of FindByID.
+func (mr *MockIRepositoryMockRecorder) FindByID(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByID", reflect.TypeOf((*MockIRepository)(nil).FindByID), ctx, id)
+}
+
+// UpdateIsComplete mocks base method.
+func (m *MockIRepository) UpdateIsComplete(ctx context.Context, id string, req *shoppingModule.ReqUpdateIsComplete) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateIsComplete", ctx, id, req)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // UpdateIsComplete indicates an expected call of UpdateIsComplete.
-func (mr *MockIRepositoryMockRecorder) UpdateIsComplete(ctx, req any) *gomock.Call {
+func (mr *MockIRepositoryMockRecorder) UpdateIsComplete(ctx, id, req any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateIsComplete", reflect.TypeOf((*MockIRepository)(nil).UpdateIsComplete), ctx, req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateIsComplete", reflect.TypeOf((*MockIRepository)(nil).UpdateIsComplete), ctx, id, req)
 }
