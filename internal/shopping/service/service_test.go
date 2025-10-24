@@ -115,6 +115,7 @@ func (s *testShoppingServiceSuite) TestInventoryService_Find() {
 		s.Require().Nil(err)
 		s.Require().NotNil(res)
 		s.Require().Equal(len(mockShps), len(res.Items))
+		s.Require().Equal(int64(len(mockShps)), res.Meta.Total)
 
 		s.Require().Equal(res.Items, mockShps)
 	})

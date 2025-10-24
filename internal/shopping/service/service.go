@@ -44,6 +44,9 @@ func (s *service) Find(ctx context.Context) (*handling.ResponseItems[shoppingMod
 
 	return &handling.ResponseItems[shoppingModule.Response]{
 		Items: res,
+		Meta: handling.MetaResponse{
+			Total: int64(len(res)),
+		},
 	}, nil
 }
 
