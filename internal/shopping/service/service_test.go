@@ -46,6 +46,80 @@ func TestInventoryServiceSuite(t *testing.T) {
 	suite.Run(t, &testShoppingServiceSuite{})
 }
 
+func (s *testShoppingServiceSuite) TestInventoryService_Find() {
+	s.T().Parallel()
+
+	s.Run("failed - find shopping", func() {
+		ctx := context.Background()
+
+		req := shoppingModule.Request{}
+		if err := gofakeit.Struct(&req); err != nil {
+			s.T().Fatal(err)
+		}
+
+		mockErr := errors.New("mock-err")
+		s.mockShoppingRepo.EXPECT().
+			Find(ctx).
+			Return(nil, mockErr)
+
+		s.mockLogger.EXPECT().
+			Error(mockErr)
+
+		res, err := s.underTest.Find(ctx)
+		s.Require().Nil(res)
+		s.Require().NotNil(err)
+		s.Require().IsType(handling.ErrorResponse{}, err)
+
+		resErr := err.(handling.ErrorResponse)
+
+		s.Require().Equal(define.CodeInternalServerError, resErr.Code)
+		s.Require().Equal(define.MsgInternalServerError, resErr.Message)
+		s.Require().Equal(http.StatusInternalServerError, resErr.Status)
+	})
+
+	s.Run("succeed - find shopping return empty slice", func() {
+		ctx := context.Background()
+
+		req := shoppingModule.Request{}
+		if err := gofakeit.Struct(&req); err != nil {
+			s.T().Fatal(err)
+		}
+
+		s.mockShoppingRepo.EXPECT().
+			Find(ctx).
+			Return(nil, nil)
+
+		res, err := s.underTest.Find(ctx)
+
+		s.Require().Nil(err)
+		s.Require().NotNil(res)
+		s.Require().IsType([]shoppingModule.Response{}, res.Items)
+	})
+
+	s.Run("succeed - find shopping", func() {
+		ctx := context.Background()
+
+		req := shoppingModule.Request{}
+		if err := gofakeit.Struct(&req); err != nil {
+			s.T().Fatal(err)
+		}
+
+		mockShps := make([]shoppingModule.Response, 3)
+		gofakeit.Slice(&mockShps)
+
+		s.mockShoppingRepo.EXPECT().
+			Find(ctx).
+			Return(mockShps, nil)
+
+		res, err := s.underTest.Find(ctx)
+		s.Require().Nil(err)
+		s.Require().NotNil(res)
+		s.Require().Equal(len(mockShps), len(res.Items))
+
+		s.Require().Equal(res.Items, mockShps)
+	})
+}
+
 func (s *testShoppingServiceSuite) TestInventoryService_Create() {
 	s.T().Parallel()
 
@@ -167,11 +241,9 @@ func (s *testShoppingServiceSuite) TestInventoryService_Create() {
 
 		res, err := s.underTest.Create(ctx, &req)
 		s.Require().Nil(err)
-		s.Require().IsType(&handling.Response{}, res)
+		s.Require().IsType(&handling.ResponseItem[*shoppingModule.Request]{}, res)
 
-		s.Require().Equal(define.CodeCreated, res.Code)
-		s.Require().Equal(define.MsgCreated, res.Message)
-		s.Require().Equal(http.StatusCreated, res.Status)
+		s.Require().NotNil(&req, res.Item)
 	})
 }
 
@@ -319,7 +391,7 @@ func (s *testShoppingServiceSuite) TestInventoryService_DeleteByID() {
 		s.mockLogger.EXPECT().
 			Error(mockErr)
 
-		res, err := s.underTest.Delete(ctx, mockShpID)
+		res, err := s.underTest.DeleteByID(ctx, mockShpID)
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -340,7 +412,7 @@ func (s *testShoppingServiceSuite) TestInventoryService_DeleteByID() {
 			FindByID(ctx, mockShpID).
 			Return(nil, mockErr)
 
-		res, err := s.underTest.Delete(ctx, mockShpID)
+		res, err := s.underTest.DeleteByID(ctx, mockShpID)
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -369,13 +441,13 @@ func (s *testShoppingServiceSuite) TestInventoryService_DeleteByID() {
 
 		mockErr := errors.New("mock-err")
 		s.mockShoppingRepo.EXPECT().
-			Delete(ctx, mockShpID).
+			DeleteByID(ctx, mockShpID).
 			Return(mockErr)
 
 		s.mockLogger.EXPECT().
 			Error(mockErr)
 
-		res, err := s.underTest.Delete(ctx, mockShpID)
+		res, err := s.underTest.DeleteByID(ctx, mockShpID)
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -403,10 +475,10 @@ func (s *testShoppingServiceSuite) TestInventoryService_DeleteByID() {
 			Return(&mockShp, nil)
 
 		s.mockShoppingRepo.EXPECT().
-			Delete(ctx, mockShpID).
+			DeleteByID(ctx, mockShpID).
 			Return(nil)
 
-		res, err := s.underTest.Delete(ctx, mockShpID)
+		res, err := s.underTest.DeleteByID(ctx, mockShpID)
 		s.Require().Nil(err)
 		s.Require().NotNil(res)
 		s.Require().IsType(&handling.Response{}, res)

@@ -3,6 +3,7 @@ package shoppingRepository
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	shoppingModule "github.com/hifat/mallow-sale-api/internal/shopping"
@@ -18,12 +19,12 @@ type mongoRepository struct {
 	db *mongo.Database
 }
 
-func New(db *mongo.Database) IRepository {
+func NewMongo(db *mongo.Database) IRepository {
 	return &mongoRepository{db}
 }
 
 func (r *mongoRepository) Find(ctx context.Context) ([]shoppingModule.Response, error) {
-	cur, err := r.db.Collection("shopping").
+	cur, err := r.db.Collection("shoppings").
 		Find(ctx, bson.M{}, nil)
 	if err != nil {
 		return nil, err
@@ -40,6 +41,7 @@ func (r *mongoRepository) Find(ctx context.Context) ([]shoppingModule.Response, 
 		shoppings = append(shoppings, shoppingModule.Response{
 			ID:               shopping.ID.Hex(),
 			Name:             shopping.Name,
+			IsComplete:       shopping.IsComplete,
 			PurchaseQuantity: shopping.PurchaseQuantity,
 			PurchaseUnit: usageUnitModule.Prototype{
 				Code: shopping.PurchaseUnit.Code,
@@ -51,17 +53,18 @@ func (r *mongoRepository) Find(ctx context.Context) ([]shoppingModule.Response, 
 		return nil, err
 	}
 
-	return nil, nil
+	return shoppings, nil
 }
 func (r *mongoRepository) FindByID(ctx context.Context, id string) (*shoppingModule.Response, error) {
+	fmt.Println(database.MustObjectIDFromHex(id))
 	var shopping shoppingModule.Entity
-	err := r.db.Collection("shopping").
+	err := r.db.Collection("shoppings").
 		FindOne(ctx, bson.M{
 			"_id": database.MustObjectIDFromHex(id),
 		}).
 		Decode(&shopping)
 	if err != nil {
-		if !errors.Is(err, mongo.ErrNoDocuments) {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, define.ErrRecordNotFound
 		}
 
@@ -107,7 +110,7 @@ func (r *mongoRepository) UpdateIsComplete(ctx context.Context, id string, req *
 	return err
 }
 
-func (r *mongoRepository) Delete(ctx context.Context, id string) error {
+func (r *mongoRepository) DeleteByID(ctx context.Context, id string) error {
 	_, err := r.db.Collection("shoppings").
 		DeleteOne(ctx, bson.M{
 			"_id": database.MustObjectIDFromHex(id),

@@ -12,5 +12,5 @@ type IRepository interface {
 	FindByID(ctx context.Context, id string) (*shoppingModule.Response, error)
 	Create(ctx context.Context, req *shoppingModule.Request) error
 	UpdateIsComplete(ctx context.Context, id string, req *shoppingModule.ReqUpdateIsComplete) error
-	Delete(ctx context.Context, id string) error
+	DeleteByID(ctx context.Context, id string) error
 }

@@ -30,8 +30,8 @@ func Init(cfg *config.Config, db *mongo.Database) *recipeHandler.Handler {
 	iHelper := usageUnitHelper.New(iLogger, usageUnitRepositoryIRepository)
 	helperIHelper := helper.New(inventoryRepositoryIRepository)
 	typeRepository := recipeRepository.NewTypeMongo(db)
-	recipeTypeHelper := recipeHelper.NewRecipeTypeHelper(typeRepository)
-	iService := recipeService.New(iLogger, iRepository, inventoryRepositoryIRepository, usageUnitRepositoryIRepository, iHelper, helperIHelper, recipeTypeHelper)
+	iRecipeTypeHelper := recipeHelper.NewRecipeTypeHelper(typeRepository)
+	iService := recipeService.New(iLogger, iRepository, inventoryRepositoryIRepository, usageUnitRepositoryIRepository, iHelper, helperIHelper, iRecipeTypeHelper)
 	rest := recipeHandler.NewRest(iService)
 	handler := recipeHandler.New(rest)
 	return handler

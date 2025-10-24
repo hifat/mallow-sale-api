@@ -15,9 +15,9 @@ import (
 
 type IService interface {
 	Find(ctx context.Context) (*handling.ResponseItems[shoppingModule.Response], error)
-	Create(ctx context.Context, req *shoppingModule.Request) (*handling.Response, error)
+	Create(ctx context.Context, req *shoppingModule.Request) (*handling.ResponseItem[*shoppingModule.Request], error)
 	UpdateIsComplete(ctx context.Context, id string, req *shoppingModule.ReqUpdateIsComplete) (*handling.Response, error)
-	Delete(ctx context.Context, id string) (*handling.Response, error)
+	DeleteByID(ctx context.Context, id string) (*handling.Response, error)
 }
 
 type service struct {
@@ -35,12 +35,19 @@ func New(logger logger.ILogger, shoppingRepo shoppingRepository.IRepository, usa
 }
 
 func (s *service) Find(ctx context.Context) (*handling.ResponseItems[shoppingModule.Response], error) {
+	res := []shoppingModule.Response{}
+	res, err := s.shoppingRepo.Find(ctx)
+	if err != nil {
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
 	return &handling.ResponseItems[shoppingModule.Response]{
-		Items: []shoppingModule.Response{},
+		Items: res,
 	}, nil
 }
 
-func (s *service) Create(ctx context.Context, req *shoppingModule.Request) (*handling.Response, error) {
+func (s *service) Create(ctx context.Context, req *shoppingModule.Request) (*handling.ResponseItem[*shoppingModule.Request], error) {
 	usageUnit, err := s.usageUnitRepo.FindByCode(ctx, req.PurchaseUnit.Code)
 	if err != nil {
 		if errors.Is(err, define.ErrRecordNotFound) {
@@ -59,10 +66,8 @@ func (s *service) Create(ctx context.Context, req *shoppingModule.Request) (*han
 		return nil, handling.ThrowErr(err)
 	}
 
-	return &handling.Response{
-		Message: define.MsgCreated,
-		Code:    define.CodeCreated,
-		Status:  http.StatusCreated,
+	return &handling.ResponseItem[*shoppingModule.Request]{
+		Item: req,
 	}, nil
 }
 
@@ -88,7 +93,7 @@ func (s *service) UpdateIsComplete(ctx context.Context, id string, req *shopping
 	}, nil
 }
 
-func (s *service) Delete(ctx context.Context, id string) (*handling.Response, error) {
+func (s *service) DeleteByID(ctx context.Context, id string) (*handling.Response, error) {
 	_, err := s.shoppingRepo.FindByID(ctx, id)
 	if err != nil {
 		if !errors.Is(define.ErrRecordNotFound, err) {
@@ -98,7 +103,7 @@ func (s *service) Delete(ctx context.Context, id string) (*handling.Response, er
 		return nil, handling.ThrowErr(err)
 	}
 
-	if err := s.shoppingRepo.Delete(ctx, id); err != nil {
+	if err := s.shoppingRepo.DeleteByID(ctx, id); err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
