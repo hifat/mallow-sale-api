@@ -21,7 +21,7 @@ type testInventoryHelperSuite struct {
 	underTest helper
 }
 
-func (s *testInventoryHelperSuite) SetupSuite() {
+func (s *testInventoryHelperSuite) SetupTest() {
 	ctrl := gomock.NewController(s.T())
 
 	s.mockInventoryRepo = mockInventoryRepository.NewMockIRepository(ctrl)

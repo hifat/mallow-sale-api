@@ -26,8 +26,11 @@ type testSupplierServiceSuite struct {
 	underTest IService
 }
 
-func (s *testSupplierServiceSuite) SetupSuite() {
+func (s *testSupplierServiceSuite) SetupTest() {
 	ctrl := gomock.NewController((s.T()))
+	s.T().Cleanup(func() {
+		ctrl.Finish()
+	})
 
 	s.mockLogger = mockLogger.NewMockLogger(ctrl)
 	s.mockSupplierRepo = mockSupplierRepository.NewMockIRepository(ctrl)
@@ -243,6 +246,7 @@ func (s *testSupplierServiceSuite) TestSupplierService_FindByID() {
 		res, err := s.underTest.FindByID(ctx, mockID)
 		s.Require().Nil(err)
 		s.Require().NotNil(res)
+		s.Require().NotNil(res.Item)
 		s.Require().Equal(mockSupplier, res.Item)
 	})
 }
@@ -371,8 +375,7 @@ func (s *testSupplierServiceSuite) TestSupplierService_DeleteByID() {
 			Error(mockErr).
 			Times(1)
 
-		res, err := s.underTest.UpdateByID(ctx, mockID, &supplierModule.Request{})
-		s.Require().Nil(res)
+		err := s.underTest.DeleteByID(ctx, mockID)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
 
@@ -392,8 +395,7 @@ func (s *testSupplierServiceSuite) TestSupplierService_DeleteByID() {
 			Return(nil, define.ErrRecordNotFound).
 			Times(1)
 
-		res, err := s.underTest.UpdateByID(ctx, mockID, &supplierModule.Request{})
-		s.Require().Nil(res)
+		err := s.underTest.DeleteByID(ctx, mockID)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
 

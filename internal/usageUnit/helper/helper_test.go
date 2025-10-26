@@ -23,7 +23,7 @@ type testUsageUnitHelperSuite struct {
 	underTest IHelper
 }
 
-func (s *testUsageUnitHelperSuite) SetupSuite() {
+func (s *testUsageUnitHelperSuite) SetupTest() {
 	ctrl := gomock.NewController(s.T())
 
 	s.mockLogger = mockLogger.NewMockLogger(ctrl)

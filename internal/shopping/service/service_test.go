@@ -28,7 +28,7 @@ type testShoppingServiceSuite struct {
 	underTest IService
 }
 
-func (s *testShoppingServiceSuite) SetupSuite() {
+func (s *testShoppingServiceSuite) SetupTest() {
 	ctrl := gomock.NewController(s.T())
 
 	s.mockLogger = mockLogger.NewMockLogger(ctrl)
