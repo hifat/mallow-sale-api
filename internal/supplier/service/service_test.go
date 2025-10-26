@@ -19,11 +19,6 @@ import (
 
 type testSupplierServiceSuite struct {
 	suite.Suite
-
-	// mockLogger       *mockLogger.MockLogger
-	// mockSupplierRepo *mockSupplierRepository.MockIRepository
-
-	// underTest IService
 }
 
 type mockSupplierService struct {
