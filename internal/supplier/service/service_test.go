@@ -20,25 +20,48 @@ import (
 type testSupplierServiceSuite struct {
 	suite.Suite
 
+	// mockLogger       *mockLogger.MockLogger
+	// mockSupplierRepo *mockSupplierRepository.MockIRepository
+
+	// underTest IService
+}
+
+type mockSupplierService struct {
 	mockLogger       *mockLogger.MockLogger
 	mockSupplierRepo *mockSupplierRepository.MockIRepository
+}
 
-	underTest IService
+func NewMock(t *testing.T) (mockSupplierService, func()) {
+	ctrl := gomock.NewController(t)
+
+	return mockSupplierService{
+			mockLogger:       mockLogger.NewMockLogger(ctrl),
+			mockSupplierRepo: mockSupplierRepository.NewMockIRepository(ctrl),
+		}, func() {
+			ctrl.Finish()
+		}
+}
+
+func NewUnderTest(m *mockSupplierService) *service {
+	return &service{
+		logger:             m.mockLogger,
+		supplierRepository: m.mockSupplierRepo,
+	}
 }
 
 func (s *testSupplierServiceSuite) SetupTest() {
-	ctrl := gomock.NewController((s.T()))
-	s.T().Cleanup(func() {
-		ctrl.Finish()
-	})
+	// ctrl := gomock.NewController((s.T()))
+	// s.T().Cleanup(func() {
+	// 	ctrl.Finish()
+	// })
 
-	s.mockLogger = mockLogger.NewMockLogger(ctrl)
-	s.mockSupplierRepo = mockSupplierRepository.NewMockIRepository(ctrl)
+	// m.mockLogger = mockLogger.NewMockLogger(ctrl)
+	// m.mockSupplierRepo = mockSupplierRepository.NewMockIRepository(ctrl)
 
-	s.underTest = &service{
-		logger:             s.mockLogger,
-		supplierRepository: s.mockSupplierRepo,
-	}
+	// underTest = &service{
+	// 	logger:             m.mockLogger,
+	// 	supplierRepository: m.mockSupplierRepo,
+	// }
 }
 
 func TestSupplierServiceSuite(t *testing.T) {
@@ -49,20 +72,25 @@ func (s *testSupplierServiceSuite) TestSupplierService_Create() {
 	s.T().Parallel()
 
 	s.Run("failed - create supplier error", func() {
+		m, cleanup := NewMock(s.T())
+		defer cleanup()
+
+		underTest := NewUnderTest(&m)
+
 		ctx := context.Background()
 		mockReq := &supplierModule.Request{}
 
 		mockErr := errors.New("mock-err")
-		s.mockSupplierRepo.EXPECT().
+		m.mockSupplierRepo.EXPECT().
 			Create(ctx, mockReq).
 			Return(mockErr).
 			Times(1)
 
-		s.mockLogger.EXPECT().
+		m.mockLogger.EXPECT().
 			Error(mockErr).
 			Times(1)
 
-		res, err := s.underTest.Create(ctx, mockReq)
+		res, err := underTest.Create(ctx, mockReq)
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -75,18 +103,23 @@ func (s *testSupplierServiceSuite) TestSupplierService_Create() {
 	})
 
 	s.Run("succeed - create supplier", func() {
+		m, cleanup := NewMock(s.T())
+		defer cleanup()
+
+		underTest := NewUnderTest(&m)
+
 		ctx := context.Background()
 		mockReq := &supplierModule.Request{}
 		if err := gofakeit.Struct(mockReq); err != nil {
 			s.T().Fatal(err)
 		}
 
-		s.mockSupplierRepo.EXPECT().
+		m.mockSupplierRepo.EXPECT().
 			Create(ctx, mockReq).
 			Return(nil).
 			Times(1)
 
-		res, err := s.underTest.Create(ctx, mockReq)
+		res, err := underTest.Create(ctx, mockReq)
 		s.Require().Nil(err)
 		s.Require().NotNil(res)
 
@@ -98,20 +131,25 @@ func (s *testSupplierServiceSuite) TestSupplierService_Find() {
 	s.T().Parallel()
 
 	s.Run("failed - count supplier error", func() {
+		m, cleanup := NewMock(s.T())
+		defer cleanup()
+
+		underTest := NewUnderTest(&m)
+
 		ctx := context.Background()
 
 		var total int64 = 3
 		mockErr := errors.New("mock-err")
-		s.mockSupplierRepo.EXPECT().
+		m.mockSupplierRepo.EXPECT().
 			Count(ctx).
 			Return(total, mockErr).
 			Times(1)
 
-		s.mockLogger.EXPECT().
+		m.mockLogger.EXPECT().
 			Error(mockErr).
 			Times(1)
 
-		res, err := s.underTest.Find(ctx, &utilsModule.QueryReq{})
+		res, err := underTest.Find(ctx, &utilsModule.QueryReq{})
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -124,25 +162,30 @@ func (s *testSupplierServiceSuite) TestSupplierService_Find() {
 	})
 
 	s.Run("failed - find supplier error", func() {
+		m, cleanup := NewMock(s.T())
+		defer cleanup()
+
+		underTest := NewUnderTest(&m)
+
 		ctx := context.Background()
 
 		var total int64 = 3
-		s.mockSupplierRepo.EXPECT().
+		m.mockSupplierRepo.EXPECT().
 			Count(ctx).
 			Return(total, nil).
 			Times(1)
 
 		mockErr := errors.New("mock-err")
-		s.mockSupplierRepo.EXPECT().
+		m.mockSupplierRepo.EXPECT().
 			Find(ctx, &utilsModule.QueryReq{}).
 			Return(nil, mockErr).
 			Times(1)
 
-		s.mockLogger.EXPECT().
+		m.mockLogger.EXPECT().
 			Error(mockErr).
 			Times(1)
 
-		res, err := s.underTest.Find(ctx, &utilsModule.QueryReq{})
+		res, err := underTest.Find(ctx, &utilsModule.QueryReq{})
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -155,21 +198,26 @@ func (s *testSupplierServiceSuite) TestSupplierService_Find() {
 	})
 
 	s.Run("succeed - create supplier", func() {
+		m, cleanup := NewMock(s.T())
+		defer cleanup()
+
+		underTest := NewUnderTest(&m)
+
 		ctx := context.Background()
 
 		var total int64 = 3
-		s.mockSupplierRepo.EXPECT().
+		m.mockSupplierRepo.EXPECT().
 			Count(ctx).
 			Return(total, nil).
 			Times(1)
 
 		mockSuppliers := make([]supplierModule.Response, total)
-		s.mockSupplierRepo.EXPECT().
+		m.mockSupplierRepo.EXPECT().
 			Find(ctx, &utilsModule.QueryReq{}).
 			Return(mockSuppliers, nil).
 			Times(1)
 
-		res, err := s.underTest.Find(ctx, &utilsModule.QueryReq{})
+		res, err := underTest.Find(ctx, &utilsModule.QueryReq{})
 		s.Require().Nil(err)
 		s.Require().NotNil(res)
 		s.Require().IsType([]supplierModule.Response{}, res.Items)
@@ -183,20 +231,25 @@ func (s *testSupplierServiceSuite) TestSupplierService_FindByID() {
 	s.T().Parallel()
 
 	s.Run("failed - find supplier by id other error", func() {
+		m, cleanup := NewMock(s.T())
+		defer cleanup()
+
+		underTest := NewUnderTest(&m)
+
 		ctx := context.Background()
 
 		mockID := "mock-id"
 		mockErr := errors.New("mock-err")
-		s.mockSupplierRepo.EXPECT().
+		m.mockSupplierRepo.EXPECT().
 			FindByID(ctx, mockID).
 			Return(nil, mockErr).
 			Times(1)
 
-		s.mockLogger.EXPECT().
+		m.mockLogger.EXPECT().
 			Error(mockErr).
 			Times(1)
 
-		res, err := s.underTest.FindByID(ctx, mockID)
+		res, err := underTest.FindByID(ctx, mockID)
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -209,15 +262,20 @@ func (s *testSupplierServiceSuite) TestSupplierService_FindByID() {
 	})
 
 	s.Run("failed - find supplier by id not found error", func() {
+		m, cleanup := NewMock(s.T())
+		defer cleanup()
+
+		underTest := NewUnderTest(&m)
+
 		ctx := context.Background()
 
 		mockID := "mock-id"
-		s.mockSupplierRepo.EXPECT().
+		m.mockSupplierRepo.EXPECT().
 			FindByID(ctx, mockID).
 			Return(nil, define.ErrRecordNotFound).
 			Times(1)
 
-		res, err := s.underTest.FindByID(ctx, mockID)
+		res, err := underTest.FindByID(ctx, mockID)
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -230,6 +288,11 @@ func (s *testSupplierServiceSuite) TestSupplierService_FindByID() {
 	})
 
 	s.Run("succeed - find supplier by id", func() {
+		m, cleanup := NewMock(s.T())
+		defer cleanup()
+
+		underTest := NewUnderTest(&m)
+
 		ctx := context.Background()
 
 		mockID := "mock-id"
@@ -238,12 +301,12 @@ func (s *testSupplierServiceSuite) TestSupplierService_FindByID() {
 			s.T().Fatal(err)
 		}
 
-		s.mockSupplierRepo.EXPECT().
+		m.mockSupplierRepo.EXPECT().
 			FindByID(ctx, mockID).
 			Return(mockSupplier, nil).
 			Times(1)
 
-		res, err := s.underTest.FindByID(ctx, mockID)
+		res, err := underTest.FindByID(ctx, mockID)
 		s.Require().Nil(err)
 		s.Require().NotNil(res)
 		s.Require().NotNil(res.Item)
@@ -255,20 +318,25 @@ func (s *testSupplierServiceSuite) TestSupplierService_UpdateByID() {
 	s.T().Parallel()
 
 	s.Run("failed - find supplier by id other error", func() {
+		m, cleanup := NewMock(s.T())
+		defer cleanup()
+
+		underTest := NewUnderTest(&m)
+
 		ctx := context.Background()
 
 		mockID := "mock-id"
 		mockErr := errors.New("mock-err")
-		s.mockSupplierRepo.EXPECT().
+		m.mockSupplierRepo.EXPECT().
 			FindByID(ctx, mockID).
 			Return(nil, mockErr).
 			Times(1)
 
-		s.mockLogger.EXPECT().
+		m.mockLogger.EXPECT().
 			Error(mockErr).
 			Times(1)
 
-		res, err := s.underTest.UpdateByID(ctx, mockID, &supplierModule.Request{})
+		res, err := underTest.UpdateByID(ctx, mockID, &supplierModule.Request{})
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -281,15 +349,20 @@ func (s *testSupplierServiceSuite) TestSupplierService_UpdateByID() {
 	})
 
 	s.Run("failed - find supplier by id not found error", func() {
+		m, cleanup := NewMock(s.T())
+		defer cleanup()
+
+		underTest := NewUnderTest(&m)
+
 		ctx := context.Background()
 
 		mockID := "mock-id"
-		s.mockSupplierRepo.EXPECT().
+		m.mockSupplierRepo.EXPECT().
 			FindByID(ctx, mockID).
 			Return(nil, define.ErrRecordNotFound).
 			Times(1)
 
-		res, err := s.underTest.UpdateByID(ctx, mockID, &supplierModule.Request{})
+		res, err := underTest.UpdateByID(ctx, mockID, &supplierModule.Request{})
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -302,25 +375,30 @@ func (s *testSupplierServiceSuite) TestSupplierService_UpdateByID() {
 	})
 
 	s.Run("failed - update supplier by id", func() {
+		m, cleanup := NewMock(s.T())
+		defer cleanup()
+
+		underTest := NewUnderTest(&m)
+
 		ctx := context.Background()
 
 		mockID := "mock-id"
-		s.mockSupplierRepo.EXPECT().
+		m.mockSupplierRepo.EXPECT().
 			FindByID(ctx, mockID).
 			Return(&supplierModule.Response{}, nil).
 			Times(1)
 
 		mockErr := errors.New("mock-err")
-		s.mockSupplierRepo.EXPECT().
+		m.mockSupplierRepo.EXPECT().
 			UpdateByID(ctx, mockID, &supplierModule.Request{}).
 			Return(mockErr).
 			Times(1)
 
-		s.mockLogger.EXPECT().
+		m.mockLogger.EXPECT().
 			Error(mockErr).
 			Times(1)
 
-		res, err := s.underTest.UpdateByID(ctx, mockID, &supplierModule.Request{})
+		res, err := underTest.UpdateByID(ctx, mockID, &supplierModule.Request{})
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -333,10 +411,15 @@ func (s *testSupplierServiceSuite) TestSupplierService_UpdateByID() {
 	})
 
 	s.Run("succeed - update supplier by id", func() {
+		m, cleanup := NewMock(s.T())
+		defer cleanup()
+
+		underTest := NewUnderTest(&m)
+
 		ctx := context.Background()
 
 		mockID := "mock-id"
-		s.mockSupplierRepo.EXPECT().
+		m.mockSupplierRepo.EXPECT().
 			FindByID(ctx, mockID).
 			Return(&supplierModule.Response{}, nil).
 			Times(1)
@@ -346,12 +429,12 @@ func (s *testSupplierServiceSuite) TestSupplierService_UpdateByID() {
 			s.T().Fatal(err)
 		}
 
-		s.mockSupplierRepo.EXPECT().
+		m.mockSupplierRepo.EXPECT().
 			UpdateByID(ctx, mockID, mockReq).
 			Return(nil).
 			Times(1)
 
-		res, err := s.underTest.UpdateByID(ctx, mockID, mockReq)
+		res, err := underTest.UpdateByID(ctx, mockID, mockReq)
 		s.Require().Nil(err)
 		s.Require().NotNil(res)
 		s.Require().Equal(mockReq, res.Item)
@@ -362,20 +445,25 @@ func (s *testSupplierServiceSuite) TestSupplierService_DeleteByID() {
 	s.T().Parallel()
 
 	s.Run("failed - find supplier by id other error", func() {
+		m, cleanup := NewMock(s.T())
+		defer cleanup()
+
+		underTest := NewUnderTest(&m)
+
 		ctx := context.Background()
 
 		mockID := "mock-id"
 		mockErr := errors.New("mock-err")
-		s.mockSupplierRepo.EXPECT().
+		m.mockSupplierRepo.EXPECT().
 			FindByID(ctx, mockID).
 			Return(nil, mockErr).
 			Times(1)
 
-		s.mockLogger.EXPECT().
+		m.mockLogger.EXPECT().
 			Error(mockErr).
 			Times(1)
 
-		err := s.underTest.DeleteByID(ctx, mockID)
+		err := underTest.DeleteByID(ctx, mockID)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
 
@@ -387,15 +475,20 @@ func (s *testSupplierServiceSuite) TestSupplierService_DeleteByID() {
 	})
 
 	s.Run("failed - find supplier by id not found error", func() {
+		m, cleanup := NewMock(s.T())
+		defer cleanup()
+
+		underTest := NewUnderTest(&m)
+
 		ctx := context.Background()
 
 		mockID := "mock-id"
-		s.mockSupplierRepo.EXPECT().
+		m.mockSupplierRepo.EXPECT().
 			FindByID(ctx, mockID).
 			Return(nil, define.ErrRecordNotFound).
 			Times(1)
 
-		err := s.underTest.DeleteByID(ctx, mockID)
+		err := underTest.DeleteByID(ctx, mockID)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
 
@@ -407,25 +500,30 @@ func (s *testSupplierServiceSuite) TestSupplierService_DeleteByID() {
 	})
 
 	s.Run("failed - delete supplier by id", func() {
+		m, cleanup := NewMock(s.T())
+		defer cleanup()
+
+		underTest := NewUnderTest(&m)
+
 		ctx := context.Background()
 
 		mockID := "mock-id"
-		s.mockSupplierRepo.EXPECT().
+		m.mockSupplierRepo.EXPECT().
 			FindByID(ctx, mockID).
 			Return(&supplierModule.Response{}, nil).
 			Times(1)
 
 		mockErr := errors.New("mock-err")
-		s.mockSupplierRepo.EXPECT().
+		m.mockSupplierRepo.EXPECT().
 			DeleteByID(ctx, mockID).
 			Return(mockErr).
 			Times(1)
 
-		s.mockLogger.EXPECT().
+		m.mockLogger.EXPECT().
 			Error(mockErr).
 			Times(1)
 
-		err := s.underTest.DeleteByID(ctx, mockID)
+		err := underTest.DeleteByID(ctx, mockID)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
 
@@ -437,10 +535,15 @@ func (s *testSupplierServiceSuite) TestSupplierService_DeleteByID() {
 	})
 
 	s.Run("succeed - delete supplier by id", func() {
+		m, cleanup := NewMock(s.T())
+		defer cleanup()
+
+		underTest := NewUnderTest(&m)
+
 		ctx := context.Background()
 
 		mockID := "mock-id"
-		s.mockSupplierRepo.EXPECT().
+		m.mockSupplierRepo.EXPECT().
 			FindByID(ctx, mockID).
 			Return(&supplierModule.Response{}, nil).
 			Times(1)
@@ -450,12 +553,12 @@ func (s *testSupplierServiceSuite) TestSupplierService_DeleteByID() {
 			s.T().Fatal(err)
 		}
 
-		s.mockSupplierRepo.EXPECT().
+		m.mockSupplierRepo.EXPECT().
 			DeleteByID(ctx, mockID).
 			Return(nil).
 			Times(1)
 
-		err := s.underTest.DeleteByID(ctx, mockID)
+		err := underTest.DeleteByID(ctx, mockID)
 		s.Require().Nil(err)
 	})
 }
