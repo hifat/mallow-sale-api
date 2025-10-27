@@ -42,8 +42,6 @@ func TestInventoryServiceSuite(t *testing.T) {
 }
 
 func (s *testInventoryServiceSuite) TestInventoryService_Create() {
-	s.T().Parallel()
-
 	s.Run("failed - update setting other error", func() {
 		ctx := context.Background()
 		var costPercentage float32 = 49.99
@@ -84,8 +82,6 @@ func (s *testInventoryServiceSuite) TestInventoryService_Create() {
 }
 
 func (s *testInventoryServiceSuite) TestInventoryService_Find() {
-	s.T().Parallel()
-
 	s.Run("failed - update setting other error", func() {
 		ctx := context.Background()
 

@@ -49,8 +49,6 @@ func TestSupplierServiceSuite(t *testing.T) {
 }
 
 func (s *testSupplierServiceSuite) TestSupplierService_Create() {
-	s.T().Parallel()
-
 	s.Run("failed - create supplier error", func() {
 		m, cleanup := NewMock(s.T())
 		defer cleanup()
@@ -108,8 +106,6 @@ func (s *testSupplierServiceSuite) TestSupplierService_Create() {
 }
 
 func (s *testSupplierServiceSuite) TestSupplierService_Find() {
-	s.T().Parallel()
-
 	s.Run("failed - count supplier error", func() {
 		m, cleanup := NewMock(s.T())
 		defer cleanup()
@@ -208,8 +204,6 @@ func (s *testSupplierServiceSuite) TestSupplierService_Find() {
 }
 
 func (s *testSupplierServiceSuite) TestSupplierService_FindByID() {
-	s.T().Parallel()
-
 	s.Run("failed - find supplier by id other error", func() {
 		m, cleanup := NewMock(s.T())
 		defer cleanup()
@@ -295,8 +289,6 @@ func (s *testSupplierServiceSuite) TestSupplierService_FindByID() {
 }
 
 func (s *testSupplierServiceSuite) TestSupplierService_UpdateByID() {
-	s.T().Parallel()
-
 	s.Run("failed - find supplier by id other error", func() {
 		m, cleanup := NewMock(s.T())
 		defer cleanup()
@@ -422,8 +414,6 @@ func (s *testSupplierServiceSuite) TestSupplierService_UpdateByID() {
 }
 
 func (s *testSupplierServiceSuite) TestSupplierService_DeleteByID() {
-	s.T().Parallel()
-
 	s.Run("failed - find supplier by id other error", func() {
 		m, cleanup := NewMock(s.T())
 		defer cleanup()

@@ -47,8 +47,6 @@ func TestInventoryServiceSuite(t *testing.T) {
 }
 
 func (s *testShoppingServiceSuite) TestInventoryService_Find() {
-	s.T().Parallel()
-
 	s.Run("failed - find shopping", func() {
 		ctx := context.Background()
 
@@ -122,8 +120,6 @@ func (s *testShoppingServiceSuite) TestInventoryService_Find() {
 }
 
 func (s *testShoppingServiceSuite) TestInventoryService_Create() {
-	s.T().Parallel()
-
 	s.Run("failed - find usage unit by code other error", func() {
 		ctx := context.Background()
 
@@ -249,8 +245,6 @@ func (s *testShoppingServiceSuite) TestInventoryService_Create() {
 }
 
 func (s *testShoppingServiceSuite) TestInventoryService_UpdateIsComplete() {
-	s.T().Parallel()
-
 	s.Run("failed - find shopping by id other error", func() {
 		ctx := context.Background()
 		mockShpID := "mock-shp-id"
@@ -378,8 +372,6 @@ func (s *testShoppingServiceSuite) TestInventoryService_UpdateIsComplete() {
 }
 
 func (s *testShoppingServiceSuite) TestInventoryService_DeleteByID() {
-	s.T().Parallel()
-
 	s.Run("failed - find shopping by id other error", func() {
 		ctx := context.Background()
 		mockShpID := "mock-shp-id"

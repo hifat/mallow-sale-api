@@ -40,8 +40,6 @@ func TestUsageUnitHelperSuite(t *testing.T) {
 }
 
 func (s *testUsageUnitHelperSuite) TestUsageUnitHelper_GetNameByCode() {
-	s.T().Parallel()
-
 	s.Run("failed - find usage unit by code error", func() {
 		mockReq := inventoryModule.Request{}
 		if err := gofakeit.Struct(&mockReq); err != nil {

@@ -36,8 +36,6 @@ func TestInventoryHelperSuite(t *testing.T) {
 }
 
 func (s *testInventoryHelperSuite) TestInventoryHelper_FindAndGetByID() {
-	s.T().Parallel()
-
 	s.Run("failed - find inventory in ids other error", func() {
 		mockIDs := []string{"mock-id"}
 		ctx := context.Background()
@@ -107,8 +105,6 @@ func (s *testInventoryHelperSuite) TestInventoryHelper_FindAndGetByID() {
 }
 
 func (s *testInventoryHelperSuite) TestInventoryHelper_calPurchasePrice() {
-	s.T().Parallel()
-
 	s.Run("should increase purchase quantity is 0 should return request purchase quantity", func() {
 		reqPurchasePrice := 5.5546
 		inventory := inventoryModule.Response{
@@ -161,8 +157,6 @@ func (s *testInventoryHelperSuite) TestInventoryHelper_calPurchasePrice() {
 }
 
 func (s *testInventoryHelperSuite) TestInventoryHelper_IncreaseStock() {
-	s.T().Parallel()
-
 	reqPurchaseQuantity := float64(44)
 	reqPurchasePrice := float64(55)
 
@@ -221,8 +215,6 @@ func (s *testInventoryHelperSuite) TestInventoryHelper_IncreaseStock() {
 }
 
 func (s *testInventoryHelperSuite) TestInventoryHelper_DecreaseStock() {
-	s.T().Parallel()
-
 	reqPurchasePrice := float64(40)
 	reqPurchaseQuantity := float64(50)
 
