@@ -44,21 +44,6 @@ func NewUnderTest(m *mockSupplierService) *service {
 	}
 }
 
-func (s *testSupplierServiceSuite) SetupTest() {
-	// ctrl := gomock.NewController((s.T()))
-	// s.T().Cleanup(func() {
-	// 	ctrl.Finish()
-	// })
-
-	// m.mockLogger = mockLogger.NewMockLogger(ctrl)
-	// m.mockSupplierRepo = mockSupplierRepository.NewMockIRepository(ctrl)
-
-	// underTest = &service{
-	// 	logger:             m.mockLogger,
-	// 	supplierRepository: m.mockSupplierRepo,
-	// }
-}
-
 func TestSupplierServiceSuite(t *testing.T) {
 	suite.Run(t, &testSupplierServiceSuite{})
 }

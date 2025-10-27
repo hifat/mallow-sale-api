@@ -23,6 +23,7 @@ type IService interface {
 }
 
 type service struct {
+	mu            sync.Mutex
 	logger        logger.ILogger
 	inventoryRepo inventoryRepository.IRepository
 	usageUnitRepo usageUnitRepository.IRepository
@@ -75,7 +76,9 @@ func (s *service) Create(ctx context.Context, req *inventoryModule.Request) (*ha
 			return
 		}
 
+		s.mu.Lock()
 		req.PurchaseUnit.Name = usageUnit.Name
+		s.mu.Unlock()
 	}()
 
 	go func() {

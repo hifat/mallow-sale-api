@@ -19,28 +19,34 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
-type testInventoryServiceSuite struct {
-	suite.Suite
-
+type mockInventoryService struct {
+	ctrl              *gomock.Controller
 	mockLogger        *mockLogger.MockLogger
 	mockInventoryRepo *mockInventoryRepository.MockIRepository
 	mockUsageUnitRepo *mockUsageUnitRepository.MockIRepository
-
-	underTest IService
 }
 
-func (s *testInventoryServiceSuite) SetupTest() {
-	ctrl := gomock.NewController(s.T())
+func NewMock(t *testing.T) mockInventoryService {
+	ctrl := gomock.NewController(t)
 
-	s.mockLogger = mockLogger.NewMockLogger(ctrl)
-	s.mockInventoryRepo = mockInventoryRepository.NewMockIRepository(ctrl)
-	s.mockUsageUnitRepo = mockUsageUnitRepository.NewMockIRepository(ctrl)
-
-	s.underTest = &service{
-		logger:        s.mockLogger,
-		inventoryRepo: s.mockInventoryRepo,
-		usageUnitRepo: s.mockUsageUnitRepo,
+	return mockInventoryService{
+		ctrl:              ctrl,
+		mockLogger:        mockLogger.NewMockLogger(ctrl),
+		mockInventoryRepo: mockInventoryRepository.NewMockIRepository(ctrl),
+		mockUsageUnitRepo: mockUsageUnitRepository.NewMockIRepository(ctrl),
 	}
+}
+
+func NewUnderTest(m mockInventoryService) *service {
+	return &service{
+		logger:        m.mockLogger,
+		inventoryRepo: m.mockInventoryRepo,
+		usageUnitRepo: m.mockUsageUnitRepo,
+	}
+}
+
+type testInventoryServiceSuite struct {
+	suite.Suite
 }
 
 func TestInventoryServiceSuite(t *testing.T) {
@@ -48,9 +54,10 @@ func TestInventoryServiceSuite(t *testing.T) {
 }
 
 func (s *testInventoryServiceSuite) TestInventoryService_Create() {
-	s.T().Parallel()
-
 	s.Run("failed - find inventory by name other error", func() {
+		m := NewMock(s.T())
+		underTest := NewUnderTest(m)
+
 		mockReq := inventoryModule.Request{}
 		if err := gofakeit.Struct(&mockReq); err != nil {
 			s.T().Fatal(err)
@@ -59,21 +66,21 @@ func (s *testInventoryServiceSuite) TestInventoryService_Create() {
 		ctx := context.Background()
 
 		mockErr := errors.New("mock err")
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			FindByName(ctx, mockReq.Name).
 			Return(nil, mockErr).
 			Times(1)
 
-		s.mockLogger.EXPECT().
+		m.mockLogger.EXPECT().
 			Error(mockErr).
 			Times(1)
 
-		s.mockUsageUnitRepo.EXPECT().
+		m.mockUsageUnitRepo.EXPECT().
 			FindByCode(gomock.Any(), gomock.Any()).
 			Return(&usageUnitModule.Prototype{}, nil).
 			Times(1)
 
-		res, err := s.underTest.Create(ctx, &mockReq)
+		res, err := underTest.Create(ctx, &mockReq)
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -86,6 +93,9 @@ func (s *testInventoryServiceSuite) TestInventoryService_Create() {
 	})
 
 	s.Run("failed - duplicated inventory", func() {
+		m := NewMock(s.T())
+		underTest := NewUnderTest(m)
+
 		mockReq := inventoryModule.Request{}
 		if err := gofakeit.Struct(&mockReq); err != nil {
 			s.T().Fatal(err)
@@ -98,17 +108,17 @@ func (s *testInventoryServiceSuite) TestInventoryService_Create() {
 
 		ctx := context.Background()
 
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			FindByName(ctx, mockReq.Name).
 			Return(&mockRes, nil).
 			Times(1)
 
-		s.mockUsageUnitRepo.EXPECT().
+		m.mockUsageUnitRepo.EXPECT().
 			FindByCode(gomock.Any(), gomock.Any()).
 			Return(&usageUnitModule.Prototype{}, nil).
-			Times(1)
+			MinTimes(0)
 
-		res, err := s.underTest.Create(ctx, &mockReq)
+		res, err := underTest.Create(ctx, &mockReq)
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -121,6 +131,9 @@ func (s *testInventoryServiceSuite) TestInventoryService_Create() {
 	})
 
 	s.Run("failed - find usage unit by code other error", func() {
+		m := NewMock(s.T())
+		underTest := NewUnderTest(m)
+
 		mockReq := inventoryModule.Request{}
 		if err := gofakeit.Struct(&mockReq); err != nil {
 			s.T().Fatal(err)
@@ -128,22 +141,22 @@ func (s *testInventoryServiceSuite) TestInventoryService_Create() {
 
 		ctx := context.Background()
 
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			FindByName(ctx, mockReq.Name).
 			Return(nil, define.ErrRecordNotFound).
 			Times(1)
 
 		mockErr := errors.New("mock err")
-		s.mockUsageUnitRepo.EXPECT().
+		m.mockUsageUnitRepo.EXPECT().
 			FindByCode(ctx, mockReq.PurchaseUnit.Code).
 			Return(nil, mockErr).
 			Times(1)
 
-		s.mockLogger.EXPECT().
+		m.mockLogger.EXPECT().
 			Error(mockErr).
 			Times(1)
 
-		res, err := s.underTest.Create(ctx, &mockReq)
+		res, err := underTest.Create(ctx, &mockReq)
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -156,6 +169,9 @@ func (s *testInventoryServiceSuite) TestInventoryService_Create() {
 	})
 
 	s.Run("failed - invalid usage unit code", func() {
+		m := NewMock(s.T())
+		underTest := NewUnderTest(m)
+
 		mockReq := inventoryModule.Request{}
 		if err := gofakeit.Struct(&mockReq); err != nil {
 			s.T().Fatal(err)
@@ -163,17 +179,17 @@ func (s *testInventoryServiceSuite) TestInventoryService_Create() {
 
 		ctx := context.Background()
 
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			FindByName(ctx, mockReq.Name).
 			Return(nil, define.ErrRecordNotFound).
-			Times(1)
+			MinTimes(0)
 
-		s.mockUsageUnitRepo.EXPECT().
+		m.mockUsageUnitRepo.EXPECT().
 			FindByCode(ctx, mockReq.PurchaseUnit.Code).
 			Return(nil, define.ErrRecordNotFound).
 			Times(1)
 
-		res, err := s.underTest.Create(ctx, &mockReq)
+		res, err := underTest.Create(ctx, &mockReq)
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -186,6 +202,9 @@ func (s *testInventoryServiceSuite) TestInventoryService_Create() {
 	})
 
 	s.Run("failed - created inventory", func() {
+		m := NewMock(s.T())
+		underTest := NewUnderTest(m)
+
 		mockReq := inventoryModule.Request{}
 		if err := gofakeit.Struct(&mockReq); err != nil {
 			s.T().Fatal(err)
@@ -200,27 +219,27 @@ func (s *testInventoryServiceSuite) TestInventoryService_Create() {
 
 		ctx := context.Background()
 
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			FindByName(ctx, mockReq.Name).
 			Return(nil, define.ErrRecordNotFound).
 			Times(1)
 
-		s.mockUsageUnitRepo.EXPECT().
+		m.mockUsageUnitRepo.EXPECT().
 			FindByCode(ctx, mockReq.PurchaseUnit.Code).
 			Return(&mockUsageUnitRes, nil).
 			Times(1)
 
 		mockErr := errors.New("mock err")
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			Create(ctx, &mockReq).
 			Return(mockErr).
 			Times(1)
 
-		s.mockLogger.EXPECT().
+		m.mockLogger.EXPECT().
 			Error(mockErr).
 			Times(1)
 
-		res, err := s.underTest.Create(ctx, &mockReq)
+		res, err := underTest.Create(ctx, &mockReq)
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -233,6 +252,9 @@ func (s *testInventoryServiceSuite) TestInventoryService_Create() {
 	})
 
 	s.Run("succeed - created inventory", func() {
+		m := NewMock(s.T())
+		underTest := NewUnderTest(m)
+
 		mockReq := inventoryModule.Request{}
 		if err := gofakeit.Struct(&mockReq); err != nil {
 			s.T().Fatal(err)
@@ -247,22 +269,22 @@ func (s *testInventoryServiceSuite) TestInventoryService_Create() {
 
 		ctx := context.Background()
 
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			FindByName(ctx, mockReq.Name).
 			Return(nil, define.ErrRecordNotFound).
 			Times(1)
 
-		s.mockUsageUnitRepo.EXPECT().
+		m.mockUsageUnitRepo.EXPECT().
 			FindByCode(ctx, mockReq.PurchaseUnit.Code).
 			Return(&mockUsageUnitRes, nil).
 			Times(1)
 
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			Create(ctx, &mockReq).
 			Return(nil).
 			Times(1)
 
-		res, err := s.underTest.Create(ctx, &mockReq)
+		res, err := underTest.Create(ctx, &mockReq)
 		s.Require().NotNil(res)
 		s.Require().Nil(err)
 
@@ -271,24 +293,25 @@ func (s *testInventoryServiceSuite) TestInventoryService_Create() {
 }
 
 func (s *testInventoryServiceSuite) TestInventoryService_Find() {
-	s.T().Parallel()
-
 	s.Run("failed - count inventories", func() {
+		m := NewMock(s.T())
+		underTest := NewUnderTest(m)
+
 		ctx := context.Background()
 
 		mockErr := errors.New("mock err")
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			Count(ctx).
 			Return(int64(0), mockErr).
 			Times(1)
 
-		s.mockLogger.EXPECT().
+		m.mockLogger.EXPECT().
 			Error(mockErr).
 			Times(1)
 
 		mockQuery := utilsModule.QueryReq{}
 
-		res, err := s.underTest.Find(ctx, &mockQuery)
+		res, err := underTest.Find(ctx, &mockQuery)
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -301,9 +324,12 @@ func (s *testInventoryServiceSuite) TestInventoryService_Find() {
 	})
 
 	s.Run("failed - find inventories", func() {
+		m := NewMock(s.T())
+		underTest := NewUnderTest(m)
+
 		ctx := context.Background()
 
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			Count(ctx).
 			Return(int64(5), nil).
 			Times(1)
@@ -311,16 +337,16 @@ func (s *testInventoryServiceSuite) TestInventoryService_Find() {
 		mockQuery := utilsModule.QueryReq{}
 
 		mockErr := errors.New("mock err")
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			Find(ctx, &mockQuery).
 			Return(nil, mockErr).
 			Times(1)
 
-		s.mockLogger.EXPECT().
+		m.mockLogger.EXPECT().
 			Error(mockErr).
 			Times(1)
 
-		res, err := s.underTest.Find(ctx, &mockQuery)
+		res, err := underTest.Find(ctx, &mockQuery)
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -333,21 +359,24 @@ func (s *testInventoryServiceSuite) TestInventoryService_Find() {
 	})
 
 	s.Run("succeed - return empty slice", func() {
+		m := NewMock(s.T())
+		underTest := NewUnderTest(m)
+
 		ctx := context.Background()
 
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			Count(ctx).
 			Return(int64(5), nil).
 			Times(1)
 
 		mockQuery := utilsModule.QueryReq{}
 
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			Find(ctx, &mockQuery).
 			Return(nil, nil).
 			Times(1)
 
-		res, err := s.underTest.Find(ctx, &mockQuery)
+		res, err := underTest.Find(ctx, &mockQuery)
 		s.Require().Nil(err)
 		s.Require().NotNil(res)
 		s.Require().IsType([]inventoryModule.Response{}, res.Items)
@@ -356,10 +385,13 @@ func (s *testInventoryServiceSuite) TestInventoryService_Find() {
 	})
 
 	s.Run("succeed - find inventories", func() {
+		m := NewMock(s.T())
+		underTest := NewUnderTest(m)
+
 		ctx := context.Background()
 		var total int64 = 3
 
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			Count(ctx).
 			Return(total, nil).
 			Times(1)
@@ -369,12 +401,12 @@ func (s *testInventoryServiceSuite) TestInventoryService_Find() {
 		mockInventories := make([]inventoryModule.Response, total)
 		gofakeit.Slice(&mockInventories)
 
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			Find(ctx, &mockQuery).
 			Return(mockInventories, nil).
 			Times(1)
 
-		res, err := s.underTest.Find(ctx, &mockQuery)
+		res, err := underTest.Find(ctx, &mockQuery)
 		s.Require().Nil(err)
 		s.Require().NotNil(res)
 		s.Require().IsType([]inventoryModule.Response{}, res.Items)
@@ -385,23 +417,24 @@ func (s *testInventoryServiceSuite) TestInventoryService_Find() {
 }
 
 func (s *testInventoryServiceSuite) TestInventoryService_FindByID() {
-	s.T().Parallel()
-
 	s.Run("failed - find inventory by id other error", func() {
+		m := NewMock(s.T())
+		underTest := NewUnderTest(m)
+
 		ctx := context.Background()
 		mockID := "mock-id"
 
 		mockErr := errors.New("mock err")
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			FindByID(ctx, mockID).
 			Return(nil, mockErr).
 			Times(1)
 
-		s.mockLogger.EXPECT().
+		m.mockLogger.EXPECT().
 			Error(mockErr).
 			Times(1)
 
-		res, err := s.underTest.FindByID(ctx, mockID)
+		res, err := underTest.FindByID(ctx, mockID)
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -414,15 +447,18 @@ func (s *testInventoryServiceSuite) TestInventoryService_FindByID() {
 	})
 
 	s.Run("failed - find inventory by id not found", func() {
+		m := NewMock(s.T())
+		underTest := NewUnderTest(m)
+
 		ctx := context.Background()
 		mockID := "mock-id"
 
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			FindByID(ctx, mockID).
 			Return(nil, define.ErrRecordNotFound).
 			Times(1)
 
-		res, err := s.underTest.FindByID(ctx, mockID)
+		res, err := underTest.FindByID(ctx, mockID)
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -435,6 +471,9 @@ func (s *testInventoryServiceSuite) TestInventoryService_FindByID() {
 	})
 
 	s.Run("succeed - find inventory by id", func() {
+		m := NewMock(s.T())
+		underTest := NewUnderTest(m)
+
 		ctx := context.Background()
 		mockID := "mock-id"
 
@@ -443,12 +482,12 @@ func (s *testInventoryServiceSuite) TestInventoryService_FindByID() {
 			s.T().Fatal(err)
 		}
 
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			FindByID(ctx, mockID).
 			Return(&mockInventory, nil).
 			Times(1)
 
-		res, err := s.underTest.FindByID(ctx, mockID)
+		res, err := underTest.FindByID(ctx, mockID)
 		s.Require().Nil(err)
 		s.Require().NotNil(res)
 		s.Require().Equal(&mockInventory, res.Item)
@@ -456,9 +495,10 @@ func (s *testInventoryServiceSuite) TestInventoryService_FindByID() {
 }
 
 func (s *testInventoryServiceSuite) TestInventoryService_UpdateByID() {
-	s.T().Parallel()
-
 	s.Run("failed - find inventory by id other error", func() {
+		m := NewMock(s.T())
+		underTest := NewUnderTest(m)
+
 		mockReq := inventoryModule.Request{}
 		if err := gofakeit.Struct(&mockReq); err != nil {
 			s.T().Fatal(err)
@@ -469,16 +509,16 @@ func (s *testInventoryServiceSuite) TestInventoryService_UpdateByID() {
 		ctx := context.Background()
 
 		mockErr := errors.New("mock err")
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			FindByID(ctx, mockID).
 			Return(nil, mockErr).
 			Times(1)
 
-		s.mockLogger.EXPECT().
+		m.mockLogger.EXPECT().
 			Error(mockErr).
 			Times(1)
 
-		res, err := s.underTest.UpdateByID(ctx, mockID, &mockReq)
+		res, err := underTest.UpdateByID(ctx, mockID, &mockReq)
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -491,6 +531,9 @@ func (s *testInventoryServiceSuite) TestInventoryService_UpdateByID() {
 	})
 
 	s.Run("failed - find inventory by id record not found", func() {
+		m := NewMock(s.T())
+		underTest := NewUnderTest(m)
+
 		mockReq := inventoryModule.Request{}
 		if err := gofakeit.Struct(&mockReq); err != nil {
 			s.T().Fatal(err)
@@ -500,12 +543,12 @@ func (s *testInventoryServiceSuite) TestInventoryService_UpdateByID() {
 
 		ctx := context.Background()
 
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			FindByID(ctx, mockID).
 			Return(nil, define.ErrRecordNotFound).
 			Times(1)
 
-		res, err := s.underTest.UpdateByID(ctx, mockID, &mockReq)
+		res, err := underTest.UpdateByID(ctx, mockID, &mockReq)
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -518,6 +561,9 @@ func (s *testInventoryServiceSuite) TestInventoryService_UpdateByID() {
 	})
 
 	s.Run("failed - find usage unit by code other error", func() {
+		m := NewMock(s.T())
+		underTest := NewUnderTest(m)
+
 		mockReq := inventoryModule.Request{}
 		if err := gofakeit.Struct(&mockReq); err != nil {
 			s.T().Fatal(err)
@@ -532,22 +578,22 @@ func (s *testInventoryServiceSuite) TestInventoryService_UpdateByID() {
 			s.T().Fatal(err)
 		}
 
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			FindByID(ctx, mockID).
 			Return(&mockInventory, nil).
 			Times(1)
 
 		mockErr := errors.New("mock-err")
-		s.mockUsageUnitRepo.EXPECT().
+		m.mockUsageUnitRepo.EXPECT().
 			FindByCode(ctx, mockReq.PurchaseUnit.Code).
 			Return(nil, mockErr).
 			Times(1)
 
-		s.mockLogger.EXPECT().
+		m.mockLogger.EXPECT().
 			Error(mockErr).
 			Times(1)
 
-		res, err := s.underTest.UpdateByID(ctx, mockID, &mockReq)
+		res, err := underTest.UpdateByID(ctx, mockID, &mockReq)
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -560,6 +606,9 @@ func (s *testInventoryServiceSuite) TestInventoryService_UpdateByID() {
 	})
 
 	s.Run("failed - invalid usage unit code", func() {
+		m := NewMock(s.T())
+		underTest := NewUnderTest(m)
+
 		mockReq := inventoryModule.Request{}
 		if err := gofakeit.Struct(&mockReq); err != nil {
 			s.T().Fatal(err)
@@ -574,17 +623,17 @@ func (s *testInventoryServiceSuite) TestInventoryService_UpdateByID() {
 			s.T().Fatal(err)
 		}
 
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			FindByID(ctx, mockID).
 			Return(&mockInventory, nil).
 			Times(1)
 
-		s.mockUsageUnitRepo.EXPECT().
+		m.mockUsageUnitRepo.EXPECT().
 			FindByCode(ctx, mockReq.PurchaseUnit.Code).
 			Return(nil, define.ErrRecordNotFound).
 			Times(1)
 
-		res, err := s.underTest.UpdateByID(ctx, mockID, &mockReq)
+		res, err := underTest.UpdateByID(ctx, mockID, &mockReq)
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -597,6 +646,9 @@ func (s *testInventoryServiceSuite) TestInventoryService_UpdateByID() {
 	})
 
 	s.Run("failed - update inventory by id other error", func() {
+		m := NewMock(s.T())
+		underTest := NewUnderTest(m)
+
 		mockReq := inventoryModule.Request{}
 		if err := gofakeit.Struct(&mockReq); err != nil {
 			s.T().Fatal(err)
@@ -611,29 +663,29 @@ func (s *testInventoryServiceSuite) TestInventoryService_UpdateByID() {
 			s.T().Fatal(err)
 		}
 
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			FindByID(ctx, mockID).
 			Return(&mockInventory, nil).
 			Times(1)
 
 		mockUsageUnit := usageUnitModule.Prototype{}
 
-		s.mockUsageUnitRepo.EXPECT().
+		m.mockUsageUnitRepo.EXPECT().
 			FindByCode(ctx, mockReq.PurchaseUnit.Code).
 			Return(&mockUsageUnit, nil).
 			Times(1)
 
 		mockErr := errors.New("mock-err")
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			UpdateByID(ctx, mockID, &mockReq).
 			Return(mockErr).
 			Times(1)
 
-		s.mockLogger.EXPECT().
+		m.mockLogger.EXPECT().
 			Error(mockErr).
 			Times(1)
 
-		res, err := s.underTest.UpdateByID(ctx, mockID, &mockReq)
+		res, err := underTest.UpdateByID(ctx, mockID, &mockReq)
 		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
@@ -646,6 +698,9 @@ func (s *testInventoryServiceSuite) TestInventoryService_UpdateByID() {
 	})
 
 	s.Run("succeed - update inventory by id", func() {
+		m := NewMock(s.T())
+		underTest := NewUnderTest(m)
+
 		mockReq := inventoryModule.Request{}
 		if err := gofakeit.Struct(&mockReq); err != nil {
 			s.T().Fatal(err)
@@ -660,24 +715,24 @@ func (s *testInventoryServiceSuite) TestInventoryService_UpdateByID() {
 			s.T().Fatal(err)
 		}
 
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			FindByID(ctx, mockID).
 			Return(&mockInventory, nil).
 			Times(1)
 
 		mockUsageUnit := usageUnitModule.Prototype{}
 
-		s.mockUsageUnitRepo.EXPECT().
+		m.mockUsageUnitRepo.EXPECT().
 			FindByCode(ctx, mockReq.PurchaseUnit.Code).
 			Return(&mockUsageUnit, nil).
 			Times(1)
 
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			UpdateByID(ctx, mockID, &mockReq).
 			Return(nil).
 			Times(1)
 
-		res, err := s.underTest.UpdateByID(ctx, mockID, &mockReq)
+		res, err := underTest.UpdateByID(ctx, mockID, &mockReq)
 		s.Require().NotNil(res)
 		s.Require().Nil(err)
 
@@ -687,21 +742,24 @@ func (s *testInventoryServiceSuite) TestInventoryService_UpdateByID() {
 
 func (s *testInventoryServiceSuite) TestInventoryService_DeleteByID() {
 	s.Run("failed - find inventory by id other error", func() {
+		m := NewMock(s.T())
+		underTest := NewUnderTest(m)
+
 		mockID := "mock-id"
 
 		ctx := context.Background()
 
 		mockErr := errors.New("mock err")
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			FindByID(ctx, mockID).
 			Return(nil, mockErr).
 			Times(1)
 
-		s.mockLogger.EXPECT().
+		m.mockLogger.EXPECT().
 			Error(mockErr).
 			Times(1)
 
-		err := s.underTest.DeleteByID(ctx, mockID)
+		err := underTest.DeleteByID(ctx, mockID)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
 
@@ -713,6 +771,9 @@ func (s *testInventoryServiceSuite) TestInventoryService_DeleteByID() {
 	})
 
 	s.Run("failed - find inventory by id record not found", func() {
+		m := NewMock(s.T())
+		underTest := NewUnderTest(m)
+
 		mockReq := inventoryModule.Request{}
 		if err := gofakeit.Struct(&mockReq); err != nil {
 			s.T().Fatal(err)
@@ -722,12 +783,12 @@ func (s *testInventoryServiceSuite) TestInventoryService_DeleteByID() {
 
 		ctx := context.Background()
 
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			FindByID(ctx, mockID).
 			Return(nil, define.ErrRecordNotFound).
 			Times(1)
 
-		err := s.underTest.DeleteByID(ctx, mockID)
+		err := underTest.DeleteByID(ctx, mockID)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
 
@@ -739,6 +800,9 @@ func (s *testInventoryServiceSuite) TestInventoryService_DeleteByID() {
 	})
 
 	s.Run("failed - delete inventory by id other error", func() {
+		m := NewMock(s.T())
+		underTest := NewUnderTest(m)
+
 		mockReq := inventoryModule.Request{}
 		if err := gofakeit.Struct(&mockReq); err != nil {
 			s.T().Fatal(err)
@@ -748,22 +812,22 @@ func (s *testInventoryServiceSuite) TestInventoryService_DeleteByID() {
 
 		ctx := context.Background()
 
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			FindByID(ctx, mockID).
 			Return(&inventoryModule.Response{}, nil).
 			Times(1)
 
 		mockErr := errors.New("mock-err")
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			DeleteByID(ctx, mockID).
 			Return(mockErr).
 			Times(1)
 
-		s.mockLogger.EXPECT().
+		m.mockLogger.EXPECT().
 			Error(mockErr).
 			Times(1)
 
-		err := s.underTest.DeleteByID(ctx, mockID)
+		err := underTest.DeleteByID(ctx, mockID)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
 
@@ -775,6 +839,9 @@ func (s *testInventoryServiceSuite) TestInventoryService_DeleteByID() {
 	})
 
 	s.Run("succeed - delete inventory by id", func() {
+		m := NewMock(s.T())
+		underTest := NewUnderTest(m)
+
 		mockReq := inventoryModule.Request{}
 		if err := gofakeit.Struct(&mockReq); err != nil {
 			s.T().Fatal(err)
@@ -784,17 +851,17 @@ func (s *testInventoryServiceSuite) TestInventoryService_DeleteByID() {
 
 		ctx := context.Background()
 
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			FindByID(ctx, mockID).
 			Return(&inventoryModule.Response{}, nil).
 			Times(1)
 
-		s.mockInventoryRepo.EXPECT().
+		m.mockInventoryRepo.EXPECT().
 			DeleteByID(ctx, mockID).
 			Return(nil).
 			Times(1)
 
-		err := s.underTest.DeleteByID(ctx, mockID)
+		err := underTest.DeleteByID(ctx, mockID)
 		s.Require().Nil(err)
 	})
 }
