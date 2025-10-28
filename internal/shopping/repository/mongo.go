@@ -55,6 +55,7 @@ func (r *mongoRepository) Find(ctx context.Context) ([]shoppingModule.Response, 
 
 	return shoppings, nil
 }
+
 func (r *mongoRepository) FindByID(ctx context.Context, id string) (*shoppingModule.Response, error) {
 	fmt.Println(database.MustObjectIDFromHex(id))
 	var shopping shoppingModule.Entity
@@ -108,6 +109,32 @@ func (r *mongoRepository) UpdateIsComplete(ctx context.Context, id string, req *
 		}})
 
 	return err
+}
+
+func (r *mongoRepository) ReOrderNo(ctx context.Context, reqs []shoppingModule.ReqReOrder) error {
+	models := []mongo.WriteModel{}
+
+	for _, v := range reqs {
+		update := mongo.NewUpdateOneModel().
+			SetFilter(bson.M{"_id": database.MustObjectIDFromHex(v.ID)}).
+			SetUpdate(bson.M{
+				"$set": bson.M{
+					"order_no":   v.OrderNo,
+					"updated_at": time.Now(),
+				},
+			})
+		models = append(models, update)
+	}
+
+	if len(models) > 0 {
+		_, err := r.db.Collection("shoppings").
+			BulkWrite(ctx, models)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (r *mongoRepository) DeleteByID(ctx context.Context, id string) error {

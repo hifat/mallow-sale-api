@@ -9,6 +9,11 @@ type Request struct {
 	PurchaseUnit     usageUnitModule.UsageUnitReq `json:"purchaseUnit"`
 }
 
+type ReqReOrder struct {
+	ID      string `fake:"{uuid}" json:"id"`
+	OrderNo uint   `fake:"{uintrange:0,100}" json:"orderNo"`
+}
+
 type Response struct {
 	ID               string                    `json:"id"`
 	Name             string                    `fake:"{name}" json:"name"`

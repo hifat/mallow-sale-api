@@ -98,6 +98,20 @@ func (mr *MockIRepositoryMockRecorder) FindByID(ctx, id any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByID", reflect.TypeOf((*MockIRepository)(nil).FindByID), ctx, id)
 }
 
+// ReOrderNo mocks base method.
+func (m *MockIRepository) ReOrderNo(ctx context.Context, reqs []shoppingModule.ReqReOrder) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ReOrderNo", ctx, reqs)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ReOrderNo indicates an expected call of ReOrderNo.
+func (mr *MockIRepositoryMockRecorder) ReOrderNo(ctx, reqs any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReOrderNo", reflect.TypeOf((*MockIRepository)(nil).ReOrderNo), ctx, reqs)
+}
+
 // UpdateIsComplete mocks base method.
 func (m *MockIRepository) UpdateIsComplete(ctx context.Context, id string, req *shoppingModule.ReqUpdateIsComplete) error {
 	m.ctrl.T.Helper()
