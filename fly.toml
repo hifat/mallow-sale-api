@@ -8,9 +8,6 @@ primary_region = 'iad'
 
 [build]
 
-[processes]
-  app = "-envPath=.env"
-
 [http_service]
   internal_port = 8080
   force_https = true
