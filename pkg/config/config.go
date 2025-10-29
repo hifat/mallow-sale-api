@@ -8,20 +8,20 @@ import (
 )
 
 type App struct {
-	Name string `mapstructure:"APP_NAME"`
-	Host string `mapstructure:"APP_HOST"`
-	Port string `mapstructure:"APP_PORT"`
-	Mode string `mapstructure:"APP_MODE"`
+	Name string
+	Host string
+	Port string
+	Mode string
 }
 
 type DB struct {
-	DBName   string `mapstructure:"DB_NAME"`
-	Username string `mapstructure:"DB_USERNAME"`
-	Password string `mapstructure:"DB_PASSWORD"`
-	Host     string `mapstructure:"DB_HOST"`
-	Port     string `mapstructure:"DB_PORT"`
-	SSLMode  string `mapstructure:"DB_SSL_MODE"`
-	Schema   string `mapstructure:"DB_SCHEMA"`
+	DBName   string
+	Username string
+	Password string
+	Host     string
+	Port     string
+	SSLMode  string
+	Schema   string
 }
 
 type Config struct {
@@ -44,29 +44,22 @@ func LoadConfig(path string) (*Config, error) {
 	viper.AutomaticEnv()
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
-	var cfg Config
-	errCh := make(chan error, 2)
-
-	go func() {
-		if err := viper.Unmarshal(&cfg.App); err != nil {
-			errCh <- err
-			return
-		}
-		errCh <- nil
-	}()
-
-	go func() {
-		if err := viper.Unmarshal(&cfg.DB); err != nil {
-			errCh <- err
-			return
-		}
-		errCh <- nil
-	}()
-
-	for i := 0; i < 2; i++ {
-		if err := <-errCh; err != nil {
-			return nil, err
-		}
+	cfg := Config{
+		App: App{
+			Name: viper.GetString("APP_NAME"),
+			Host: viper.GetString("APP_HOST"),
+			Port: viper.GetString("APP_PORT"),
+			Mode: viper.GetString("APP_MODE"),
+		},
+		DB: DB{
+			DBName:   viper.GetString("DB_NAME"),
+			Username: viper.GetString("DB_USERNAME"),
+			Password: viper.GetString("DB_PASSWORD"),
+			Host:     viper.GetString("DB_HOST"),
+			Port:     viper.GetString("DB_PORT"),
+			SSLMode:  viper.GetString("DB_SSL_MODE"),
+			Schema:   viper.GetString("DB_SCHEMA"),
+		},
 	}
 
 	return &cfg, nil
