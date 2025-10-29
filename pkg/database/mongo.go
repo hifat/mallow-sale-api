@@ -15,22 +15,23 @@ import (
 func NewMongo(cfg config.DB) (*mongo.Database, func(), error) {
 	// Build connection string with proper authentication
 	uri := fmt.Sprintf(
-		"mongodb://%s:%s@%s:%s/%s",
+		"%s://%s:%s@%s%s/%s",
+		cfg.Protocol,
 		cfg.Username,
 		cfg.Password,
 		cfg.Host,
-		cfg.Port,
+		func() string {
+			if cfg.Port != "" {
+				return ":" + cfg.Port
+			}
+
+			return ""
+		}(),
 		cfg.DBName,
 	)
 
-	if cfg.Schema != "" {
-		uri += fmt.Sprintf("?authSource=%s", cfg.Schema)
-	} else {
-		uri += "?authSource=admin"
-	}
-
-	if cfg.SSLMode != "" {
-		uri += fmt.Sprintf("&ssl=%s", cfg.SSLMode)
+	if cfg.Query != "" {
+		uri += cfg.Query
 	}
 
 	clientOpts := options.Client().
