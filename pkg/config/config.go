@@ -44,11 +44,6 @@ func LoadConfig(path string) (*Config, error) {
 	viper.AutomaticEnv()
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
-	if err := viper.ReadInConfig(); err != nil {
-		// .env file is optional, so only log if not found
-		log.Printf("No .env file found or error reading it: %v", err)
-	}
-
 	var cfg Config
 	errCh := make(chan error, 2)
 
