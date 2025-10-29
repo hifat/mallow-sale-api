@@ -36,6 +36,11 @@ func LoadConfig(path string) (*Config, error) {
 
 	viper.SetConfigFile(path)
 	viper.SetConfigType("env")
+
+	if err := viper.ReadInConfig(); err != nil {
+		log.Printf("No .env file found, using environment variables")
+	}
+
 	viper.AutomaticEnv()
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 

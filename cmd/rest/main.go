@@ -56,7 +56,7 @@ func configCors() cors.Config {
 // @name Authorization
 // @description Type "Bearer" followed by a space and JWT token.
 func main() {
-	envPath := flag.String("envPath", "./env/.env", "env path")
+	envPath := flag.String("envPath", "", "env path")
 	flag.Parse()
 
 	cfg, err := config.LoadConfig(*envPath)

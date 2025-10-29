@@ -1,5 +1,5 @@
 run:
-	go run ./cmd/rest/
+	go run ./cmd/rest/ -envPath=./env/.env
 
 swag:
 	swag init -g cmd/rest/main.go -o docs --parseDependency --parseInternal
