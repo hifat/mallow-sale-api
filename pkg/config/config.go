@@ -15,7 +15,6 @@ type App struct {
 }
 
 type DB struct {
-	Protocol string
 	DBName   string
 	Username string
 	Password string
@@ -23,7 +22,6 @@ type DB struct {
 	Port     string
 	SSLMode  string
 	Schema   string
-	Query    string
 }
 
 type Config struct {
@@ -54,7 +52,6 @@ func LoadConfig(path string) (*Config, error) {
 			Mode: viper.GetString("APP_MODE"),
 		},
 		DB: DB{
-			Protocol: viper.GetString("DB_PROTOCOL"),
 			DBName:   viper.GetString("DB_NAME"),
 			Username: viper.GetString("DB_USERNAME"),
 			Password: viper.GetString("DB_PASSWORD"),
@@ -62,7 +59,6 @@ func LoadConfig(path string) (*Config, error) {
 			Port:     viper.GetString("DB_PORT"),
 			SSLMode:  viper.GetString("DB_SSL_MODE"),
 			Schema:   viper.GetString("DB_SCHEMA"),
-			Query:    viper.GetString("DB_QUERY"),
 		},
 	}
 
