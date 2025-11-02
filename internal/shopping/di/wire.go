@@ -23,8 +23,10 @@ func Init(cfg *config.Config, db *mongo.Database) *shoppingHandler.Handler {
 		// Service
 		logger.New,
 		shoppingService.New,
+		shoppingService.NewReceipt,
 
 		// Handler
+		shoppingHandler.NewReceiptRest,
 		shoppingHandler.NewRest,
 		shoppingHandler.New,
 	)

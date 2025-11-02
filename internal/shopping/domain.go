@@ -1,6 +1,10 @@
 package shoppingModule
 
-import usageUnitModule "github.com/hifat/mallow-sale-api/internal/usageUnit"
+import (
+	"mime/multipart"
+
+	usageUnitModule "github.com/hifat/mallow-sale-api/internal/usageUnit"
+)
 
 type Request struct {
 	Name             string                       `fake:"{name}" json:"name"`
@@ -24,4 +28,17 @@ type Response struct {
 
 type ReqUpdateIsComplete struct {
 	IsComplete bool `json:"isComplete"`
+}
+
+type ReqReceiptReader struct {
+	Image *multipart.FileHeader `json:"image"`
+}
+
+type ResReceiptReader struct {
+	InventoryID      string  `json:"inventoryID"` // Make vector db solution for search
+	Name             string  `json:"name"`
+	NameEdited       string  `json:"nameEdited"`
+	PurchasePrice    float64 `json:"purchasePrice"`
+	PurchaseQuantity float64 `json:"purchaseQuantity"`
+	Remark           string  `json:"remark"`
 }

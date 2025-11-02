@@ -70,6 +70,10 @@ func main() {
 	}
 	defer cleanup()
 
+	if err := os.MkdirAll("./upload", 0755); err != nil {
+		log.Fatalf("Failed to create upload dir: %v", err)
+	}
+
 	r := gin.Default()
 
 	r.Use(gin.Recovery())

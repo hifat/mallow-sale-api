@@ -24,6 +24,8 @@ func Init(cfg *config.Config, db *mongo.Database) *shoppingHandler.Handler {
 	usageUnitRepositoryIRepository := usageUnitRepository.NewMongo(db)
 	iService := shoppingService.New(iLogger, iRepository, usageUnitRepositoryIRepository)
 	rest := shoppingHandler.NewRest(iService)
-	handler := shoppingHandler.New(rest)
+	iReceiptService := shoppingService.NewReceipt(iLogger)
+	receiptRest := shoppingHandler.NewReceiptRest(iReceiptService)
+	handler := shoppingHandler.New(rest, receiptRest)
 	return handler
 }

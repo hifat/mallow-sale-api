@@ -228,6 +228,11 @@ definitions:
     required:
     - costPercentage
     type: object
+  github_com_hifat_mallow-sale-api_internal_shopping.ReqReceiptReader:
+    properties:
+      image:
+        $ref: '#/definitions/multipart.FileHeader'
+    type: object
   github_com_hifat_mallow-sale-api_internal_shopping.ReqUpdateIsComplete:
     properties:
       isComplete:
@@ -402,6 +407,11 @@ definitions:
       item:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.Response'
     type: object
+  github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_shopping_ReqReceiptReader:
+    properties:
+      item:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.ReqReceiptReader'
+    type: object
   github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_shopping_Request:
     properties:
       item:
@@ -480,6 +490,21 @@ definitions:
         type: array
       meta:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse'
+    type: object
+  multipart.FileHeader:
+    properties:
+      filename:
+        type: string
+      header:
+        $ref: '#/definitions/textproto.MIMEHeader'
+      size:
+        type: integer
+    type: object
+  textproto.MIMEHeader:
+    additionalProperties:
+      items:
+        type: string
+      type: array
     type: object
 info:
   contact:
@@ -1207,6 +1232,39 @@ paths:
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
       summary: Update Shopping Is Complete
+      tags:
+      - shopping
+  /shoppings/read-receipt:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Receipt reader data
+        in: body
+        name: shopping
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.ReqReceiptReader'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_shopping_ReqReceiptReader'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      summary: Receipt Reader
       tags:
       - shopping
   /stocks:

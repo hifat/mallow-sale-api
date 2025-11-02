@@ -1,11 +1,13 @@
 package shoppingHandler
 
 type Handler struct {
-	Rest *Rest
+	Rest        *Rest
+	ReceiptRest *ReceiptRest
 }
 
-func New(Rest *Rest) *Handler {
+func New(Rest *Rest, ReceiptRest *ReceiptRest) *Handler {
 	return &Handler{
 		Rest,
+		ReceiptRest,
 	}
 }
