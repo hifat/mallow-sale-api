@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"mime/multipart"
 	"os"
 	"path/filepath"
 	"strings"
@@ -30,18 +31,13 @@ func NewReceipt(logger logger.ILogger) IReceiptService {
 	}
 }
 
-func (s *receiptService) Reader(ctx context.Context, req *shoppingModule.ReqReceiptReader) (*handling.ResponseItem[shoppingModule.ResReceiptReader], error) {
-	var MakeFileSize int64 = 10 * 1024 * 1024 // 10 MB
-	if req.Image.Size > MakeFileSize {
-		return nil, errors.New("file size must be less than 10 MB")
-	}
-
-	fileHeader, err := req.Image.Open()
+func (s *receiptService) upload(file *multipart.FileHeader, targetPath string) (*string, error) {
+	fileHeader, err := file.Open()
 	if err != nil {
 		s.logger.Error(err)
 		return nil, err
 	}
-	fileHeader.Close()
+	defer fileHeader.Close()
 
 	mtype, err := mimetype.DetectReader(fileHeader)
 	if err != nil {
@@ -65,16 +61,16 @@ func (s *receiptService) Reader(ctx context.Context, req *shoppingModule.ReqRece
 
 	ext := mtype.Extension()
 	if ext == "" {
-		ext = strings.ToLower(filepath.Ext(req.Image.Filename))
+		ext = strings.ToLower(filepath.Ext(file.Filename))
 	}
 
 	// Generate unique filename
-	filename := filepath.Base(req.Image.Filename)
+	filename := filepath.Base(file.Filename)
 	filename = strings.TrimSuffix(filename, filepath.Ext(filename))
-	uniqueFilename := fmt.Sprintf("%s_%d%s", filename, time.Now().Unix(), ext)
+	newFileName := fmt.Sprintf("%s_%d%s", filename, time.Now().Unix(), ext)
 
 	// Create destination file
-	dst, err := os.Create(filepath.Join("upload", uniqueFilename))
+	dst, err := os.Create(filepath.Join(targetPath, newFileName))
 	if err != nil {
 		s.logger.Error(err)
 		return nil, err
@@ -82,7 +78,7 @@ func (s *receiptService) Reader(ctx context.Context, req *shoppingModule.ReqRece
 	defer dst.Close()
 
 	// Open source file
-	src, err := req.Image.Open()
+	src, err := file.Open()
 	if err != nil {
 		s.logger.Error(err)
 		return nil, err
@@ -93,6 +89,21 @@ func (s *receiptService) Reader(ctx context.Context, req *shoppingModule.ReqRece
 	if _, err := io.Copy(dst, src); err != nil {
 		s.logger.Error(err)
 		return nil, err
+	}
+
+	return nil, nil
+}
+
+func (s *receiptService) Reader(ctx context.Context, req *shoppingModule.ReqReceiptReader) (*handling.ResponseItem[shoppingModule.ResReceiptReader], error) {
+	var MakeFileSize int64 = 10 * 1024 * 1024 // 10 MB
+	if req.Image.Size > MakeFileSize {
+		return nil, errors.New("file size must be less than 10 MB")
+	}
+
+	_, err := s.upload(req.Image, "upload")
+	if err != nil {
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
 	}
 
 	return &handling.ResponseItem[shoppingModule.ResReceiptReader]{}, nil

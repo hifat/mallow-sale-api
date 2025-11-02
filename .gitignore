@@ -42,3 +42,5 @@ apikey.txt
 !.env.example
 /data/*
 !/data/.keep
+/upload/*
+!/upload/.keep
