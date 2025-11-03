@@ -14,17 +14,19 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/config"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 	"go.mongodb.org/mongo-driver/mongo"
+	"google.golang.org/grpc"
 )
 
 // Injectors from wire.go:
 
-func Init(cfg *config.Config, db *mongo.Database) *shoppingHandler.Handler {
+func Init(cfg *config.Config, db *mongo.Database, grpcConn *grpc.ClientConn) *shoppingHandler.Handler {
 	iLogger := logger.New()
 	iRepository := shoppingRepository.NewMongo(db)
 	usageUnitRepositoryIRepository := usageUnitRepository.NewMongo(db)
 	iService := shoppingService.New(iLogger, iRepository, usageUnitRepositoryIRepository)
 	rest := shoppingHandler.NewRest(iService)
-	iReceiptService := shoppingService.NewReceipt(iLogger)
+	iReceiptGrpcRepository := shoppingRepository.NewReceiptGRPC(grpcConn)
+	iReceiptService := shoppingService.NewReceipt(iLogger, iReceiptGrpcRepository)
 	receiptRest := shoppingHandler.NewReceiptRest(iReceiptService)
 	handler := shoppingHandler.New(rest, receiptRest)
 	return handler

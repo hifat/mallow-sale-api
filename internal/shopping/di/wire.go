@@ -12,12 +12,14 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/config"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 	"go.mongodb.org/mongo-driver/mongo"
+	"google.golang.org/grpc"
 )
 
-func Init(cfg *config.Config, db *mongo.Database) *shoppingHandler.Handler {
+func Init(cfg *config.Config, db *mongo.Database, grpcConn *grpc.ClientConn) *shoppingHandler.Handler {
 	wire.Build(
 		// Repository
 		shoppingRepository.NewMongo,
+		shoppingRepository.NewReceiptGRPC,
 		usageUnitRepository.NewMongo,
 
 		// Service

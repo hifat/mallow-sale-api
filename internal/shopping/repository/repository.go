@@ -15,3 +15,8 @@ type IRepository interface {
 	ReOrderNo(ctx context.Context, reqs []shoppingModule.ReqReOrder) error
 	DeleteByID(ctx context.Context, id string) error
 }
+
+//go:generate mockgen -source=./receiptGrpc.go -destination=./mock/receiptGrpc.go -package=mockShoppingRepository
+type IReceiptGrpcRepository interface {
+	ReadReceipt(ctx context.Context, fileName string, file []byte) ([]shoppingModule.ResReceiptReader, error)
+}

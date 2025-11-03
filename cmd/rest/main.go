@@ -19,6 +19,8 @@ import (
 	"github.com/hifat/mallow-sale-api/router"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func configCors() cors.Config {
@@ -74,6 +76,21 @@ func main() {
 		log.Fatalf("Failed to create upload dir: %v", err)
 	}
 
+	MaxContentSize := 20 * 1024 * 1024 // 20 MB
+
+	grpcConn, err := grpc.NewClient(
+		cfg.GRPC.Host,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithDefaultCallOptions(
+			grpc.MaxCallRecvMsgSize(MaxContentSize),
+			grpc.MaxCallSendMsgSize(MaxContentSize),
+		),
+	)
+	if err != nil {
+		log.Printf("Warn! Failed to connect GRPC: %v", err)
+	}
+	defer grpcConn.Close()
+
 	r := gin.Default()
 
 	r.Use(gin.Recovery())
@@ -83,7 +100,7 @@ func main() {
 
 	v1 := r.Group("/api/v1")
 
-	router.RegisterAll(v1, cfg, db)
+	router.RegisterAll(v1, cfg, db, grpcConn)
 
 	srv := &http.Server{
 		Addr:           fmt.Sprintf(":%s", cfg.App.Port),

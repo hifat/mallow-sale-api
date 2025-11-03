@@ -13,36 +13,39 @@ import (
 
 	"github.com/gabriel-vasile/mimetype"
 	shoppingModule "github.com/hifat/mallow-sale-api/internal/shopping"
+	shoppingRepository "github.com/hifat/mallow-sale-api/internal/shopping/repository"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 )
 
 type IReceiptService interface {
-	Reader(ctx context.Context, req *shoppingModule.ReqReceiptReader) (*handling.ResponseItem[shoppingModule.ResReceiptReader], error)
+	Reader(ctx context.Context, req *shoppingModule.ReqReceiptReader) (*handling.ResponseItems[shoppingModule.ResReceiptReader], error)
 }
 
 type receiptService struct {
-	logger logger.ILogger
+	logger      logger.ILogger
+	receiptGRPC shoppingRepository.IReceiptGrpcRepository
 }
 
-func NewReceipt(logger logger.ILogger) IReceiptService {
+func NewReceipt(logger logger.ILogger, receiptGRPC shoppingRepository.IReceiptGrpcRepository) IReceiptService {
 	return &receiptService{
 		logger,
+		receiptGRPC,
 	}
 }
 
-func (s *receiptService) upload(file *multipart.FileHeader, targetPath string) (*string, error) {
+func (s *receiptService) upload(file *multipart.FileHeader, targetPath string) (string, error) {
 	fileHeader, err := file.Open()
 	if err != nil {
 		s.logger.Error(err)
-		return nil, err
+		return "", err
 	}
 	defer fileHeader.Close()
 
 	mtype, err := mimetype.DetectReader(fileHeader)
 	if err != nil {
 		s.logger.Error(err)
-		return nil, err
+		return "", err
 	}
 
 	allowedImageType := map[string]bool{
@@ -56,7 +59,7 @@ func (s *receiptService) upload(file *multipart.FileHeader, targetPath string) (
 
 	_, ok := allowedImageType[mtype.String()]
 	if !ok {
-		return nil, errors.New("invalid mimetype")
+		return "", errors.New("invalid mimetype")
 	}
 
 	ext := mtype.Extension()
@@ -73,7 +76,7 @@ func (s *receiptService) upload(file *multipart.FileHeader, targetPath string) (
 	dst, err := os.Create(filepath.Join(targetPath, newFileName))
 	if err != nil {
 		s.logger.Error(err)
-		return nil, err
+		return "", err
 	}
 	defer dst.Close()
 
@@ -81,30 +84,39 @@ func (s *receiptService) upload(file *multipart.FileHeader, targetPath string) (
 	src, err := file.Open()
 	if err != nil {
 		s.logger.Error(err)
-		return nil, err
+		return "", err
 	}
 	defer src.Close()
 
 	// Copy the uploaded file to the destination file
 	if _, err := io.Copy(dst, src); err != nil {
 		s.logger.Error(err)
-		return nil, err
+		return "", err
 	}
 
-	return nil, nil
+	return newFileName, nil
 }
 
-func (s *receiptService) Reader(ctx context.Context, req *shoppingModule.ReqReceiptReader) (*handling.ResponseItem[shoppingModule.ResReceiptReader], error) {
+func (s *receiptService) Reader(ctx context.Context, req *shoppingModule.ReqReceiptReader) (*handling.ResponseItems[shoppingModule.ResReceiptReader], error) {
 	var MakeFileSize int64 = 10 * 1024 * 1024 // 10 MB
 	if req.Image.Size > MakeFileSize {
 		return nil, errors.New("file size must be less than 10 MB")
 	}
 
-	_, err := s.upload(req.Image, "upload")
+	imgName, err := s.upload(req.Image, "upload")
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
 
-	return &handling.ResponseItem[shoppingModule.ResReceiptReader]{}, nil
+	img, _ := os.ReadFile("upload/" + imgName)
+	resRcp, err := s.receiptGRPC.ReadReceipt(ctx, imgName, img)
+	if err != nil {
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
+	return &handling.ResponseItems[shoppingModule.ResReceiptReader]{
+		Items: resRcp,
+	}, nil
 }

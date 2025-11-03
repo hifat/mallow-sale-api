@@ -5,10 +5,11 @@ import (
 	shoppingDi "github.com/hifat/mallow-sale-api/internal/shopping/di"
 	"github.com/hifat/mallow-sale-api/pkg/config"
 	"go.mongodb.org/mongo-driver/mongo"
+	"google.golang.org/grpc"
 )
 
-func ShoppingRouter(r *gin.RouterGroup, cfg *config.Config, db *mongo.Database) {
-	h := shoppingDi.Init(cfg, db)
+func ShoppingRouter(r *gin.RouterGroup, cfg *config.Config, db *mongo.Database, grpcConn *grpc.ClientConn) {
+	h := shoppingDi.Init(cfg, db, grpcConn)
 
 	r.Group("/shoppings").
 		GET("", h.Rest.Find).

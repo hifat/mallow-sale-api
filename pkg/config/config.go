@@ -24,9 +24,15 @@ type DB struct {
 	Schema   string
 }
 
+type GRPC struct {
+	Host string
+	Port string
+}
+
 type Config struct {
-	App App
-	DB  DB
+	App  App
+	DB   DB
+	GRPC GRPC
 }
 
 func LoadConfig(path string) (*Config, error) {
@@ -59,6 +65,10 @@ func LoadConfig(path string) (*Config, error) {
 			Port:     viper.GetString("DB_PORT"),
 			SSLMode:  viper.GetString("DB_SSL_MODE"),
 			Schema:   viper.GetString("DB_SCHEMA"),
+		},
+		GRPC: GRPC{
+			Host: viper.GetString("GRPC_HOST"),
+			Port: viper.GetString("GRPC_PORT"),
 		},
 	}
 
