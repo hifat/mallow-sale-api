@@ -116,6 +116,8 @@ func (s *receiptService) Reader(ctx context.Context, req *shoppingModule.ReqRece
 		return nil, handling.ThrowErr(err)
 	}
 
+	// TODO: Remove file when used
+
 	return &handling.ResponseItems[shoppingModule.ResReceiptReader]{
 		Items: resRcp,
 	}, nil

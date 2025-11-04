@@ -1009,6 +1009,7 @@
         },
         "/shoppings/read-receipt": {
             "post": {
+                "description": "**Error Codes:**\n\n**400 Bad Request:**\n- `MAX_FILE_SIZE`: max file size\n- `NOT_ALLOWED_MIME_TYPE`: not allowed mime type\n\n**500 Internal Server Error:**\n- `INTERNAL_SERVER_ERROR`: internal server error",
                 "consumes": [
                     "application/json"
                 ],
@@ -1031,20 +1032,14 @@
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_shopping_ReqReceiptReader"
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_shopping_ResReceiptReader"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
+                        "description": "**MAX_FILE_SIZE**: max file size,  \u003cbr\u003e**NOT_ALLOWED_MIME_TYPE**: not allowed mime type",
                         "schema": {
                             "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
                         }
@@ -2050,6 +2045,30 @@
                 }
             }
         },
+        "github_com_hifat_mallow-sale-api_internal_shopping.ResReceiptReader": {
+            "type": "object",
+            "properties": {
+                "inventoryID": {
+                    "description": "Make vector db solution for search",
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "nameEdited": {
+                    "type": "string"
+                },
+                "purchasePrice": {
+                    "type": "number"
+                },
+                "purchaseQuantity": {
+                    "type": "number"
+                },
+                "remark": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_hifat_mallow-sale-api_internal_shopping.Response": {
             "type": "object",
             "properties": {
@@ -2293,14 +2312,6 @@
                 }
             }
         },
-        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_shopping_ReqReceiptReader": {
-            "type": "object",
-            "properties": {
-                "item": {
-                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.ReqReceiptReader"
-                }
-            }
-        },
         "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_shopping_Request": {
             "type": "object",
             "properties": {
@@ -2376,6 +2387,20 @@
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.Response"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_shopping_ResReceiptReader": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.ResReceiptReader"
                     }
                 },
                 "meta": {

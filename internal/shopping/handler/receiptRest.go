@@ -19,10 +19,17 @@ func NewReceiptRest(receiptService shoppingService.IReceiptService) *ReceiptRest
 // @Tags 		shopping
 // @Accept 		json
 // @Produce 	json
+// @Description  **Error Codes:**
+// @Description
+// @Description  **400 Bad Request:**
+// @Description  - `MAX_FILE_SIZE`: max file size
+// @Description  - `NOT_ALLOWED_MIME_TYPE`: not allowed mime type
+// @Description
+// @Description  **500 Internal Server Error:**
+// @Description  - `INTERNAL_SERVER_ERROR`: internal server error
 // @Param 		shopping body shoppingModule.ReqReceiptReader true "Receipt reader data"
-// @Success 	201 {object} handling.ResponseItem[shoppingModule.ReqReceiptReader]
+// @Success 	200 {object} handling.ResponseItems[shoppingModule.ResReceiptReader]
 // @Failure 	400 {object} handling.ErrorResponse
-// @Failure 	404 {object} handling.ErrorResponse
 // @Failure 	500 {object} handling.ErrorResponse
 // @Router 		/shoppings/read-receipt [post]
 func (r *ReceiptRest) Reader(c *gin.Context) {
