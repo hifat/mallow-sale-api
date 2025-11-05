@@ -1039,7 +1039,7 @@
                         }
                     },
                     "400": {
-                        "description": "**MAX_FILE_SIZE**: max file size,  \u003cbr\u003e**NOT_ALLOWED_MIME_TYPE**: not allowed mime type",
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
                         }
