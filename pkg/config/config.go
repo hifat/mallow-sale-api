@@ -80,9 +80,9 @@ func LoadConfig(path string) (*Config, error) {
 			Port: viper.GetString("GRPC_PORT"),
 		},
 		Auth: Auth{
-			AccessTokenSecret:   viper.GetString("ACCESS_TOKEN_EXPIRES"),
+			AccessTokenSecret:   viper.GetString("ACCESS_TOKEN_SECRET"),
 			AccessTokenExpires:  viper.GetDuration("ACCESS_TOKEN_EXPIRES"),
-			RefreshTokenSecret:  viper.GetString("TOKEN_SECRET"),
+			RefreshTokenSecret:  viper.GetString("REFRESH_TOKEN_SECRET"),
 			RefreshTokenExpires: viper.GetDuration("REFRESH_TOKEN_EXPIRES"),
 		},
 	}
