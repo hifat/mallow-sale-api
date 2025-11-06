@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"strings"
+	"time"
 
 	"github.com/spf13/viper"
 )
@@ -29,10 +30,18 @@ type GRPC struct {
 	Port string
 }
 
+type Auth struct {
+	AccessTokenSecret   string
+	AccessTokenExpires  time.Duration
+	RefreshTokenSecret  string
+	RefreshTokenExpires time.Duration
+}
+
 type Config struct {
 	App  App
 	DB   DB
 	GRPC GRPC
+	Auth Auth
 }
 
 func LoadConfig(path string) (*Config, error) {
@@ -69,6 +78,12 @@ func LoadConfig(path string) (*Config, error) {
 		GRPC: GRPC{
 			Host: viper.GetString("GRPC_HOST"),
 			Port: viper.GetString("GRPC_PORT"),
+		},
+		Auth: Auth{
+			AccessTokenSecret:   viper.GetString("ACCESS_TOKEN_EXPIRES"),
+			AccessTokenExpires:  viper.GetDuration("ACCESS_TOKEN_EXPIRES"),
+			RefreshTokenSecret:  viper.GetString("TOKEN_SECRET"),
+			RefreshTokenExpires: viper.GetDuration("REFRESH_TOKEN_EXPIRES"),
 		},
 	}
 
