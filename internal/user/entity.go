@@ -7,5 +7,5 @@ type Entity struct {
 
 	Name     string `bson:"name" json:"name"`
 	Username string `bson:"username" json:"username"`
-	Password []byte `bson:"password" json:"password"`
+	Password string `bson:"password" json:"-"`
 }

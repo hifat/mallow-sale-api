@@ -7,7 +7,7 @@ import (
 
 type SigninReq struct {
 	Username string `fake:"{username}" json:"username"`
-	Password []byte `fake:"{password}" json:"password"`
+	Password string `fake:"{password}" json:"password"`
 }
 
 type AuthRes struct {
@@ -17,7 +17,27 @@ type AuthRes struct {
 	RefreshToken string `json:"refreshToken"`
 }
 
+func (a *AuthRes) SetAccessToken(t string) {
+	a.AccessToken = t
+}
+
+func (a *AuthRes) SetRefreshToken(t string) {
+	a.RefreshToken = t
+}
+
 type Passport struct {
 	AuthID uuid.UUID `json:"authID"`
 	User   *AuthRes  `json:"user"`
+}
+
+func (a *Passport) SetAccessToken(t string) {
+	if a.User != nil {
+		a.User.SetAccessToken(t)
+	}
+}
+
+func (a *Passport) SetRefreshToken(t string) {
+	if a.User != nil {
+		a.User.SetRefreshToken(t)
+	}
 }

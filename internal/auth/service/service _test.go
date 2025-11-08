@@ -3,6 +3,7 @@ package authService
 import (
 	"context"
 	"errors"
+	"log"
 	"net/http"
 	"testing"
 
@@ -10,6 +11,7 @@ import (
 	authModule "github.com/hifat/mallow-sale-api/internal/auth"
 	userModule "github.com/hifat/mallow-sale-api/internal/user"
 	mockUserRepository "github.com/hifat/mallow-sale-api/internal/user/repository/mock"
+	"github.com/hifat/mallow-sale-api/pkg/config"
 	"github.com/hifat/mallow-sale-api/pkg/define"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 	mockLogger "github.com/hifat/mallow-sale-api/pkg/logger/mock"
@@ -28,15 +30,22 @@ func NewMock(t *testing.T) mockAuthService {
 	ctrl := gomock.NewController(t)
 
 	return mockAuthService{
-		ctrl:         ctrl,
+		ctrl: ctrl,
+
 		mockLogger:   mockLogger.NewMockLogger(ctrl),
 		mockUserRepo: mockUserRepository.NewMockIRepository(ctrl),
 	}
 }
 
 func NewUnderTest(m mockAuthService) *service {
+	cfg, err := config.LoadConfig("")
+	if err != nil {
+		log.Fatalf("failed to load config: %v", err)
+	}
+
 	return &service{
 		logger:   m.mockLogger,
+		cfg:      cfg,
 		userRepo: m.mockUserRepo,
 	}
 }
@@ -131,7 +140,47 @@ func (s *testAuthServiceSuite) TestAuthService_Signin() {
 			s.T().Fatalf("Failed to hashed password: %v", err)
 		}
 
-		mockRes.Password = hashedPass
+		mockRes.Password = string(hashedPass)
+
+		ctx := context.Background()
+
+		m.mockUserRepo.EXPECT().
+			FindByUsername(ctx, mockReq.Username).
+			Return(&mockRes, nil).
+			Times(1)
+
+		res, err := underTest.Signin(ctx, &mockReq)
+		s.Require().Nil(res)
+		s.Require().NotNil(err)
+		s.Require().IsType(handling.ErrorResponse{}, err)
+
+		resErr := err.(handling.ErrorResponse)
+
+		s.Require().Equal(define.CodeInvalidCredentials, resErr.Code)
+		s.Require().Equal(define.MsgInvalidCredentials, resErr.Message)
+		s.Require().Equal(http.StatusUnauthorized, resErr.Status)
+	})
+
+	s.Run("failed - invalid password", func() {
+		m := NewMock(s.T())
+		underTest := NewUnderTest(m)
+
+		mockReq := authModule.SigninReq{}
+		if err := gofakeit.Struct(&mockReq); err != nil {
+			s.T().Fatal(err)
+		}
+
+		mockRes := userModule.Response{}
+		if err := gofakeit.Struct(&mockRes); err != nil {
+			s.T().Fatal(err)
+		}
+
+		hashedPass, err := bcrypt.GenerateFromPassword([]byte("invalid_pass"), 10)
+		if err != nil {
+			s.T().Fatalf("Failed to hashed password: %v", err)
+		}
+
+		mockRes.Password = string(hashedPass)
 
 		ctx := context.Background()
 

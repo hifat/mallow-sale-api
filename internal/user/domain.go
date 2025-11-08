@@ -6,7 +6,7 @@ type Prototype struct {
 	Name     string `fake:"{name}" json:"name"`
 	Username string `json:"username"`
 
-	Password []byte `bson:"password" json:"-"`
+	Password string `bson:"password" json:"-"`
 }
 
 type Response struct {
@@ -14,16 +14,16 @@ type Response struct {
 }
 
 type Request struct {
-	Password []byte `json:"password"`
+	Password string `json:"password"`
 }
 
 func (r *Request) HashPassword() error {
-	hashed, err := bcrypt.GenerateFromPassword(r.Password, 10)
+	hashed, err := bcrypt.GenerateFromPassword([]byte(r.Password), 10)
 	if err != nil {
 		return err
 	}
 
-	r.Password = hashed
+	r.Password = string(hashed)
 
 	return nil
 }

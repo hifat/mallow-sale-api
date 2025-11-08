@@ -70,11 +70,11 @@ func (t TokenType) secret(cfg config.Auth) (string, error) {
 }
 
 type handler struct {
-	cfg      config.Config
+	cfg      *config.Config
 	passport authModule.Passport
 }
 
-func New(cfg config.Config, passport authModule.Passport) *handler {
+func New(cfg *config.Config, passport authModule.Passport) *handler {
 	return &handler{
 		cfg,
 		passport,
@@ -111,9 +111,9 @@ func (h *handler) Signed(tokenType TokenType) (*AuthClaims, string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, authClaims)
 
-	sined, err := token.SignedString([]byte(secret))
+	signed, err := token.SignedString([]byte(secret))
 
-	return &authClaims, sined, err
+	return &authClaims, signed, err
 }
 
 func Claims(cfg config.Auth, tokenType TokenType, tokenString string) (*AuthClaims, error) {

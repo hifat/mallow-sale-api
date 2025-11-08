@@ -35,6 +35,16 @@ func getErrObject(code string) ErrorResponse {
 			Message: define.MsgRecordNotFound,
 			Status:  http.StatusNotFound,
 		},
+		define.CodeUnauthorized: {
+			Code:    define.CodeUnauthorized,
+			Message: define.MsgUnauthorized,
+			Status:  http.StatusUnauthorized,
+		},
+		define.CodeInvalidCredentials: {
+			Code:    define.CodeInvalidCredentials,
+			Message: define.MsgInvalidCredentials,
+			Status:  http.StatusUnauthorized,
+		},
 		define.CodeInvalidUsageUnit: {
 			Code:    define.CodeInvalidUsageUnit,
 			Message: define.MsgInvalidUsageUnit,

@@ -49,5 +49,10 @@ func main() {
 		log.Fatalf("Failed to seed suppliers: %v", err)
 	}
 
+	// Seed suer
+	if err := SeedUser(ctx, db); err != nil {
+		log.Fatalf("Failed to seed users: %v", err)
+	}
+
 	log.Println("Database seeding completed successfully!")
 }

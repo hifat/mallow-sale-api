@@ -8,6 +8,7 @@ import (
 )
 
 func RegisterAll(r *gin.RouterGroup, cfg *config.Config, db *mongo.Database, grpcConn *grpc.ClientConn) {
+	AuthRouter(r, cfg, db)
 	InventoryRouter(r, cfg, db)
 	RecipeRouter(r, cfg, db)
 	SettingRouter(r, db)
