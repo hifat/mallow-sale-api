@@ -15,12 +15,18 @@ import (
 func NewMongo(cfg config.DB) (*mongo.Database, func(), error) {
 	// Build connection string with proper authentication
 	uri := fmt.Sprintf(
-		"%s://%s:%s@%s:%s/%s",
+		"%s://%s:%s@%s%s/%s",
 		cfg.Protocol,
 		cfg.Username,
 		cfg.Password,
 		cfg.Host,
-		cfg.Port,
+		func() string {
+			if cfg.Port != "" {
+				return ":" + cfg.Port
+			}
+
+			return ""
+		}(),
 		cfg.DBName,
 	)
 
