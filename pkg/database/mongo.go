@@ -15,7 +15,8 @@ import (
 func NewMongo(cfg config.DB) (*mongo.Database, func(), error) {
 	// Build connection string with proper authentication
 	uri := fmt.Sprintf(
-		"mongodb://%s:%s@%s:%s/%s",
+		"%s://%s:%s@%s:%s/%s",
+		cfg.Protocol,
 		cfg.Username,
 		cfg.Password,
 		cfg.Host,
