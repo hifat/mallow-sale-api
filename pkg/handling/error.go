@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/hifat/mallow-sale-api/pkg/define"
+	"github.com/hifat/mallow-sale-api/pkg/utils/token"
 )
 
 // TODO: Reflector, It duplicated prop
@@ -94,11 +95,24 @@ func ThrowErrByCode(code string) ErrorResponse {
 }
 
 func ThrowErr(err error) ErrorResponse {
-	if errors.Is(err, define.ErrRecordNotFound) {
+	switch {
+	case errors.Is(err, define.ErrRecordNotFound):
 		return ErrorResponse{
 			Code:    define.CodeRecordNotFound,
 			Message: define.MsgRecordNotFound,
 			Status:  http.StatusNotFound,
+		}
+	case errors.Is(err, token.ErrInvalidToken):
+		return ErrorResponse{
+			Code:    define.CodeUnauthorized,
+			Message: define.MsgUnauthorized,
+			Status:  http.StatusUnauthorized,
+		}
+	case errors.Is(err, token.ErrTokenExpired):
+		return ErrorResponse{
+			Code:    define.CodeUnauthorized,
+			Message: define.MsgUnauthorized,
+			Status:  http.StatusUnauthorized,
 		}
 	}
 

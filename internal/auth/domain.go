@@ -21,8 +21,16 @@ func (a *AuthRes) SetAccessToken(t string) {
 	a.AccessToken = t
 }
 
+func (a *AuthRes) GetAccessToken() string {
+	return a.AccessToken
+}
+
 func (a *AuthRes) SetRefreshToken(t string) {
 	a.RefreshToken = t
+}
+
+func (a *AuthRes) GetUserID() string {
+	return a.ID
 }
 
 type Passport struct {
@@ -36,8 +44,24 @@ func (a *Passport) SetAccessToken(t string) {
 	}
 }
 
+func (a *Passport) GetAccessToken() string {
+	if a.User != nil {
+		a.User.GetAccessToken()
+	}
+
+	return ""
+}
+
 func (a *Passport) SetRefreshToken(t string) {
 	if a.User != nil {
 		a.User.SetRefreshToken(t)
 	}
+}
+
+func (a *Passport) GetUserID() string {
+	if a.User != nil {
+		a.User.GetAccessToken()
+	}
+
+	return ""
 }

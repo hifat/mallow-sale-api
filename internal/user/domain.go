@@ -3,6 +3,7 @@ package userModule
 import "golang.org/x/crypto/bcrypt"
 
 type Prototype struct {
+	ID       string `fake:"{uuid}" json:"id"`
 	Name     string `fake:"{name}" json:"name"`
 	Username string `json:"username"`
 

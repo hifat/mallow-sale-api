@@ -4,6 +4,8 @@ definitions:
     properties:
       accessToken:
         type: string
+      id:
+        type: string
       name:
         type: string
       refreshToken:
@@ -640,6 +642,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Find Inventories
       tags:
       - inventory

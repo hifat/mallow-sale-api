@@ -65,6 +65,7 @@ func (r *Rest) FindByID(c *gin.Context) {
 }
 
 // @Summary 	Find Inventories
+// @security 	BearerAuth
 // @Tags 		inventory
 // @Accept 		json
 // @Produce 	json

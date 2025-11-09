@@ -77,6 +77,11 @@ const docTemplate = `{
         },
         "/inventories": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -1730,6 +1735,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "accessToken": {
+                    "type": "string"
+                },
+                "id": {
                     "type": "string"
                 },
                 "name": {
