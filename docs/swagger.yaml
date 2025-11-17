@@ -821,6 +821,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Find Promotions
       tags:
       - promotion
@@ -853,6 +855,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Create Promotion
       tags:
       - promotion
@@ -881,6 +885,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Delete Promotion by ID
       tags:
       - promotion
@@ -912,6 +918,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Find Promotion by ID
       tags:
       - promotion
@@ -949,6 +957,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Update Promotion by ID
       tags:
       - promotion
@@ -993,6 +1003,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Find Recipes
       tags:
       - recipe
@@ -1025,6 +1037,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Create Recipe
       tags:
       - recipe
@@ -1053,6 +1067,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Delete Recipe by ID
       tags:
       - recipe
@@ -1084,6 +1100,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Find Recipe by ID
       tags:
       - recipe
@@ -1121,6 +1139,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Update Recipe by ID
       tags:
       - recipe
@@ -1152,6 +1172,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Batch update recipe order no
       tags:
       - recipe
@@ -1170,6 +1192,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Get Settings
       tags:
       - settings
@@ -1198,6 +1222,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Update Settings
       tags:
       - settings
@@ -1216,6 +1242,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Find Shoppings
       tags:
       - shopping
@@ -1248,6 +1276,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Create Shopping
       tags:
       - shopping
@@ -1280,6 +1310,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Delete Shopping by ID
       tags:
       - shopping
@@ -1318,6 +1350,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Update Shopping Is Complete
       tags:
       - shopping
@@ -1356,6 +1390,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Receipt Reader
       tags:
       - shopping
@@ -1397,6 +1433,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Find Stocks
       tags:
       - stock
@@ -1425,6 +1463,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Create Stock
       tags:
       - stock
@@ -1453,6 +1493,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Delete Stock by ID
       tags:
       - stock
@@ -1484,6 +1526,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Find Stock by ID
       tags:
       - stock
@@ -1521,6 +1565,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Update Stock by ID
       tags:
       - stock
@@ -1562,6 +1608,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Find Suppliers
       tags:
       - supplier
@@ -1590,6 +1638,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Create Supplier
       tags:
       - supplier
@@ -1618,6 +1668,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Delete Supplier by ID
       tags:
       - supplier
@@ -1649,6 +1701,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Find Supplier by ID
       tags:
       - supplier
@@ -1686,6 +1740,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Update Supplier by ID
       tags:
       - supplier

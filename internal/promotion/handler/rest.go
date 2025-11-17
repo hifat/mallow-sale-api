@@ -17,6 +17,7 @@ func NewRest(promotionService promotionService.IService) *Rest {
 }
 
 // @Summary 	Create Promotion
+// @security 	BearerAuth
 // @Tags 		promotion
 // @Accept 		json
 // @Produce 	json
@@ -43,6 +44,7 @@ func (r *Rest) Create(c *gin.Context) {
 }
 
 // @Summary 	Find Promotions
+// @security 	BearerAuth
 // @Tags 		promotion
 // @Accept 		json
 // @Produce 	json
@@ -68,6 +70,7 @@ func (r *Rest) Find(c *gin.Context) {
 }
 
 // @Summary 	Find Promotion by ID
+// @security 	BearerAuth
 // @Tags 		promotion
 // @Accept 		json
 // @Produce 	json
@@ -90,6 +93,7 @@ func (r *Rest) FindByID(c *gin.Context) {
 }
 
 // @Summary 	Update Promotion by ID
+// @security 	BearerAuth
 // @Tags 		promotion
 // @Accept 		json
 // @Produce 	json
@@ -119,6 +123,7 @@ func (r *Rest) UpdateByID(c *gin.Context) {
 }
 
 // @Summary 	Delete Promotion by ID
+// @security 	BearerAuth
 // @Tags 		promotion
 // @Accept 		json
 // @Produce 	json

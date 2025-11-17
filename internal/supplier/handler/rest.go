@@ -16,15 +16,16 @@ func NewRest(supplierService supplierService.IService) *Rest {
 	return &Rest{supplierService: supplierService}
 }
 
-// @Summary      Create Supplier
-// @Tags         supplier
-// @Accept       json
-// @Produce      json
-// @Param        supplier body supplierModule.Request true "Created supplier data"
-// @Success      201 {object} handling.ResponseItem[supplierModule.Request]
-// @Failure      400 {object} handling.ErrorResponse
-// @Failure      500 {object} handling.ErrorResponse
-// @Router       /suppliers [post]
+// @Summary     Create Supplier
+// @security 	BearerAuth
+// @Tags        supplier
+// @Accept      json
+// @Produce     json
+// @Param       supplier body supplierModule.Request true "Created supplier data"
+// @Success     201 {object} handling.ResponseItem[supplierModule.Request]
+// @Failure     400 {object} handling.ErrorResponse
+// @Failure     500 {object} handling.ErrorResponse
+// @Router      /suppliers [post]
 func (r *Rest) Create(c *gin.Context) {
 	var req supplierModule.Request
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -39,14 +40,15 @@ func (r *Rest) Create(c *gin.Context) {
 	handling.ResponseCreated(c, *res)
 }
 
-// @Summary      Find Suppliers
-// @Tags         supplier
-// @Accept       json
-// @Produce      json
-// @Param        query query utilsModule.QueryReq false "Query parameters"
-// @Success      200 {object} handling.ResponseItems[supplierModule.Response]
-// @Failure      500 {object} handling.ErrorResponse
-// @Router       /suppliers [get]
+// @Summary     Find Suppliers
+// @security 	BearerAuth
+// @Tags        supplier
+// @Accept      json
+// @Produce     json
+// @Param       query query utilsModule.QueryReq false "Query parameters"
+// @Success     200 {object} handling.ResponseItems[supplierModule.Response]
+// @Failure     500 {object} handling.ErrorResponse
+// @Router      /suppliers [get]
 func (r *Rest) Find(c *gin.Context) {
 	var query utilsModule.QueryReq
 	if err := c.ShouldBindQuery(&query); err != nil {
@@ -63,16 +65,17 @@ func (r *Rest) Find(c *gin.Context) {
 	handling.ResponseSuccess(c, *res)
 }
 
-// @Summary      Find Supplier by ID
-// @Tags         supplier
-// @Accept       json
-// @Produce      json
-// @Param        id path string true "supplierID"
-// @Success      200 {object} handling.ResponseItem[supplierModule.Response]
-// @Failure      400 {object} handling.ErrorResponse
-// @Failure      404 {object} handling.ErrorResponse
-// @Failure      500 {object} handling.ErrorResponse
-// @Router       /suppliers/{id} [get]
+// @Summary     Find Supplier by ID
+// @security 	BearerAuth
+// @Tags        supplier
+// @Accept      json
+// @Produce     json
+// @Param       id path string true "supplierID"
+// @Success     200 {object} handling.ResponseItem[supplierModule.Response]
+// @Failure     400 {object} handling.ErrorResponse
+// @Failure     404 {object} handling.ErrorResponse
+// @Failure     500 {object} handling.ErrorResponse
+// @Router      /suppliers/{id} [get]
 func (r *Rest) FindByID(c *gin.Context) {
 	id := c.Param("id")
 	res, err := r.supplierService.FindByID(c.Request.Context(), id)
@@ -84,17 +87,18 @@ func (r *Rest) FindByID(c *gin.Context) {
 	handling.ResponseSuccess(c, *res)
 }
 
-// @Summary      Update Supplier by ID
-// @Tags         supplier
-// @Accept       json
-// @Produce      json
-// @Param        id path string true "supplierID"
-// @Param        supplier body supplierModule.Request true "Updated supplier data"
-// @Success      200 {object} handling.ResponseItem[supplierModule.Request]
-// @Failure      400 {object} handling.ErrorResponse
-// @Failure      404 {object} handling.ErrorResponse
-// @Failure      500 {object} handling.ErrorResponse
-// @Router       /suppliers/{id} [put]
+// @Summary     Update Supplier by ID
+// @security 	BearerAuth
+// @Tags        supplier
+// @Accept      json
+// @Produce     json
+// @Param       id path string true "supplierID"
+// @Param       supplier body supplierModule.Request true "Updated supplier data"
+// @Success     200 {object} handling.ResponseItem[supplierModule.Request]
+// @Failure     400 {object} handling.ErrorResponse
+// @Failure     404 {object} handling.ErrorResponse
+// @Failure     500 {object} handling.ErrorResponse
+// @Router      /suppliers/{id} [put]
 func (r *Rest) UpdateByID(c *gin.Context) {
 	id := c.Param("id")
 	var req supplierModule.Request
@@ -112,15 +116,16 @@ func (r *Rest) UpdateByID(c *gin.Context) {
 	handling.ResponseSuccess(c, *res)
 }
 
-// @Summary      Delete Supplier by ID
-// @Tags         supplier
-// @Accept       json
-// @Produce      json
-// @Param        id path string true "supplierID"
-// @Success      200 {object} handling.Response
-// @Failure      404 {object} handling.ErrorResponse
-// @Failure      500 {object} handling.ErrorResponse
-// @Router       /suppliers/{id} [delete]
+// @Summary     Delete Supplier by ID
+// @security 	BearerAuth
+// @Tags        supplier
+// @Accept      json
+// @Produce     json
+// @Param       id path string true "supplierID"
+// @Success     200 {object} handling.Response
+// @Failure     404 {object} handling.ErrorResponse
+// @Failure     500 {object} handling.ErrorResponse
+// @Router      /suppliers/{id} [delete]
 func (r *Rest) DeleteByID(c *gin.Context) {
 	id := c.Param("id")
 	err := r.supplierService.DeleteByID(c.Request.Context(), id)

@@ -16,6 +16,7 @@ func NewRest(recipeService recipeService.IService) *Rest {
 }
 
 // @Summary 	Create Recipe
+// @security 	BearerAuth
 // @Tags 		recipe
 // @Accept 		json
 // @Produce 	json
@@ -42,6 +43,7 @@ func (r *Rest) Create(c *gin.Context) {
 }
 
 // @Summary 	Find Recipes
+// @security 	BearerAuth
 // @Tags 		recipe
 // @Accept 		json
 // @Produce 	json
@@ -66,6 +68,7 @@ func (r *Rest) Find(c *gin.Context) {
 }
 
 // @Summary 	Find Recipe by ID
+// @security 	BearerAuth
 // @Tags 		recipe
 // @Accept 		json
 // @Produce 	json
@@ -88,6 +91,7 @@ func (r *Rest) FindByID(c *gin.Context) {
 }
 
 // @Summary 	Update Recipe by ID
+// @security 	BearerAuth
 // @Tags 		recipe
 // @Accept 		json
 // @Produce 	json
@@ -117,6 +121,7 @@ func (r *Rest) UpdateByID(c *gin.Context) {
 }
 
 // @Summary 	Delete Recipe by ID
+// @security 	BearerAuth
 // @Tags 		recipe
 // @Accept 		json
 // @Produce 	json
@@ -138,6 +143,7 @@ func (r *Rest) DeleteByID(c *gin.Context) {
 }
 
 // @Summary      Batch update recipe order no
+// @security 	BearerAuth
 // @Tags         recipe
 // @Accept       json
 // @Produce      json

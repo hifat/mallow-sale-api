@@ -16,6 +16,7 @@ func NewRest(shoppingService shoppingService.IService) *Rest {
 }
 
 // @Summary 	Create Shopping
+// @security 	BearerAuth
 // @Tags 		shopping
 // @Accept 		json
 // @Produce 	json
@@ -42,6 +43,7 @@ func (r *Rest) Create(c *gin.Context) {
 }
 
 // @Summary 	Find Shoppings
+// @security 	BearerAuth
 // @Tags 		shopping
 // @Accept 		json
 // @Produce 	json
@@ -59,6 +61,7 @@ func (r *Rest) Find(c *gin.Context) {
 }
 
 // @Summary 	Update Shopping Is Complete
+// @security 	BearerAuth
 // @Tags 		shopping
 // @Accept 		json
 // @Produce 	json
@@ -88,6 +91,7 @@ func (r *Rest) UpdateIsComplete(c *gin.Context) {
 }
 
 // @Summary 	Delete Shopping by ID
+// @security 	BearerAuth
 // @Tags 		shopping
 // @Accept 		json
 // @Produce 	json

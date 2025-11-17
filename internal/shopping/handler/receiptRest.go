@@ -16,6 +16,7 @@ func NewReceiptRest(receiptService shoppingService.IReceiptService) *ReceiptRest
 }
 
 // @Summary 	Receipt Reader
+// @security 	BearerAuth
 // @Tags 		shopping
 // @Accept 		json
 // @Produce 	json
