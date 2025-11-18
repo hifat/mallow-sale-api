@@ -104,14 +104,14 @@ func ThrowErr(err error) ErrorResponse {
 		}
 	case errors.Is(err, token.ErrInvalidToken):
 		return ErrorResponse{
-			Code:    define.CodeUnauthorized,
-			Message: define.MsgUnauthorized,
+			Code:    define.CodeInvalidToken,
+			Message: define.MsgInvalidToken,
 			Status:  http.StatusUnauthorized,
 		}
 	case errors.Is(err, token.ErrTokenExpired):
 		return ErrorResponse{
-			Code:    define.CodeUnauthorized,
-			Message: define.MsgUnauthorized,
+			Code:    define.CodeTokenExpired,
+			Message: define.MsgTokenExpired,
 			Status:  http.StatusUnauthorized,
 		}
 	}

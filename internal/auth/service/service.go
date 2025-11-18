@@ -12,6 +12,7 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 	"github.com/hifat/mallow-sale-api/pkg/utils/token"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type IService interface {
@@ -47,6 +48,10 @@ func (s *service) Signin(ctx context.Context, req *authModule.SigninReq) (*authM
 		return nil, handling.ThrowErr(err)
 	}
 
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
+		return nil, handling.ThrowErrByCode(define.CodeInvalidCredentials)
+	}
+
 	passport := &authModule.Passport{
 		User: &authModule.AuthRes{
 			Prototype: userModule.Prototype{
@@ -59,6 +64,10 @@ func (s *service) Signin(ctx context.Context, req *authModule.SigninReq) (*authM
 	t := token.New(s.cfg, *passport)
 
 	_, accessToken, err := t.Signed(token.ACCESS)
+	if err != nil {
+		return nil, handling.ThrowErr(err)
+	}
+
 	passport.SetAccessToken(accessToken)
 
 	_, refreshToken, err := t.Signed(token.REFRESH)
