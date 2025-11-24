@@ -76,10 +76,21 @@ func main() {
 		log.Fatalf("Failed to create upload dir: %v", err)
 	}
 
+	/* ---------------------------------- REST ---------------------------------- */
+
+	r := gin.Default()
+
+	r.Use(gin.Recovery())
+	r.Use(cors.New(configCors()))
+
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	v1 := r.Group("/api/v1")
+
 	MaxContentSize := 20 * 1024 * 1024 // 20 MB
 
 	grpcConn, err := grpc.NewClient(
-		cfg.GRPC.Host,
+		cfg.BLLReader.GRPCHost,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithDefaultCallOptions(
 			grpc.MaxCallRecvMsgSize(MaxContentSize),
@@ -90,15 +101,6 @@ func main() {
 		log.Printf("Warn! Failed to connect GRPC: %v", err)
 	}
 	defer grpcConn.Close()
-
-	r := gin.Default()
-
-	r.Use(gin.Recovery())
-	r.Use(cors.New(configCors()))
-
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
-	v1 := r.Group("/api/v1")
 
 	router.RegisterAll(v1, cfg, db, grpcConn)
 

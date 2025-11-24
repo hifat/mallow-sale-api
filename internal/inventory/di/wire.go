@@ -26,6 +26,7 @@ func Init(cfg *config.Config, db *mongo.Database) *inventoryHandler.Handler {
 
 		// Handler
 		inventoryHandler.NewRest,
+		inventoryHandler.NewGrpc,
 		inventoryHandler.New,
 	)
 

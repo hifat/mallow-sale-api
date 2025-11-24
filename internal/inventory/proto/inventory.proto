@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package inventoryProto;
+option go_package = "./inventoryProto";
+
+message Query {}
+
+message Inventory {
+    string ID = 1;
+    string Name = 2;
+}
+
+message InventoryResponse {
+    repeated Inventory items = 1;
+}
+
+
+service InventoryGrpcService {
+    rpc Find(Query) returns (InventoryResponse);
+}

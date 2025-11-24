@@ -1,8 +1,16 @@
-run:
+rest:
 	go run ./cmd/rest/ -envPath=./env/.env
+
+grpc:
+	go run ./cmd/grpc/ -envPath=./env/.env
 
 swag:
 	swag init -g cmd/rest/main.go -o docs --parseDependency --parseInternal
+
+pb-gen:
+	protoc --go_out=. --go_opt=paths=source_relative \
+		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
+		./internal/inventory/proto/inventory.proto
 
 seed:
 	go run ./cmd/seeder/

@@ -29,6 +29,7 @@ type DB struct {
 type GRPC struct {
 	Host string
 	Port string
+	Key  string
 }
 
 type Auth struct {
@@ -38,11 +39,17 @@ type Auth struct {
 	RefreshTokenExpires time.Duration
 }
 
+type BLLReader struct {
+	GRPCHost string
+	GRPCKey  string
+}
+
 type Config struct {
-	App  App
-	DB   DB
-	GRPC GRPC
-	Auth Auth
+	App       App
+	DB        DB
+	GRPC      GRPC
+	Auth      Auth
+	BLLReader BLLReader
 }
 
 func LoadConfig(path string) (*Config, error) {
@@ -80,12 +87,17 @@ func LoadConfig(path string) (*Config, error) {
 		GRPC: GRPC{
 			Host: viper.GetString("GRPC_HOST"),
 			Port: viper.GetString("GRPC_PORT"),
+			Key:  viper.GetString("GRPC_KEY"),
 		},
 		Auth: Auth{
 			AccessTokenSecret:   viper.GetString("ACCESS_TOKEN_SECRET"),
 			AccessTokenExpires:  viper.GetDuration("ACCESS_TOKEN_EXPIRES"),
 			RefreshTokenSecret:  viper.GetString("REFRESH_TOKEN_SECRET"),
 			RefreshTokenExpires: viper.GetDuration("REFRESH_TOKEN_EXPIRES"),
+		},
+		BLLReader: BLLReader{
+			GRPCHost: viper.GetString("GRPC_BLL_HOST"),
+			GRPCKey:  viper.GetString("GRPC_BLL_KEY"),
 		},
 	}
 

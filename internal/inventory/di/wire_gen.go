@@ -24,6 +24,7 @@ func Init(cfg *config.Config, db *mongo.Database) *inventoryHandler.Handler {
 	usageUnitRepositoryIRepository := usageUnitRepository.NewMongo(db)
 	iService := inventoryService.New(iLogger, iRepository, usageUnitRepositoryIRepository)
 	rest := inventoryHandler.NewRest(iService)
-	handler := inventoryHandler.New(rest)
+	grpc := inventoryHandler.NewGrpc(iService)
+	handler := inventoryHandler.New(rest, grpc)
 	return handler
 }
