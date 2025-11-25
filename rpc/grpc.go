@@ -6,9 +6,9 @@ import (
 	"net"
 
 	inventoryDi "github.com/hifat/mallow-sale-api/internal/inventory/di"
-	inventoryProto "github.com/hifat/mallow-sale-api/internal/inventory/proto"
 	middlewareHandler "github.com/hifat/mallow-sale-api/internal/middleware/handler"
 	"github.com/hifat/mallow-sale-api/pkg/config"
+	"github.com/hifat/mallow-sale-api/pkg/grpc/inventoryProto"
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc"
 )

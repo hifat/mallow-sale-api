@@ -3,9 +3,9 @@ package inventoryHandler
 import (
 	"context"
 
-	inventoryProto "github.com/hifat/mallow-sale-api/internal/inventory/proto"
 	inventoryService "github.com/hifat/mallow-sale-api/internal/inventory/service"
 	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
+	"github.com/hifat/mallow-sale-api/pkg/grpc/inventoryProto"
 )
 
 type GRPC struct {
