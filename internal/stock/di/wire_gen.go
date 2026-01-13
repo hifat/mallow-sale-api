@@ -28,7 +28,7 @@ func Init(cfg *config.Config, db *mongo.Database) *stockHandler.Handler {
 	inventoryRepositoryIRepository := inventoryRepository.NewMongo(db)
 	supplierRepositoryIRepository := supplierRepository.NewMongo(db)
 	usageUnitRepositoryIRepository := usageUnitRepository.NewMongo(db)
-	iHelper := helper.New(inventoryRepositoryIRepository)
+	iHelper := inventoryHelper.New(inventoryRepositoryIRepository)
 	supplierHelperIHelper := supplierHelper.New(supplierRepositoryIRepository)
 	iLogger := logger.New()
 	usageUnitHelperIHelper := usageUnitHelper.New(iLogger, usageUnitRepositoryIRepository)

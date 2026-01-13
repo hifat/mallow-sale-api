@@ -7,9 +7,13 @@
 package shoppingDi
 
 import (
+	"github.com/hifat/mallow-sale-api/internal/inventory/helper"
+	"github.com/hifat/mallow-sale-api/internal/inventory/repository"
 	"github.com/hifat/mallow-sale-api/internal/shopping/handler"
 	"github.com/hifat/mallow-sale-api/internal/shopping/repository"
 	"github.com/hifat/mallow-sale-api/internal/shopping/service"
+	"github.com/hifat/mallow-sale-api/internal/supplier/helper"
+	"github.com/hifat/mallow-sale-api/internal/supplier/repository"
 	"github.com/hifat/mallow-sale-api/internal/usageUnit/helper"
 	"github.com/hifat/mallow-sale-api/internal/usageUnit/repository"
 	"github.com/hifat/mallow-sale-api/pkg/config"
@@ -25,7 +29,11 @@ func Init(cfg *config.Config, db *mongo.Database, grpcConn *grpc.ClientConn) *sh
 	iRepository := shoppingRepository.NewMongo(db)
 	usageUnitRepositoryIRepository := usageUnitRepository.NewMongo(db)
 	iHelper := usageUnitHelper.New(iLogger, usageUnitRepositoryIRepository)
-	iService := shoppingService.New(iLogger, iRepository, usageUnitRepositoryIRepository, iHelper)
+	supplierRepositoryIRepository := supplierRepository.NewMongo(db)
+	supplierHelperIHelper := supplierHelper.New(supplierRepositoryIRepository)
+	inventoryRepositoryIRepository := inventoryRepository.NewMongo(db)
+	inventoryHelperIHelper := inventoryHelper.New(inventoryRepositoryIRepository)
+	iService := shoppingService.New(iLogger, iRepository, usageUnitRepositoryIRepository, iHelper, supplierHelperIHelper, inventoryHelperIHelper)
 	rest := shoppingHandler.NewRest(iService)
 	iReceiptGrpcRepository := shoppingRepository.NewReceiptGRPC(grpcConn)
 	iReceiptService := shoppingService.NewReceipt(iLogger, iReceiptGrpcRepository)

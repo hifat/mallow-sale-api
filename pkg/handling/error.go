@@ -76,6 +76,11 @@ func getErrObject(code string) ErrorResponse {
 			Message: define.MsgDuplicatedInventoryName,
 			Status:  http.StatusBadRequest,
 		},
+		define.CodeInvalidPurchaseUnit: {
+			Code:    define.CodeInvalidPurchaseUnit,
+			Message: define.MsgInvalidPurchaseUnit,
+			Status:  http.StatusBadRequest,
+		},
 	}
 
 	errObj, ok := mapErr[code]

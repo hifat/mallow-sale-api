@@ -8,21 +8,24 @@ import (
 
 type RequestInventoryStatus struct {
 	Code EnumCodeInventoryStatusType `json:"code"`
-	Name string                      `json:"-"`
+
+	Name string `json:"-"`
 }
 
 type RequestInventory struct {
-	OrderNo          uint                   `json:"orderNo"`
-	InventoryID      string                 `json:"inventoryID"`
-	InventoryName    string                 `json:"inventoryName"`
-	PurchaseQuantity float64                `json:"purchaseQuantity"`
-	PurchaseUnit     usageUnitModule.Entity `json:"purchaseUnit"`
+	OrderNo          uint                         `validate:"required" json:"orderNo"`
+	InventoryID      string                       `validate:"required" json:"inventoryID"`
+	PurchaseQuantity float64                      `validate:"required" json:"purchaseQuantity"`
+	PurchaseUnit     usageUnitModule.ReqUsageUnit `json:"purchaseUnit"`
+
+	InventoryName string `json:"-"`
 }
 
 type Request struct {
-	SupplierID   string             `json:"supplierID"`
-	SupplierName string             `json:"-"`
-	Inventories  []RequestInventory `json:"inventories"`
+	SupplierID  string             `validate:"required" json:"supplierID"`
+	Inventories []RequestInventory `validate:"dive" json:"inventories"`
+
+	SupplierName string `json:"-"`
 }
 
 func (p *Request) GetPurchaseUnitCodes() []string {
@@ -36,6 +39,15 @@ func (p *Request) GetPurchaseUnitCodes() []string {
 	}
 
 	return codes
+}
+
+func (p *Request) GetInventoryIDs() []string {
+	ids := make([]string, 0, len(p.Inventories))
+	for _, v := range p.Inventories {
+		ids = append(ids, v.InventoryID)
+	}
+
+	return ids
 }
 
 type ReqReOrder struct {

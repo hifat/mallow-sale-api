@@ -5,9 +5,13 @@ package shoppingDi
 
 import (
 	"github.com/google/wire"
+	inventoryHelper "github.com/hifat/mallow-sale-api/internal/inventory/helper"
+	inventoryRepository "github.com/hifat/mallow-sale-api/internal/inventory/repository"
 	shoppingHandler "github.com/hifat/mallow-sale-api/internal/shopping/handler"
 	shoppingRepository "github.com/hifat/mallow-sale-api/internal/shopping/repository"
 	shoppingService "github.com/hifat/mallow-sale-api/internal/shopping/service"
+	supplierHelper "github.com/hifat/mallow-sale-api/internal/supplier/helper"
+	supplierRepository "github.com/hifat/mallow-sale-api/internal/supplier/repository"
 	usageUnitHelper "github.com/hifat/mallow-sale-api/internal/usageUnit/helper"
 	usageUnitRepository "github.com/hifat/mallow-sale-api/internal/usageUnit/repository"
 	"github.com/hifat/mallow-sale-api/pkg/config"
@@ -22,6 +26,8 @@ func Init(cfg *config.Config, db *mongo.Database, grpcConn *grpc.ClientConn) *sh
 		shoppingRepository.NewMongo,
 		shoppingRepository.NewReceiptGRPC,
 		usageUnitRepository.NewMongo,
+		supplierRepository.NewMongo,
+		inventoryRepository.NewMongo,
 
 		// Service
 		logger.New,
@@ -35,6 +41,8 @@ func Init(cfg *config.Config, db *mongo.Database, grpcConn *grpc.ClientConn) *sh
 
 		// Helper
 		usageUnitHelper.New,
+		supplierHelper.New,
+		inventoryHelper.New,
 	)
 
 	return &shoppingHandler.Handler{}

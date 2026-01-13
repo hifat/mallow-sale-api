@@ -2340,6 +2340,9 @@
         },
         "github_com_hifat_mallow-sale-api_internal_shopping.Request": {
             "type": "object",
+            "required": [
+                "supplierID"
+            ],
             "properties": {
                 "inventories": {
                     "type": "array",
@@ -2354,11 +2357,13 @@
         },
         "github_com_hifat_mallow-sale-api_internal_shopping.RequestInventory": {
             "type": "object",
+            "required": [
+                "inventoryID",
+                "orderNo",
+                "purchaseQuantity"
+            ],
             "properties": {
                 "inventoryID": {
-                    "type": "string"
-                },
-                "inventoryName": {
                     "type": "string"
                 },
                 "orderNo": {
@@ -2368,18 +2373,7 @@
                     "type": "number"
                 },
                 "purchaseUnit": {
-                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.Entity"
-                },
-                "status": {
-                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.RequestInventoryStatus"
-                }
-            }
-        },
-        "github_com_hifat_mallow-sale-api_internal_shopping.RequestInventoryStatus": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.EnumCodeInventoryStatusType"
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.ReqUsageUnit"
                 }
             }
         },
@@ -2567,6 +2561,17 @@
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_usageUnit.ReqUsageUnit": {
+            "type": "object",
+            "required": [
+                "code"
+            ],
+            "properties": {
+                "code": {
                     "type": "string"
                 }
             }

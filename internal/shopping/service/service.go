@@ -5,7 +5,9 @@ import (
 	"errors"
 	"net/http"
 
+	inventoryHelper "github.com/hifat/mallow-sale-api/internal/inventory/helper"
 	shoppingModule "github.com/hifat/mallow-sale-api/internal/shopping"
+	supplierHelper "github.com/hifat/mallow-sale-api/internal/supplier/helper"
 	usageUnitHelper "github.com/hifat/mallow-sale-api/internal/usageUnit/helper"
 	usageUnitRepository "github.com/hifat/mallow-sale-api/internal/usageUnit/repository"
 	"github.com/hifat/mallow-sale-api/pkg/define"
@@ -18,14 +20,25 @@ type service struct {
 	shoppingRepo    shoppingModule.IRepository
 	usageUnitRepo   usageUnitRepository.IRepository
 	usageUnitHelper usageUnitHelper.IHelper
+	supplierHelper  supplierHelper.IHelper
+	inventoryHelper inventoryHelper.IHelper
 }
 
-func New(logger logger.ILogger, shoppingRepo shoppingModule.IRepository, usageUnitRepo usageUnitRepository.IRepository, usageUnitHelper usageUnitHelper.IHelper) shoppingModule.IService {
+func New(
+	logger logger.ILogger,
+	shoppingRepo shoppingModule.IRepository,
+	usageUnitRepo usageUnitRepository.IRepository,
+	usageUnitHelper usageUnitHelper.IHelper,
+	supplierHelper supplierHelper.IHelper,
+	inventoryHelper inventoryHelper.IHelper,
+) shoppingModule.IService {
 	return &service{
 		logger,
 		shoppingRepo,
 		usageUnitRepo,
 		usageUnitHelper,
+		supplierHelper,
+		inventoryHelper,
 	}
 }
 
@@ -46,14 +59,45 @@ func (s *service) Find(ctx context.Context) (*handling.ResponseItems[shoppingMod
 }
 
 func (s *service) Create(ctx context.Context, req *shoppingModule.Request) (*handling.ResponseItem[*shoppingModule.Request], error) {
+	findSupplierByID, err := s.supplierHelper.FindAndGetByID(ctx, []string{req.SupplierID})
+	if err != nil {
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
+	supplier := findSupplierByID(req.SupplierID)
+	if supplier == nil {
+		return nil, handling.ThrowErrByCode(define.CodeInvalidSupplierID)
+	}
+
+	req.SupplierName = supplier.Name
+
 	getNameByCode, err := s.usageUnitHelper.GetNameByCode(ctx, req.GetPurchaseUnitCodes())
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
 
+	findInventoryByID, err := s.inventoryHelper.FindAndGetByID(ctx, req.GetInventoryIDs())
+	if err != nil {
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
 	for i, v := range req.Inventories {
-		req.Inventories[i].PurchaseUnit.Name = getNameByCode(v.PurchaseUnit.Code)
+		inventory := findInventoryByID(v.InventoryID)
+		if inventory == nil {
+			return nil, handling.ThrowErrByCode(define.CodeInvalidInventoryID)
+		}
+
+		req.Inventories[i].InventoryName = inventory.Name
+
+		purchaseUnitName := getNameByCode(v.PurchaseUnit.Code)
+		if purchaseUnitName == "" {
+			return nil, handling.ThrowErrByCode(define.CodeInvalidPurchaseUnit)
+		}
+
+		req.Inventories[i].PurchaseUnit.Name = purchaseUnitName
 	}
 
 	err = s.shoppingRepo.Create(ctx, req)
