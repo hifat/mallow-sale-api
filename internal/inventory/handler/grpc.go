@@ -25,7 +25,7 @@ func (g *GRPC) Find(ctx context.Context, req *inventoryProto.Query) (*inventoryP
 
 	res := inventoryProto.InventoryResponse{}
 	res.Items = make([]*inventoryProto.Inventory, len(invRes.Items))
-	for i, v := range res.Items {
+	for i, v := range invRes.Items {
 		res.Items[i] = &inventoryProto.Inventory{
 			ID:   v.ID,
 			Name: v.Name,
