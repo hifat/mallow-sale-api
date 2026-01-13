@@ -7,7 +7,6 @@ import (
 	"time"
 
 	shoppingModule "github.com/hifat/mallow-sale-api/internal/shopping"
-	usageUnitModule "github.com/hifat/mallow-sale-api/internal/usageUnit"
 	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 	"github.com/hifat/mallow-sale-api/pkg/database"
 	"github.com/hifat/mallow-sale-api/pkg/define"
@@ -19,7 +18,7 @@ type mongoRepository struct {
 	db *mongo.Database
 }
 
-func NewMongo(db *mongo.Database) IRepository {
+func NewMongo(db *mongo.Database) shoppingModule.IRepository {
 	return &mongoRepository{db}
 }
 
@@ -39,14 +38,10 @@ func (r *mongoRepository) Find(ctx context.Context) ([]shoppingModule.Response, 
 		}
 
 		shoppings = append(shoppings, shoppingModule.Response{
-			ID:               shopping.ID.Hex(),
-			Name:             shopping.Name,
-			IsComplete:       shopping.IsComplete,
-			PurchaseQuantity: shopping.PurchaseQuantity,
-			PurchaseUnit: usageUnitModule.Prototype{
-				Code: shopping.PurchaseUnit.Code,
-				Name: shopping.PurchaseUnit.Name,
-			},
+			ID:           shopping.ID.Hex(),
+			SupplierID:   shopping.SupplierID,
+			SupplierName: shopping.SupplierName,
+			Inventories:  make([]shoppingModule.PrototypeInventory, 0),
 		})
 	}
 	if err := cur.Err(); err != nil {
@@ -73,10 +68,14 @@ func (r *mongoRepository) FindByID(ctx context.Context, id string) (*shoppingMod
 	}
 
 	res := &shoppingModule.Response{
-		ID:               shopping.ID.Hex(),
-		Name:             shopping.Name,
-		PurchaseQuantity: shopping.PurchaseQuantity,
-		PurchaseUnit:     usageUnitModule.Prototype(shopping.PurchaseUnit),
+		ID:           shopping.ID.Hex(),
+		SupplierID:   shopping.SupplierID,
+		SupplierName: shopping.SupplierName,
+		Inventories:  make([]shoppingModule.PrototypeInventory, 0, len(shopping.Inventories)),
+	}
+
+	for _, v := range shopping.Inventories {
+		res.Inventories = append(res.Inventories, shoppingModule.PrototypeInventory(v))
 	}
 
 	return res, nil
@@ -84,10 +83,9 @@ func (r *mongoRepository) FindByID(ctx context.Context, id string) (*shoppingMod
 
 func (r *mongoRepository) Create(ctx context.Context, req *shoppingModule.Request) error {
 	newShopping := shoppingModule.Entity{
-		Name:             req.Name,
-		PurchaseQuantity: req.PurchaseQuantity,
-		PurchaseUnit:     usageUnitModule.Entity(req.PurchaseUnit),
-		IsComplete:       false,
+		SupplierID:   req.SupplierID,
+		SupplierName: req.SupplierName,
+		Inventories:  make([]shoppingModule.Inventory, 0, len(req.Inventories)),
 		Base: utilsModule.Base{
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),

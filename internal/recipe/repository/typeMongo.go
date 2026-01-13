@@ -37,7 +37,7 @@ func (r *mongoTypeRepository) Find(ctx context.Context, query *utilsModule.Query
 	return types, nil
 }
 
-func (r *mongoTypeRepository) FindByCode(ctx context.Context, code string) (*recipeModule.RecipeTypeResponse, error) {
+func (r *mongoTypeRepository) FindByCode(ctx context.Context, code recipeModule.EnumCodeRecipeType) (*recipeModule.RecipeTypeResponse, error) {
 	result := r.db.Collection("recipe_types").FindOne(ctx, bson.M{"code": code})
 	if result.Err() != nil {
 		return nil, result.Err()
@@ -51,7 +51,7 @@ func (r *mongoTypeRepository) FindByCode(ctx context.Context, code string) (*rec
 	return &typeResponse, nil
 }
 
-func (r *mongoTypeRepository) FindInCodes(ctx context.Context, codes []string) ([]recipeModule.RecipeTypeResponse, error) {
+func (r *mongoTypeRepository) FindInCodes(ctx context.Context, codes []recipeModule.EnumCodeRecipeType) ([]recipeModule.RecipeTypeResponse, error) {
 	cursor, err := r.db.Collection("recipe_types").Find(ctx, bson.M{"code": bson.M{"$in": codes}})
 	if err != nil {
 		return nil, err

@@ -41,10 +41,10 @@ func (m *MockIRecipeTypeHelper) EXPECT() *MockIRecipeTypeHelperMockRecorder {
 }
 
 // FindAndGetByCode mocks base method.
-func (m *MockIRecipeTypeHelper) FindAndGetByCode(ctx context.Context, codes []string) (func(string) *recipeModule.RecipeTypeResponse, error) {
+func (m *MockIRecipeTypeHelper) FindAndGetByCode(ctx context.Context, codes []recipeModule.EnumCodeRecipeType) (func(recipeModule.EnumCodeRecipeType) *recipeModule.RecipeTypeResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindAndGetByCode", ctx, codes)
-	ret0, _ := ret[0].(func(string) *recipeModule.RecipeTypeResponse)
+	ret0, _ := ret[0].(func(recipeModule.EnumCodeRecipeType) *recipeModule.RecipeTypeResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

@@ -2096,6 +2096,23 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_hifat_mallow-sale-api_internal_recipe.EnumCodeRecipeType": {
+            "type": "string",
+            "enum": [
+                "FOOD",
+                "DESSERT",
+                "DRINK",
+                "SNACK",
+                "INGREDIENT"
+            ],
+            "x-enum-varnames": [
+                "EnumCodeFood",
+                "EnumCodeDessert",
+                "EnumCodeDRINK",
+                "EnumCodeSnack",
+                "EnumCodeIngredient"
+            ]
+        },
         "github_com_hifat_mallow-sale-api_internal_recipe.IngredientPrototype": {
             "type": "object",
             "properties": {
@@ -2133,7 +2150,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "code": {
-                    "type": "string"
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.EnumCodeRecipeType"
                 },
                 "name": {
                     "type": "string"
@@ -2147,7 +2164,7 @@ const docTemplate = `{
             ],
             "properties": {
                 "code": {
-                    "type": "string"
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.EnumCodeRecipeType"
                 }
             }
         },
@@ -2257,6 +2274,61 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_hifat_mallow-sale-api_internal_shopping.EnumCodeInventoryStatusType": {
+            "type": "string",
+            "enum": [
+                "PENDING",
+                "IN_PROGRESS",
+                "SUCCESS",
+                "CANCEL"
+            ],
+            "x-enum-comments": {
+                "EnumCodeCancel": "ยกเลิก",
+                "EnumCodeInProgress": "กำลังดำเนินการ",
+                "EnumCodePending": "รอดำเนินการ",
+                "EnumCodeSuccess": "เสร็จสิน"
+            },
+            "x-enum-varnames": [
+                "EnumCodePending",
+                "EnumCodeInProgress",
+                "EnumCodeSuccess",
+                "EnumCodeCancel"
+            ]
+        },
+        "github_com_hifat_mallow-sale-api_internal_shopping.InventoryStatus": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.EnumCodeInventoryStatusType"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_shopping.PrototypeInventory": {
+            "type": "object",
+            "properties": {
+                "inventoryID": {
+                    "type": "string"
+                },
+                "inventoryName": {
+                    "type": "string"
+                },
+                "orderNo": {
+                    "type": "integer"
+                },
+                "purchaseQuantity": {
+                    "type": "number"
+                },
+                "purchaseUnit": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.Entity"
+                },
+                "status": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.InventoryStatus"
+                }
+            }
+        },
         "github_com_hifat_mallow-sale-api_internal_shopping.ReqReceiptReader": {
             "type": "object",
             "properties": {
@@ -2276,17 +2348,45 @@ const docTemplate = `{
         "github_com_hifat_mallow-sale-api_internal_shopping.Request": {
             "type": "object",
             "properties": {
-                "isComplete": {
-                    "type": "boolean"
+                "inventories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.RequestInventory"
+                    }
                 },
-                "name": {
+                "supplierID": {
                     "type": "string"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_shopping.RequestInventory": {
+            "type": "object",
+            "properties": {
+                "inventoryID": {
+                    "type": "string"
+                },
+                "inventoryName": {
+                    "type": "string"
+                },
+                "orderNo": {
+                    "type": "integer"
                 },
                 "purchaseQuantity": {
                     "type": "number"
                 },
                 "purchaseUnit": {
-                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.UsageUnitReq"
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.Entity"
+                },
+                "status": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.RequestInventoryStatus"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_shopping.RequestInventoryStatus": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.EnumCodeInventoryStatusType"
                 }
             }
         },
@@ -2320,17 +2420,17 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
-                "isComplete": {
-                    "type": "boolean"
+                "inventories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.PrototypeInventory"
+                    }
                 },
-                "name": {
+                "supplierID": {
                     "type": "string"
                 },
-                "purchaseQuantity": {
-                    "type": "number"
-                },
-                "purchaseUnit": {
-                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.Prototype"
+                "supplierName": {
+                    "type": "string"
                 }
             }
         },
@@ -2452,6 +2552,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_usageUnit.Entity": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 }
             }

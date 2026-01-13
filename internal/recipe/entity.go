@@ -19,7 +19,7 @@ type RecipeTypeEntity struct {
 	utilsModule.Base `bson:"inline"`
 
 	ID   primitive.ObjectID `bson:"_id,omitempty" json:"id"`
-	Code string             `bson:"code" json:"code"`
+	Code EnumCodeRecipeType `bson:"code" json:"code"`
 	Name string             `bson:"name" json:"name"`
 }
 

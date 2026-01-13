@@ -14,7 +14,7 @@ type receiptGRPCRepository struct {
 	grpcConn *grpc.ClientConn
 }
 
-func NewReceiptGRPC(grpcConn *grpc.ClientConn) IReceiptGrpcRepository {
+func NewReceiptGRPC(grpcConn *grpc.ClientConn) shoppingModule.IReceiptGrpcRepository {
 	return &receiptGRPCRepository{grpcConn}
 }
 

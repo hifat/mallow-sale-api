@@ -3,15 +3,14 @@ package shoppingHandler
 import (
 	"github.com/gin-gonic/gin"
 	shoppingModule "github.com/hifat/mallow-sale-api/internal/shopping"
-	shoppingService "github.com/hifat/mallow-sale-api/internal/shopping/service"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 )
 
 type Rest struct {
-	shoppingService shoppingService.IService
+	shoppingService shoppingModule.IService
 }
 
-func NewRest(shoppingService shoppingService.IService) *Rest {
+func NewRest(shoppingService shoppingModule.IService) *Rest {
 	return &Rest{shoppingService: shoppingService}
 }
 

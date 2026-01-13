@@ -10,6 +10,7 @@ import (
 	shoppingModule "github.com/hifat/mallow-sale-api/internal/shopping"
 	mockShoppingRepository "github.com/hifat/mallow-sale-api/internal/shopping/repository/mock"
 	usageUnitModule "github.com/hifat/mallow-sale-api/internal/usageUnit"
+	mockUsageUnitHelper "github.com/hifat/mallow-sale-api/internal/usageUnit/helper/mock"
 	mockUsageUnitRepository "github.com/hifat/mallow-sale-api/internal/usageUnit/repository/mock"
 	"github.com/hifat/mallow-sale-api/pkg/define"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
@@ -21,11 +22,12 @@ import (
 type testShoppingServiceSuite struct {
 	suite.Suite
 
-	mockLogger       *mockLogger.MockLogger
-	mockShoppingRepo *mockShoppingRepository.MockIRepository
-	mockUsageUniRepo *mockUsageUnitRepository.MockIRepository
+	mockLogger         *mockLogger.MockLogger
+	mockShoppingRepo   *mockShoppingRepository.MockIRepository
+	mockUsageUniRepo   *mockUsageUnitRepository.MockIRepository
+	mockUsageUniHelper *mockUsageUnitHelper.MockIHelper
 
-	underTest IService
+	underTest shoppingModule.IService
 }
 
 func (s *testShoppingServiceSuite) SetupTest() {
@@ -34,11 +36,13 @@ func (s *testShoppingServiceSuite) SetupTest() {
 	s.mockLogger = mockLogger.NewMockLogger(ctrl)
 	s.mockShoppingRepo = mockShoppingRepository.NewMockIRepository(ctrl)
 	s.mockUsageUniRepo = mockUsageUnitRepository.NewMockIRepository(ctrl)
+	s.mockUsageUniHelper = mockUsageUnitHelper.NewMockIHelper(ctrl)
 
 	s.underTest = &service{
-		logger:        s.mockLogger,
-		shoppingRepo:  s.mockShoppingRepo,
-		usageUnitRepo: s.mockUsageUniRepo,
+		logger:          s.mockLogger,
+		shoppingRepo:    s.mockShoppingRepo,
+		usageUnitRepo:   s.mockUsageUniRepo,
+		usageUnitHelper: s.mockUsageUniHelper,
 	}
 }
 
@@ -129,9 +133,9 @@ func (s *testShoppingServiceSuite) TestInventoryService_Create() {
 		}
 
 		mockErr := errors.New("mock-err")
-		s.mockUsageUniRepo.EXPECT().
-			FindByCode(ctx, req.PurchaseUnit.Code).
-			Return(nil, mockErr)
+		s.mockUsageUniHelper.EXPECT().
+			GetNameByCode(ctx, req.GetPurchaseUnitCodes()).
+			Return(&mockErr, nil)
 
 		s.mockLogger.EXPECT().
 			Error(mockErr)
@@ -161,10 +165,9 @@ func (s *testShoppingServiceSuite) TestInventoryService_Create() {
 			s.T().Fatal(err)
 		}
 
-		mockErr := define.ErrRecordNotFound
-		s.mockUsageUniRepo.EXPECT().
-			FindByCode(ctx, req.PurchaseUnit.Code).
-			Return(nil, mockErr)
+		s.mockUsageUniHelper.EXPECT().
+			GetNameByCode(ctx, req.GetPurchaseUnitCodes()).
+			Return(&mockUsgUnit, nil)
 
 		res, err := s.underTest.Create(ctx, &req)
 		s.Require().Nil(res)
@@ -191,8 +194,8 @@ func (s *testShoppingServiceSuite) TestInventoryService_Create() {
 			s.T().Fatal(err)
 		}
 
-		s.mockUsageUniRepo.EXPECT().
-			FindByCode(ctx, req.PurchaseUnit.Code).
+		s.mockUsageUniHelper.EXPECT().
+			GetNameByCode(ctx, req.GetPurchaseUnitCodes()).
 			Return(&mockUsgUnit, nil)
 
 		mockErr := errors.New("mock-err")
@@ -228,8 +231,8 @@ func (s *testShoppingServiceSuite) TestInventoryService_Create() {
 			s.T().Fatal(err)
 		}
 
-		s.mockUsageUniRepo.EXPECT().
-			FindByCode(ctx, req.PurchaseUnit.Code).
+		s.mockUsageUniHelper.EXPECT().
+			GetNameByCode(ctx, req.GetPurchaseUnitCodes()).
 			Return(&mockUsgUnit, nil)
 
 		s.mockShoppingRepo.EXPECT().

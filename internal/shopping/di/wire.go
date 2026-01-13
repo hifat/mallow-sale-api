@@ -8,6 +8,7 @@ import (
 	shoppingHandler "github.com/hifat/mallow-sale-api/internal/shopping/handler"
 	shoppingRepository "github.com/hifat/mallow-sale-api/internal/shopping/repository"
 	shoppingService "github.com/hifat/mallow-sale-api/internal/shopping/service"
+	usageUnitHelper "github.com/hifat/mallow-sale-api/internal/usageUnit/helper"
 	usageUnitRepository "github.com/hifat/mallow-sale-api/internal/usageUnit/repository"
 	"github.com/hifat/mallow-sale-api/pkg/config"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
@@ -31,6 +32,9 @@ func Init(cfg *config.Config, db *mongo.Database, grpcConn *grpc.ClientConn) *sh
 		shoppingHandler.NewReceiptRest,
 		shoppingHandler.NewRest,
 		shoppingHandler.New,
+
+		// Helper
+		usageUnitHelper.New,
 	)
 
 	return &shoppingHandler.Handler{}

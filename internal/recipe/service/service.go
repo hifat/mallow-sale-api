@@ -83,7 +83,7 @@ func (s *service) Create(ctx context.Context, req *recipeModule.Request) (*handl
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		getRecipeTypeByCode, err := s.recipeTypeHelper.FindAndGetByCode(ctx, []string{req.RecipeType.Code})
+		getRecipeTypeByCode, err := s.recipeTypeHelper.FindAndGetByCode(ctx, []recipeModule.EnumCodeRecipeType{req.RecipeType.Code})
 		if err != nil {
 			s.logger.Error(err)
 			errCh <- err
@@ -192,7 +192,7 @@ func (s *service) UpdateByID(ctx context.Context, id string, req *recipeModule.R
 		req.Ingredients[i].Unit.Name = name
 	}
 
-	getRecipeTypeByCode, err := s.recipeTypeHelper.FindAndGetByCode(ctx, []string{req.RecipeType.Code})
+	getRecipeTypeByCode, err := s.recipeTypeHelper.FindAndGetByCode(ctx, []recipeModule.EnumCodeRecipeType{req.RecipeType.Code})
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)

@@ -15,8 +15,8 @@ type IngredientRequest struct {
 }
 
 type RecipeTypeRequest struct {
-	Code string `validate:"required" json:"code"`
-	Name string `json:"-"`
+	Code EnumCodeRecipeType `validate:"required" json:"code"`
+	Name string             `json:"-"`
 }
 
 type Request struct {
@@ -56,8 +56,8 @@ type IngredientPrototype struct {
 }
 
 type RecipeTypePrototype struct {
-	Code string `json:"code"`
-	Name string `json:"name"`
+	Code EnumCodeRecipeType `json:"code"`
+	Name string             `json:"name"`
 }
 
 type Prototype struct {
@@ -92,8 +92,8 @@ type UpdateOrderNoRequest struct {
 }
 
 type RecipeTypeResponse struct {
-	Code string `json:"code"`
-	Name string `json:"name"`
+	Code EnumCodeRecipeType `json:"code"`
+	Name string             `json:"name"`
 }
 
 type QueryReq struct {

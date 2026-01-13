@@ -13,21 +13,16 @@ import (
 
 	"github.com/gabriel-vasile/mimetype"
 	shoppingModule "github.com/hifat/mallow-sale-api/internal/shopping"
-	shoppingRepository "github.com/hifat/mallow-sale-api/internal/shopping/repository"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 )
 
-type IReceiptService interface {
-	Reader(ctx context.Context, req *shoppingModule.ReqReceiptReader) (*handling.ResponseItems[shoppingModule.ResReceiptReader], error)
-}
-
 type receiptService struct {
 	logger      logger.ILogger
-	receiptGRPC shoppingRepository.IReceiptGrpcRepository
+	receiptGRPC shoppingModule.IReceiptGrpcRepository
 }
 
-func NewReceipt(logger logger.ILogger, receiptGRPC shoppingRepository.IReceiptGrpcRepository) IReceiptService {
+func NewReceipt(logger logger.ILogger, receiptGRPC shoppingModule.IReceiptGrpcRepository) shoppingModule.IReceiptService {
 	return &receiptService{
 		logger,
 		receiptGRPC,

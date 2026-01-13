@@ -6,31 +6,26 @@ import (
 	"net/http"
 
 	shoppingModule "github.com/hifat/mallow-sale-api/internal/shopping"
-	shoppingRepository "github.com/hifat/mallow-sale-api/internal/shopping/repository"
+	usageUnitHelper "github.com/hifat/mallow-sale-api/internal/usageUnit/helper"
 	usageUnitRepository "github.com/hifat/mallow-sale-api/internal/usageUnit/repository"
 	"github.com/hifat/mallow-sale-api/pkg/define"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 )
 
-type IService interface {
-	Find(ctx context.Context) (*handling.ResponseItems[shoppingModule.Response], error)
-	Create(ctx context.Context, req *shoppingModule.Request) (*handling.ResponseItem[*shoppingModule.Request], error)
-	UpdateIsComplete(ctx context.Context, id string, req *shoppingModule.ReqUpdateIsComplete) (*handling.Response, error)
-	DeleteByID(ctx context.Context, id string) (*handling.Response, error)
-}
-
 type service struct {
-	logger        logger.ILogger
-	shoppingRepo  shoppingRepository.IRepository
-	usageUnitRepo usageUnitRepository.IRepository
+	logger          logger.ILogger
+	shoppingRepo    shoppingModule.IRepository
+	usageUnitRepo   usageUnitRepository.IRepository
+	usageUnitHelper usageUnitHelper.IHelper
 }
 
-func New(logger logger.ILogger, shoppingRepo shoppingRepository.IRepository, usageUnitRepo usageUnitRepository.IRepository) IService {
+func New(logger logger.ILogger, shoppingRepo shoppingModule.IRepository, usageUnitRepo usageUnitRepository.IRepository, usageUnitHelper usageUnitHelper.IHelper) shoppingModule.IService {
 	return &service{
 		logger,
 		shoppingRepo,
 		usageUnitRepo,
+		usageUnitHelper,
 	}
 }
 
@@ -51,17 +46,15 @@ func (s *service) Find(ctx context.Context) (*handling.ResponseItems[shoppingMod
 }
 
 func (s *service) Create(ctx context.Context, req *shoppingModule.Request) (*handling.ResponseItem[*shoppingModule.Request], error) {
-	usageUnit, err := s.usageUnitRepo.FindByCode(ctx, req.PurchaseUnit.Code)
+	getNameByCode, err := s.usageUnitHelper.GetNameByCode(ctx, req.GetPurchaseUnitCodes())
 	if err != nil {
-		if errors.Is(err, define.ErrRecordNotFound) {
-			return nil, handling.ThrowErrByCode(define.CodeInvalidUsageUnit)
-		}
-
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
 
-	req.PurchaseUnit.Name = usageUnit.Name
+	for i, v := range req.Inventories {
+		req.Inventories[i].PurchaseUnit.Name = getNameByCode(v.PurchaseUnit.Code)
+	}
 
 	err = s.shoppingRepo.Create(ctx, req)
 	if err != nil {
@@ -74,6 +67,7 @@ func (s *service) Create(ctx context.Context, req *shoppingModule.Request) (*han
 	}, nil
 }
 
+// TODO: Wait destroy this function
 func (s *service) UpdateIsComplete(ctx context.Context, id string, req *shoppingModule.ReqUpdateIsComplete) (*handling.Response, error) {
 	_, err := s.shoppingRepo.FindByID(ctx, id)
 	if err != nil {

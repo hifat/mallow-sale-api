@@ -3,15 +3,14 @@ package shoppingHandler
 import (
 	"github.com/gin-gonic/gin"
 	shoppingModule "github.com/hifat/mallow-sale-api/internal/shopping"
-	shoppingService "github.com/hifat/mallow-sale-api/internal/shopping/service"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 )
 
 type ReceiptRest struct {
-	receiptService shoppingService.IReceiptService
+	receiptService shoppingModule.IReceiptService
 }
 
-func NewReceiptRest(receiptService shoppingService.IReceiptService) *ReceiptRest {
+func NewReceiptRest(receiptService shoppingModule.IReceiptService) *ReceiptRest {
 	return &ReceiptRest{receiptService}
 }
 
