@@ -6,6 +6,7 @@ type Response struct {
 	ID           string               `json:"id"`
 	SupplierID   string               `json:"supplierID"`
 	SupplierName string               `json:"supplierName"`
+	Status       PrototypeStatus      `json:"status"`
 	CreatedAt    time.Time            `json:"createdAt"`
 	UpdatedAt    time.Time            `json:"updatedAt"`
 	Inventories  []PrototypeInventory `json:"inventories"`

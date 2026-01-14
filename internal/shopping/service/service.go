@@ -119,6 +119,8 @@ func (s *service) Create(ctx context.Context, req *shoppingModule.Request) (*han
 		}
 	}
 
+	req.Status.Code = shoppingModule.EnumCodeShoppingPending
+
 	err = s.shoppingRepo.Create(ctx, req)
 	if err != nil {
 		s.logger.Error(err)

@@ -6,12 +6,6 @@ import (
 	usageUnitModule "github.com/hifat/mallow-sale-api/internal/usageUnit"
 )
 
-type RequestInventoryStatus struct {
-	Code EnumCodeInventoryStatusType `json:"code"`
-
-	Name string `json:"-"`
-}
-
 type RequestInventory struct {
 	OrderNo          uint                         `validate:"required" json:"orderNo"`
 	InventoryID      string                       `validate:"required" json:"inventoryID"`
@@ -27,6 +21,7 @@ type Request struct {
 	Inventories []RequestInventory `validate:"dive" json:"inventories"`
 
 	SupplierName string `json:"-"`
+	Status       Status `json:"-"`
 }
 
 func (p *Request) GetPurchaseUnitCodes() []string {

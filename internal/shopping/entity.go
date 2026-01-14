@@ -19,10 +19,16 @@ type Inventory struct {
 	Status           InventoryStatus        `bson:"status" json:"status"`
 }
 
+type Status struct {
+	Code EnumCodeShoppingStatusType `bson:"code" json:"code"`
+	Name string                     `bson:"name" json:"name"`
+}
+
 type Entity struct {
 	utilsModule.Base `bson:"inline"`
 
 	SupplierID   string      `bson:"supplier_id" json:"supplierID"`
 	SupplierName string      `bson:"supplier_name" json:"supplierName"`
+	Status       Status      `bson:"status" json:"status"`
 	Inventories  []Inventory `bson:"inventories" json:"inventories"`
 }

@@ -2337,39 +2337,31 @@
             "type": "string",
             "enum": [
                 "PENDING",
+                "SUCCESS",
+                "MOVE_ORDER",
+                "CANCEL"
+            ],
+            "x-enum-varnames": [
+                "EnumCodeInventoryPending",
+                "EnumCodeInventorySuccess",
+                "EnumCodeInventoryMoveOrder",
+                "EnumCodeInventoryCancel"
+            ]
+        },
+        "github_com_hifat_mallow-sale-api_internal_shopping.EnumCodeShoppingStatusType": {
+            "type": "string",
+            "enum": [
+                "PENDING",
                 "IN_PROGRESS",
                 "SUCCESS",
                 "CANCEL"
             ],
-            "x-enum-comments": {
-                "EnumCodeCancel": "ยกเลิก",
-                "EnumCodeInProgress": "กำลังดำเนินการ",
-                "EnumCodePending": "รอดำเนินการ",
-                "EnumCodeSuccess": "เสร็จสิน"
-            },
-            "x-enum-descriptions": [
-                "รอดำเนินการ",
-                "กำลังดำเนินการ",
-                "เสร็จสิน",
-                "ยกเลิก"
-            ],
             "x-enum-varnames": [
-                "EnumCodePending",
-                "EnumCodeInProgress",
-                "EnumCodeSuccess",
-                "EnumCodeCancel"
+                "EnumCodeShoppingPending",
+                "EnumCodeShoppingInProgress",
+                "EnumCodeShoppingSuccess",
+                "EnumCodeShoppingCancel"
             ]
-        },
-        "github_com_hifat_mallow-sale-api_internal_shopping.InventoryStatus": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.EnumCodeInventoryStatusType"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
         },
         "github_com_hifat_mallow-sale-api_internal_shopping.PrototypeInventory": {
             "type": "object",
@@ -2390,7 +2382,29 @@
                     "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.Entity"
                 },
                 "status": {
-                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.InventoryStatus"
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.PrototypeInventoryStatus"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_shopping.PrototypeInventoryStatus": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.EnumCodeInventoryStatusType"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_shopping.PrototypeStatus": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.EnumCodeShoppingStatusType"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },
@@ -2476,6 +2490,9 @@
         "github_com_hifat_mallow-sale-api_internal_shopping.Response": {
             "type": "object",
             "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 },
@@ -2485,10 +2502,16 @@
                         "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.PrototypeInventory"
                     }
                 },
+                "status": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.PrototypeStatus"
+                },
                 "supplierID": {
                     "type": "string"
                 },
                 "supplierName": {
+                    "type": "string"
+                },
+                "updatedAt": {
                     "type": "string"
                 }
             }

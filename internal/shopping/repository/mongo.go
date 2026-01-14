@@ -41,6 +41,9 @@ func (r *mongoRepository) Find(ctx context.Context) ([]shoppingModule.Response, 
 			ID:           shopping.ID.Hex(),
 			SupplierID:   shopping.SupplierID,
 			SupplierName: shopping.SupplierName,
+			Status:       shoppingModule.PrototypeStatus(shopping.Status),
+			CreatedAt:    shopping.CreatedAt,
+			UpdatedAt:    shopping.UpdatedAt,
 			Inventories:  make([]shoppingModule.PrototypeInventory, 0),
 		})
 	}
@@ -70,11 +73,21 @@ func (r *mongoRepository) FindByID(ctx context.Context, id string) (*shoppingMod
 		ID:           shopping.ID.Hex(),
 		SupplierID:   shopping.SupplierID,
 		SupplierName: shopping.SupplierName,
+		Status:       shoppingModule.PrototypeStatus(shopping.Status),
+		CreatedAt:    shopping.CreatedAt,
+		UpdatedAt:    shopping.UpdatedAt,
 		Inventories:  make([]shoppingModule.PrototypeInventory, 0, len(shopping.Inventories)),
 	}
 
 	for _, v := range shopping.Inventories {
-		res.Inventories = append(res.Inventories, shoppingModule.PrototypeInventory(v))
+		res.Inventories = append(res.Inventories, shoppingModule.PrototypeInventory{
+			OrderNo:          v.OrderNo,
+			InventoryID:      v.InventoryID,
+			InventoryName:    v.InventoryName,
+			PurchaseQuantity: v.PurchaseQuantity,
+			PurchaseUnit:     v.PurchaseUnit,
+			Status:           shoppingModule.PrototypeInventoryStatus(v.Status),
+		})
 	}
 
 	return res, nil
@@ -84,6 +97,7 @@ func (r *mongoRepository) Create(ctx context.Context, req *shoppingModule.Reques
 	newShopping := shoppingModule.Entity{
 		SupplierID:   req.SupplierID,
 		SupplierName: req.SupplierName,
+		Status:       shoppingModule.Status(req.Status),
 		Inventories:  make([]shoppingModule.Inventory, 0, len(req.Inventories)),
 		Base: utilsModule.Base{
 			CreatedAt: time.Now(),

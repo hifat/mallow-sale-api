@@ -272,32 +272,27 @@ definitions:
   github_com_hifat_mallow-sale-api_internal_shopping.EnumCodeInventoryStatusType:
     enum:
     - PENDING
+    - SUCCESS
+    - MOVE_ORDER
+    - CANCEL
+    type: string
+    x-enum-varnames:
+    - EnumCodeInventoryPending
+    - EnumCodeInventorySuccess
+    - EnumCodeInventoryMoveOrder
+    - EnumCodeInventoryCancel
+  github_com_hifat_mallow-sale-api_internal_shopping.EnumCodeShoppingStatusType:
+    enum:
+    - PENDING
     - IN_PROGRESS
     - SUCCESS
     - CANCEL
     type: string
-    x-enum-comments:
-      EnumCodeCancel: ยกเลิก
-      EnumCodeInProgress: กำลังดำเนินการ
-      EnumCodePending: รอดำเนินการ
-      EnumCodeSuccess: เสร็จสิน
-    x-enum-descriptions:
-    - รอดำเนินการ
-    - กำลังดำเนินการ
-    - เสร็จสิน
-    - ยกเลิก
     x-enum-varnames:
-    - EnumCodePending
-    - EnumCodeInProgress
-    - EnumCodeSuccess
-    - EnumCodeCancel
-  github_com_hifat_mallow-sale-api_internal_shopping.InventoryStatus:
-    properties:
-      code:
-        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.EnumCodeInventoryStatusType'
-      name:
-        type: string
-    type: object
+    - EnumCodeShoppingPending
+    - EnumCodeShoppingInProgress
+    - EnumCodeShoppingSuccess
+    - EnumCodeShoppingCancel
   github_com_hifat_mallow-sale-api_internal_shopping.PrototypeInventory:
     properties:
       inventoryID:
@@ -311,7 +306,21 @@ definitions:
       purchaseUnit:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.Entity'
       status:
-        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.InventoryStatus'
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.PrototypeInventoryStatus'
+    type: object
+  github_com_hifat_mallow-sale-api_internal_shopping.PrototypeInventoryStatus:
+    properties:
+      code:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.EnumCodeInventoryStatusType'
+      name:
+        type: string
+    type: object
+  github_com_hifat_mallow-sale-api_internal_shopping.PrototypeStatus:
+    properties:
+      code:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.EnumCodeShoppingStatusType'
+      name:
+        type: string
     type: object
   github_com_hifat_mallow-sale-api_internal_shopping.ReqReceiptReader:
     properties:
@@ -367,15 +376,21 @@ definitions:
     type: object
   github_com_hifat_mallow-sale-api_internal_shopping.Response:
     properties:
+      createdAt:
+        type: string
       id:
         type: string
       inventories:
         items:
           $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.PrototypeInventory'
         type: array
+      status:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.PrototypeStatus'
       supplierID:
         type: string
       supplierName:
+        type: string
+      updatedAt:
         type: string
     type: object
   github_com_hifat_mallow-sale-api_internal_stock.Request:
