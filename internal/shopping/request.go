@@ -18,7 +18,8 @@ type RequestInventory struct {
 	PurchaseQuantity float64                      `validate:"required" json:"purchaseQuantity"`
 	PurchaseUnit     usageUnitModule.ReqUsageUnit `json:"purchaseUnit"`
 
-	InventoryName string `json:"-"`
+	InventoryName string          `json:"-"`
+	Status        InventoryStatus `json:"-"`
 }
 
 type Request struct {

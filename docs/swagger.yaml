@@ -281,6 +281,11 @@ definitions:
       EnumCodeInProgress: กำลังดำเนินการ
       EnumCodePending: รอดำเนินการ
       EnumCodeSuccess: เสร็จสิน
+    x-enum-descriptions:
+    - รอดำเนินการ
+    - กำลังดำเนินการ
+    - เสร็จสิน
+    - ยกเลิก
     x-enum-varnames:
     - EnumCodePending
     - EnumCodeInProgress
@@ -542,6 +547,11 @@ definitions:
       item:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.Request'
     type: object
+  github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_shopping_Response:
+    properties:
+      item:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.Response'
+    type: object
   github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_stock_Request:
     properties:
       item:
@@ -632,6 +642,7 @@ definitions:
       header:
         $ref: '#/definitions/textproto.MIMEHeader'
       size:
+        format: int64
         type: integer
     type: object
   textproto.MIMEHeader:
@@ -758,6 +769,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Create Inventory
       tags:
       - inventory
@@ -790,6 +803,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Delete Inventory by ID
       tags:
       - inventory
@@ -821,6 +836,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Find Inventory by ID
       tags:
       - inventory
@@ -858,6 +875,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Update Inventory by ID
       tags:
       - inventory
@@ -1395,6 +1414,35 @@ paths:
       security:
       - BearerAuth: []
       summary: Delete Shopping by ID
+      tags:
+      - shopping
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Shopping ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_shopping_Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Find Shopping by ID
       tags:
       - shopping
   /shoppings/{id}/is-complete:

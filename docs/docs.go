@@ -144,6 +144,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -195,6 +200,11 @@ const docTemplate = `{
         },
         "/inventories/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -242,6 +252,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -298,6 +313,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -1197,6 +1217,52 @@ const docTemplate = `{
             }
         },
         "/shoppings/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "shopping"
+                ],
+                "summary": "Find Shopping by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Shopping ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_shopping_Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            },
             "delete": {
                 "security": [
                     {
@@ -2288,6 +2354,12 @@ const docTemplate = `{
                 "EnumCodePending": "รอดำเนินการ",
                 "EnumCodeSuccess": "เสร็จสิน"
             },
+            "x-enum-descriptions": [
+                "รอดำเนินการ",
+                "กำลังดำเนินการ",
+                "เสร็จสิน",
+                "ยกเลิก"
+            ],
             "x-enum-varnames": [
                 "EnumCodePending",
                 "EnumCodeInProgress",
@@ -2689,6 +2761,14 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_shopping_Response": {
+            "type": "object",
+            "properties": {
+                "item": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.Response"
+                }
+            }
+        },
         "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_stock_Request": {
             "type": "object",
             "properties": {
@@ -2829,7 +2909,8 @@ const docTemplate = `{
                     "$ref": "#/definitions/textproto.MIMEHeader"
                 },
                 "size": {
-                    "type": "integer"
+                    "type": "integer",
+                    "format": "int64"
                 }
             }
         },

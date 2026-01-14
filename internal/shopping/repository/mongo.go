@@ -3,10 +3,10 @@ package shoppingRepository
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	shoppingModule "github.com/hifat/mallow-sale-api/internal/shopping"
+	usageUnitModule "github.com/hifat/mallow-sale-api/internal/usageUnit"
 	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 	"github.com/hifat/mallow-sale-api/pkg/database"
 	"github.com/hifat/mallow-sale-api/pkg/define"
@@ -52,7 +52,6 @@ func (r *mongoRepository) Find(ctx context.Context) ([]shoppingModule.Response, 
 }
 
 func (r *mongoRepository) FindByID(ctx context.Context, id string) (*shoppingModule.Response, error) {
-	fmt.Println(database.MustObjectIDFromHex(id))
 	var shopping shoppingModule.Entity
 	err := r.db.Collection("shoppings").
 		FindOne(ctx, bson.M{
@@ -90,6 +89,17 @@ func (r *mongoRepository) Create(ctx context.Context, req *shoppingModule.Reques
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		},
+	}
+
+	for _, v := range req.Inventories {
+		newShopping.Inventories = append(newShopping.Inventories, shoppingModule.Inventory{
+			OrderNo:          v.OrderNo,
+			InventoryID:      v.InventoryID,
+			InventoryName:    v.InventoryName,
+			PurchaseUnit:     usageUnitModule.Entity(v.PurchaseUnit),
+			PurchaseQuantity: v.PurchaseQuantity,
+			Status:           shoppingModule.InventoryStatus(v.Status),
+		})
 	}
 
 	_, err := r.db.Collection("shoppings").

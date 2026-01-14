@@ -1,8 +1,19 @@
 package shoppingModule
 
+type EnumCodeShoppingStatusType string
+
+const (
+	EnumCodeShoppingPending    EnumCodeShoppingStatusType = "PENDING"
+	EnumCodeShoppingInProgress EnumCodeShoppingStatusType = "IN_PROGRESS"
+	EnumCodeShoppingSuccess    EnumCodeShoppingStatusType = "SUCCESS"
+	EnumCodeShoppingCancel     EnumCodeShoppingStatusType = "CANCEL"
+)
+
 type EnumCodeInventoryStatusType string
 
-const EnumCodePending EnumCodeInventoryStatusType = "PENDING"        // รอดำเนินการ
-const EnumCodeInProgress EnumCodeInventoryStatusType = "IN_PROGRESS" // กำลังดำเนินการ
-const EnumCodeSuccess EnumCodeInventoryStatusType = "SUCCESS"        // เสร็จสิน
-const EnumCodeCancel EnumCodeInventoryStatusType = "CANCEL"          // ยกเลิก
+const (
+	EnumCodeInventoryPending   EnumCodeInventoryStatusType = "PENDING"
+	EnumCodeInventorySuccess   EnumCodeInventoryStatusType = "SUCCESS"
+	EnumCodeInventoryMoveOrder EnumCodeInventoryStatusType = "MOVE_ORDER"
+	EnumCodeInventoryCancel    EnumCodeInventoryStatusType = "CANCEL"
+)

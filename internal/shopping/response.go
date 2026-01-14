@@ -1,9 +1,13 @@
 package shoppingModule
 
+import "time"
+
 type Response struct {
 	ID           string               `json:"id"`
 	SupplierID   string               `json:"supplierID"`
 	SupplierName string               `json:"supplierName"`
+	CreatedAt    time.Time            `json:"createdAt"`
+	UpdatedAt    time.Time            `json:"updatedAt"`
 	Inventories  []PrototypeInventory `json:"inventories"`
 }
 

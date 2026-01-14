@@ -59,6 +59,28 @@ func (r *Rest) Find(c *gin.Context) {
 	handling.ResponseSuccess(c, *res)
 }
 
+// @Summary 	Find Shopping by ID
+// @security 	BearerAuth
+// @Tags 		shopping
+// @Accept 		json
+// @Produce 	json
+// @Param 		id path string true "Shopping ID"
+// @Success 	200 {object} handling.ResponseItem[shoppingModule.Response]
+// @Failure 	404 {object} handling.ErrorResponse
+// @Failure 	500 {object} handling.ErrorResponse
+// @Router 		/shoppings/{id} [get]
+func (r *Rest) FindByID(c *gin.Context) {
+	id := c.Param("id")
+
+	res, err := r.shoppingService.FindByID(c.Request.Context(), id)
+	if err != nil {
+		handling.ResponseErr(c, err)
+		return
+	}
+
+	handling.ResponseSuccess(c, *res)
+}
+
 // @Summary 	Update Shopping Is Complete
 // @security 	BearerAuth
 // @Tags 		shopping

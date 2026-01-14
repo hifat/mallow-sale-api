@@ -31,6 +31,7 @@ type IReceiptGrpcRepository interface {
 
 type IService interface {
 	Find(ctx context.Context) (*handling.ResponseItems[Response], error)
+	FindByID(ctx context.Context, id string) (*handling.ResponseItem[*Response], error)
 	Create(ctx context.Context, req *Request) (*handling.ResponseItem[*Request], error)
 	UpdateIsComplete(ctx context.Context, id string, req *ReqUpdateIsComplete) (*handling.Response, error)
 	DeleteByID(ctx context.Context, id string) (*handling.Response, error)

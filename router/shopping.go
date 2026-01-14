@@ -13,6 +13,7 @@ func ShoppingRouter(r *gin.RouterGroup, cfg *config.Config, db *mongo.Database, 
 
 	r.Group("/shoppings").
 		GET("", h.Rest.Find).
+		GET("/:id", h.Rest.FindByID).
 		POST("", h.Rest.Create).
 		POST("/read-receipt", h.ReceiptRest.Reader).
 		PATCH("/:id/is-complete", h.Rest.UpdateIsComplete).

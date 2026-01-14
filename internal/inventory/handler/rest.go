@@ -17,6 +17,7 @@ func NewRest(inventoryService inventoryService.IService) *Rest {
 }
 
 // @Summary 	Create Inventory
+// @security 	BearerAuth
 // @Tags 		inventory
 // @Accept 		json
 // @Produce 	json
@@ -43,6 +44,7 @@ func (r *Rest) Create(c *gin.Context) {
 }
 
 // @Summary 	Find Inventory by ID
+// @security 	BearerAuth
 // @Tags 		inventory
 // @Accept 		json
 // @Produce 	json
@@ -90,6 +92,7 @@ func (r *Rest) Find(c *gin.Context) {
 }
 
 // @Summary 	Update Inventory by ID
+// @security 	BearerAuth
 // @Tags 		inventory
 // @Accept 		json
 // @Produce 	json
@@ -119,6 +122,7 @@ func (r *Rest) UpdateByID(c *gin.Context) {
 }
 
 // @Summary 	Delete Inventory by ID
+// @security 	BearerAuth
 // @Tags 		inventory
 // @Accept 		json
 // @Produce 	json

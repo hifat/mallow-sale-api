@@ -43,7 +43,6 @@ func New(
 }
 
 func (s *service) Find(ctx context.Context) (*handling.ResponseItems[shoppingModule.Response], error) {
-	res := []shoppingModule.Response{}
 	res, err := s.shoppingRepo.Find(ctx)
 	if err != nil {
 		s.logger.Error(err)
@@ -55,6 +54,21 @@ func (s *service) Find(ctx context.Context) (*handling.ResponseItems[shoppingMod
 		Meta: handling.MetaResponse{
 			Total: int64(len(res)),
 		},
+	}, nil
+}
+
+func (s *service) FindByID(ctx context.Context, id string) (*handling.ResponseItem[*shoppingModule.Response], error) {
+	res, err := s.shoppingRepo.FindByID(ctx, id)
+	if err != nil {
+		if !errors.Is(define.ErrRecordNotFound, err) {
+			s.logger.Error(err)
+		}
+
+		return nil, handling.ThrowErr(err)
+	}
+
+	return &handling.ResponseItem[*shoppingModule.Response]{
+		Item: res,
 	}, nil
 }
 
@@ -98,6 +112,11 @@ func (s *service) Create(ctx context.Context, req *shoppingModule.Request) (*han
 		}
 
 		req.Inventories[i].PurchaseUnit.Name = purchaseUnitName
+
+		req.Inventories[i].Status = shoppingModule.InventoryStatus{
+			Code: shoppingModule.EnumCodeInventoryPending,
+			Name: v.Status.Name,
+		}
 	}
 
 	err = s.shoppingRepo.Create(ctx, req)
