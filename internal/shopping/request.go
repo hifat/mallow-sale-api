@@ -55,6 +55,15 @@ type ReqUpdateIsComplete struct {
 	IsComplete bool `json:"isComplete"`
 }
 
+/* --------------------------- Shopping Inventory --------------------------- */
+
+type RequestShoppingInventory struct {
+	InventoryID   string `validate:"required" json:"inventoryID"`
+	InventoryName string `validate:"required" json:"inventoryName"`
+	SupplierID    string `validate:"required" json:"supplierID"`
+	SupplierName  string `validate:"required" json:"supplierName"`
+}
+
 /* --------------------------------- Receipt -------------------------------- */
 
 type ReqReceiptReader struct {

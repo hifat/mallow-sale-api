@@ -20,10 +20,13 @@ import (
 	"google.golang.org/grpc"
 )
 
+//
+//go:generate wire ./wire.go
 func Init(cfg *config.Config, db *mongo.Database, grpcConn *grpc.ClientConn) *shoppingHandler.Handler {
 	wire.Build(
 		// Repository
 		shoppingRepository.NewMongo,
+		shoppingRepository.NewInventoryMongo,
 		shoppingRepository.NewReceiptGRPC,
 		usageUnitRepository.NewMongo,
 		supplierRepository.NewMongo,
@@ -32,10 +35,12 @@ func Init(cfg *config.Config, db *mongo.Database, grpcConn *grpc.ClientConn) *sh
 		// Service
 		logger.New,
 		shoppingService.New,
+		shoppingService.NewInventory,
 		shoppingService.NewReceipt,
 
 		// Handler
 		shoppingHandler.NewReceiptRest,
+		shoppingHandler.NewInventoryRest,
 		shoppingHandler.NewRest,
 		shoppingHandler.New,
 

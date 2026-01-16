@@ -2,12 +2,14 @@ package supplierRepository
 
 import (
 	"context"
+	"errors"
 	"strings"
 	"time"
 
 	supplierModule "github.com/hifat/mallow-sale-api/internal/supplier"
 	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 	"github.com/hifat/mallow-sale-api/pkg/database"
+	"github.com/hifat/mallow-sale-api/pkg/define"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -101,6 +103,10 @@ func (r *mongoRepository) FindByID(ctx context.Context, id string) (*supplierMod
 	filter := bson.M{"_id": database.MustObjectIDFromHex(id)}
 	var supplier supplierModule.Entity
 	if err := r.db.Collection("suppliers").FindOne(ctx, filter).Decode(&supplier); err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, define.ErrRecordNotFound
+		}
+
 		return nil, err
 	}
 	createdAt := supplier.CreatedAt

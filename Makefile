@@ -15,6 +15,9 @@ pb-gen:
 seed:
 	go run ./cmd/seeder/
 
+migrate:
+	go run ./cmd/migration/
+
 k8s-create-config-map:
 	kubectl create configmap mallow-sale-api-env --from-file=./env/.env.local -n mallow-sale
 

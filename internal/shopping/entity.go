@@ -32,3 +32,14 @@ type Entity struct {
 	Status       Status      `bson:"status" json:"status"`
 	Inventories  []Inventory `bson:"inventories" json:"inventories"`
 }
+
+/* --------------------------- Shopping Inventory --------------------------- */
+
+type InventoryEntity struct {
+	utilsModule.Base `bson:"inline"`
+
+	InventoryID   string `bson:"inventory_id" json:"inventoryID"`
+	InventoryName string `bson:"inventory_name" json:"inventoryName"`
+	SupplierID    string `bson:"supplier_id" json:"supplierID"`
+	SupplierName  string `bson:"supplier_name" json:"supplierName"`
+}

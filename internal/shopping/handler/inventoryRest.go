@@ -1,38 +1,38 @@
-package shoppingInventoryHandler
+package shoppingHandler
 
 import (
 	"github.com/gin-gonic/gin"
-	shoppingInventoryModule "github.com/hifat/mallow-sale-api/internal/shopping/inventory"
+	shoppingModule "github.com/hifat/mallow-sale-api/internal/shopping"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 )
 
-type Rest struct {
-	shoppingInventoryService shoppingInventoryModule.IService
+type InventoryRest struct {
+	service shoppingModule.IInventoryService
 }
 
-func NewRest(shoppingInventoryService shoppingInventoryModule.IService) *Rest {
-	return &Rest{shoppingInventoryService: shoppingInventoryService}
+func NewInventoryRest(service shoppingModule.IInventoryService) *InventoryRest {
+	return &InventoryRest{service: service}
 }
 
-// @Summary 	Create ShoppingInventory
+// @Summary 	Create Shopping Inventory
 // @security 	BearerAuth
 // @Tags 		Shopping Inventory
 // @Accept 		json
 // @Produce 	json
-// @Param 		inventory body shoppingInventoryModule.Request true "Created inventory data"
-// @Success 	201 {object} handling.ResponseItem[shoppingInventoryModule.Request]
+// @Param 		inventory body shoppingModule.RequestShoppingInventory true "Created inventory data"
+// @Success 	201 {object} handling.ResponseItem[shoppingModule.RequestShoppingInventory]
 // @Failure 	400 {object} handling.ErrorResponse
 // @Failure 	404 {object} handling.ErrorResponse
 // @Failure 	500 {object} handling.ErrorResponse
 // @Router 		/shopping-inventories [post]
-func (r *Rest) Create(c *gin.Context) {
-	req := new(shoppingInventoryModule.Request)
+func (r *InventoryRest) Create(c *gin.Context) {
+	req := new(shoppingModule.RequestShoppingInventory)
 	if err := c.ShouldBindJSON(req); err != nil {
 		handling.ResponseFormErr(c, err)
 		return
 	}
 
-	res, err := r.shoppingInventoryService.Create(c.Request.Context(), req)
+	res, err := r.service.Create(c.Request.Context(), req)
 	if err != nil {
 		handling.ResponseErr(c, err)
 		return
@@ -41,16 +41,16 @@ func (r *Rest) Create(c *gin.Context) {
 	handling.ResponseCreated(c, *res)
 }
 
-// @Summary 	Find ShoppingInventory
+// @Summary 	Find Shopping Inventory
 // @security 	BearerAuth
 // @Tags 		Shopping Inventory
 // @Accept 		json
 // @Produce 	json
-// @Success 	200 {object} handling.ResponseItems[shoppingInventoryModule.Response]
+// @Success 	200 {object} handling.ResponseItems[shoppingModule.Response]
 // @Failure 	500 {object} handling.ErrorResponse
 // @Router 		/shopping-inventories [get]
-func (r *Rest) Find(c *gin.Context) {
-	res, err := r.shoppingInventoryService.Find(c.Request.Context())
+func (r *InventoryRest) Find(c *gin.Context) {
+	res, err := r.service.Find(c.Request.Context())
 	if err != nil {
 		handling.ResponseErr(c, err)
 		return
@@ -69,10 +69,10 @@ func (r *Rest) Find(c *gin.Context) {
 // @Failure 	404 {object} handling.ErrorResponse
 // @Failure 	500 {object} handling.ErrorResponse
 // @Router 		/shopping-inventories/{id} [delete]
-func (r *Rest) DeleteByID(c *gin.Context) {
+func (r *InventoryRest) DeleteByID(c *gin.Context) {
 	id := c.Param("id")
 
-	err := r.shoppingInventoryService.DeleteByID(c.Request.Context(), id)
+	err := r.service.DeleteByID(c.Request.Context(), id)
 	if err != nil {
 		handling.ResponseErr(c, err)
 		return

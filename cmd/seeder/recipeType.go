@@ -45,6 +45,6 @@ func SeedRecipeTypes(ctx context.Context, db *mongo.Database) error {
 		return err
 	}
 
-	log.Printf("Successfully seeded %d recipe types", len(result.InsertedIDs))
+	log.Printf("Successfully seeded %v recipe types", len(result.InsertedIDs))
 	return nil
 }

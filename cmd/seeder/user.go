@@ -24,7 +24,7 @@ func SeedUser(ctx context.Context, db *mongo.Database) error {
 		},
 		Name:     "admin",
 		Username: "admin",
-		Password: "$2a$10$lNVnjXjniMR6BTZzneN6TuvB1n/DKl.DcoS.aa4WBxO7XLEzy.QDq", // Default: 1234
+		Password: "$2a$10$KlHghtIez2EKjLFtQWFSIeiKvNAL4y.hYpJVmhookAlWDHISZ3wbK", // Default: 1234
 	}
 
 	// Check if data already exists
@@ -45,6 +45,6 @@ func SeedUser(ctx context.Context, db *mongo.Database) error {
 		return err
 	}
 
-	log.Printf("Successfully seeded %d user", result.InsertedID)
+	log.Printf("Successfully seeded %v user", result.InsertedID)
 	return nil
 }

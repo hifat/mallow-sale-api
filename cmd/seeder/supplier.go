@@ -60,6 +60,6 @@ func SeedSuppliers(ctx context.Context, db *mongo.Database) error {
 		return err
 	}
 
-	log.Printf("Successfully seeded %d suppliers", len(result.InsertedIDs))
+	log.Printf("Successfully seeded %v suppliers", len(result.InsertedIDs))
 	return nil
 }

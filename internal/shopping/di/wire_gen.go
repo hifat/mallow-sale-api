@@ -24,6 +24,8 @@ import (
 
 // Injectors from wire.go:
 
+//
+//go:generate wire ./wire.go
 func Init(cfg *config.Config, db *mongo.Database, grpcConn *grpc.ClientConn) *shoppingHandler.Handler {
 	iLogger := logger.New()
 	iRepository := shoppingRepository.NewMongo(db)
@@ -35,9 +37,12 @@ func Init(cfg *config.Config, db *mongo.Database, grpcConn *grpc.ClientConn) *sh
 	inventoryHelperIHelper := inventoryHelper.New(inventoryRepositoryIRepository)
 	iService := shoppingService.New(iLogger, iRepository, usageUnitRepositoryIRepository, iHelper, supplierHelperIHelper, inventoryHelperIHelper)
 	rest := shoppingHandler.NewRest(iService)
+	iInventoryRepository := shoppingRepository.NewInventoryMongo(db)
+	iInventoryService := shoppingService.NewInventory(iInventoryRepository, inventoryRepositoryIRepository, supplierRepositoryIRepository, iLogger)
+	inventoryRest := shoppingHandler.NewInventoryRest(iInventoryService)
 	iReceiptGrpcRepository := shoppingRepository.NewReceiptGRPC(grpcConn)
 	iReceiptService := shoppingService.NewReceipt(iLogger, iReceiptGrpcRepository)
 	receiptRest := shoppingHandler.NewReceiptRest(iReceiptService)
-	handler := shoppingHandler.New(rest, receiptRest)
+	handler := shoppingHandler.New(rest, inventoryRest, receiptRest)
 	return handler
 }

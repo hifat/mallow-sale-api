@@ -60,6 +60,6 @@ func SeedUsageUnits(ctx context.Context, db *mongo.Database) error {
 		return err
 	}
 
-	log.Printf("Successfully seeded %d usage units", len(result.InsertedIDs))
+	log.Printf("Successfully seeded %v usage units", len(result.InsertedIDs))
 	return nil
 }

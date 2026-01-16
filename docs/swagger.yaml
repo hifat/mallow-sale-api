@@ -358,6 +358,22 @@ definitions:
     - orderNo
     - purchaseQuantity
     type: object
+  github_com_hifat_mallow-sale-api_internal_shopping.RequestShoppingInventory:
+    properties:
+      inventoryID:
+        type: string
+      inventoryName:
+        type: string
+      supplierID:
+        type: string
+      supplierName:
+        type: string
+    required:
+    - inventoryID
+    - inventoryName
+    - supplierID
+    - supplierName
+    type: object
   github_com_hifat_mallow-sale-api_internal_shopping.ResReceiptReader:
     properties:
       inventoryID:
@@ -562,6 +578,11 @@ definitions:
       item:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.Request'
     type: object
+  ? github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_shopping_RequestShoppingInventory
+  : properties:
+      item:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.RequestShoppingInventory'
+    type: object
   github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_shopping_Response:
     properties:
       item:
@@ -657,7 +678,6 @@ definitions:
       header:
         $ref: '#/definitions/textproto.MIMEHeader'
       size:
-        format: int64
         type: integer
     type: object
   textproto.MIMEHeader:
@@ -1343,6 +1363,90 @@ paths:
       summary: Update Settings
       tags:
       - settings
+  /shopping-inventories:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_shopping_Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Find ShoppingInventory
+      tags:
+      - Shopping Inventory
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Created inventory data
+        in: body
+        name: inventory
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.RequestShoppingInventory'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_shopping_RequestShoppingInventory'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create Shopping Inventory
+      tags:
+      - Shopping Inventory
+  /shopping-inventories/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Shopping Inventory ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete Shopping Inventory by ID
+      tags:
+      - Shopping Inventory
   /shoppings:
     get:
       consumes:

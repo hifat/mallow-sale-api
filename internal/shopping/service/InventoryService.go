@@ -1,26 +1,26 @@
-package shoppingInventoryModule
+package shoppingService
 
 import (
 	"context"
 	"errors"
 
 	inventoryRepository "github.com/hifat/mallow-sale-api/internal/inventory/repository"
-	shoppingInventoryModule "github.com/hifat/mallow-sale-api/internal/shopping/inventory"
+	shoppingModule "github.com/hifat/mallow-sale-api/internal/shopping"
 	supplierRepository "github.com/hifat/mallow-sale-api/internal/supplier/repository"
 	"github.com/hifat/mallow-sale-api/pkg/define"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 )
 
-type service struct {
-	repo          shoppingInventoryModule.IRepository
+type inventoryService struct {
+	repo          shoppingModule.IInventoryRepository
 	inventoryRepo inventoryRepository.IRepository
 	supplierRepo  supplierRepository.IRepository
 	logger        logger.ILogger
 }
 
-func New(repo shoppingInventoryModule.IRepository, inventoryRepo inventoryRepository.IRepository, supplierRepo supplierRepository.IRepository, logger logger.ILogger) shoppingInventoryModule.IService {
-	return &service{
+func NewInventory(repo shoppingModule.IInventoryRepository, inventoryRepo inventoryRepository.IRepository, supplierRepo supplierRepository.IRepository, logger logger.ILogger) shoppingModule.IInventoryService {
+	return &inventoryService{
 		repo:          repo,
 		inventoryRepo: inventoryRepo,
 		supplierRepo:  supplierRepo,
@@ -28,7 +28,7 @@ func New(repo shoppingInventoryModule.IRepository, inventoryRepo inventoryReposi
 	}
 }
 
-func (s *service) Create(ctx context.Context, req *shoppingInventoryModule.Request) (*handling.ResponseItem[*shoppingInventoryModule.Request], error) {
+func (s *inventoryService) Create(ctx context.Context, req *shoppingModule.RequestShoppingInventory) (*handling.ResponseItem[*shoppingModule.RequestShoppingInventory], error) {
 	inventory, err := s.inventoryRepo.FindByID(ctx, req.InventoryID)
 	if err != nil {
 		if errors.Is(err, define.ErrRecordNotFound) {
@@ -44,7 +44,7 @@ func (s *service) Create(ctx context.Context, req *shoppingInventoryModule.Reque
 	supplier, err := s.supplierRepo.FindByID(ctx, req.SupplierID)
 	if err != nil {
 		if errors.Is(err, define.ErrRecordNotFound) {
-			return nil, handling.ThrowErrByCode(define.CodeInvalidInventoryID)
+			return nil, handling.ThrowErrByCode(define.CodeInvalidSupplierID)
 		}
 
 		s.logger.Error(err)
@@ -58,24 +58,24 @@ func (s *service) Create(ctx context.Context, req *shoppingInventoryModule.Reque
 		return nil, handling.ThrowErr(err)
 	}
 
-	return &handling.ResponseItem[*shoppingInventoryModule.Request]{
+	return &handling.ResponseItem[*shoppingModule.RequestShoppingInventory]{
 		Item: req,
 	}, nil
 }
 
-func (s *service) Find(ctx context.Context) (*handling.ResponseItems[shoppingInventoryModule.Response], error) {
-	invShoppings, err := s.repo.Find(ctx)
+func (s *inventoryService) Find(ctx context.Context) (*handling.ResponseItems[shoppingModule.InventoryResponse], error) {
+	shoppingInvs, err := s.repo.Find(ctx)
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
 
-	return &handling.ResponseItems[shoppingInventoryModule.Response]{
-		Items: invShoppings,
+	return &handling.ResponseItems[shoppingModule.InventoryResponse]{
+		Items: shoppingInvs,
 	}, nil
 }
 
-func (s *service) DeleteByID(ctx context.Context, id string) error {
+func (s *inventoryService) DeleteByID(ctx context.Context, id string) error {
 	if err := s.repo.DeleteByID(ctx, id); err != nil {
 		s.logger.Error(err)
 		return handling.ThrowErr(err)
