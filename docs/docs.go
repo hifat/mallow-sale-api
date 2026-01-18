@@ -1094,7 +1094,7 @@ const docTemplate = `{
                 "tags": [
                     "Shopping Inventory"
                 ],
-                "summary": "Find ShoppingInventory",
+                "summary": "Find Shopping Inventory",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1779,6 +1779,60 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/storage/upload": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "storage"
+                ],
+                "summary": "Upload File to Google Drive",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "File to upload",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Google Drive folder ID (optional)",
+                        "name": "folderId",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_storage_UploadResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
                         }
@@ -2749,6 +2803,23 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_hifat_mallow-sale-api_internal_storage.UploadResponse": {
+            "type": "object",
+            "properties": {
+                "fileId": {
+                    "type": "string"
+                },
+                "fileName": {
+                    "type": "string"
+                },
+                "uploadedAt": {
+                    "type": "string"
+                },
+                "webViewLink": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_hifat_mallow-sale-api_internal_supplier.Prototype": {
             "type": "object",
             "properties": {
@@ -2974,6 +3045,14 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_storage_UploadResponse": {
+            "type": "object",
+            "properties": {
+                "item": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_storage.UploadResponse"
+                }
+            }
+        },
         "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_supplier_Request": {
             "type": "object",
             "properties": {
@@ -3098,7 +3177,8 @@ const docTemplate = `{
                     "$ref": "#/definitions/textproto.MIMEHeader"
                 },
                 "size": {
-                    "type": "integer"
+                    "type": "integer",
+                    "format": "int64"
                 }
             }
         },

@@ -44,12 +44,17 @@ type BLLReader struct {
 	GRPCKey  string
 }
 
+type GoogleDrive struct {
+	ServiceAccount string
+}
+
 type Config struct {
-	App       App
-	DB        DB
-	GRPC      GRPC
-	Auth      Auth
-	BLLReader BLLReader
+	App         App
+	DB          DB
+	GRPC        GRPC
+	Auth        Auth
+	BLLReader   BLLReader
+	GoogleDrive GoogleDrive
 }
 
 func LoadConfig(path string) (*Config, error) {
@@ -98,6 +103,9 @@ func LoadConfig(path string) (*Config, error) {
 		BLLReader: BLLReader{
 			GRPCHost: viper.GetString("GRPC_BLL_HOST"),
 			GRPCKey:  viper.GetString("GRPC_BLL_KEY"),
+		},
+		GoogleDrive: GoogleDrive{
+			ServiceAccount: viper.GetString("GDRIVE_SERVICE_ACCOUNT"),
 		},
 	}
 

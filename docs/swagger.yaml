@@ -455,6 +455,17 @@ definitions:
       updatedAt:
         type: string
     type: object
+  github_com_hifat_mallow-sale-api_internal_storage.UploadResponse:
+    properties:
+      fileId:
+        type: string
+      fileName:
+        type: string
+      uploadedAt:
+        type: string
+      webViewLink:
+        type: string
+    type: object
   github_com_hifat_mallow-sale-api_internal_supplier.Prototype:
     properties:
       createdAt:
@@ -598,6 +609,11 @@ definitions:
       item:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_stock.Response'
     type: object
+  github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_storage_UploadResponse:
+    properties:
+      item:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_storage.UploadResponse'
+    type: object
   github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_supplier_Request:
     properties:
       item:
@@ -678,6 +694,7 @@ definitions:
       header:
         $ref: '#/definitions/textproto.MIMEHeader'
       size:
+        format: int64
         type: integer
     type: object
   textproto.MIMEHeader:
@@ -1380,7 +1397,7 @@ paths:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
       security:
       - BearerAuth: []
-      summary: Find ShoppingInventory
+      summary: Find Shopping Inventory
       tags:
       - Shopping Inventory
     post:
@@ -1819,6 +1836,40 @@ paths:
       summary: Update Stock by ID
       tags:
       - stock
+  /storage/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: File to upload
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: Google Drive folder ID (optional)
+        in: formData
+        name: folderId
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_storage_UploadResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Upload File to Google Drive
+      tags:
+      - storage
   /suppliers:
     get:
       consumes:
