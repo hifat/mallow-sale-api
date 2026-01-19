@@ -7,9 +7,9 @@
 package storageDi
 
 import (
-	storageHandler "github.com/hifat/mallow-sale-api/internal/storage/handler"
-	storageRepository "github.com/hifat/mallow-sale-api/internal/storage/repository"
-	storageService "github.com/hifat/mallow-sale-api/internal/storage/service"
+	"github.com/hifat/mallow-sale-api/internal/storage/handler"
+	"github.com/hifat/mallow-sale-api/internal/storage/repository"
+	"github.com/hifat/mallow-sale-api/internal/storage/service"
 	"github.com/hifat/mallow-sale-api/pkg/config"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 )
@@ -17,11 +17,11 @@ import (
 // Injectors from wire.go:
 
 func Init(cfg *config.Config) (*storageHandler.Handler, error) {
+	iLogger := logger.New()
 	iRepository, err := storageRepository.NewGDrive(cfg)
 	if err != nil {
 		return nil, err
 	}
-	iLogger := logger.New()
 	iService := storageService.New(iLogger, iRepository)
 	rest := storageHandler.NewRest(iService)
 	handler := storageHandler.New(rest)
