@@ -327,10 +327,18 @@ definitions:
       image:
         $ref: '#/definitions/multipart.FileHeader'
     type: object
-  github_com_hifat_mallow-sale-api_internal_shopping.ReqUpdateIsComplete:
+  github_com_hifat_mallow-sale-api_internal_shopping.ReqUpdateStatus:
     properties:
-      isComplete:
-        type: boolean
+      statusCode:
+        allOf:
+        - $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.EnumCodeShoppingStatusType'
+        enum:
+        - PENDING
+        - IN_PROGRESS
+        - SUCCESS
+        - CANCEL
+    required:
+    - statusCode
     type: object
   github_com_hifat_mallow-sale-api_internal_shopping.Request:
     properties:
@@ -1380,7 +1388,7 @@ paths:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
       security:
       - BearerAuth: []
-      summary: Find ShoppingInventory
+      summary: Find Shopping Inventory
       tags:
       - Shopping Inventory
     post:
@@ -1564,7 +1572,46 @@ paths:
       summary: Find Shopping by ID
       tags:
       - shopping
-  /shoppings/{id}/is-complete:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Shopping ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated shopping data
+        in: body
+        name: shopping
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_shopping_Request'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update Shopping
+      tags:
+      - shopping
+  /shoppings/{id}/status:
     patch:
       consumes:
       - application/json
@@ -1574,12 +1621,12 @@ paths:
         name: id
         required: true
         type: string
-      - description: Updated shopping is complete
+      - description: Updated shopping status
         in: body
         name: shopping
         required: true
         schema:
-          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.ReqUpdateIsComplete'
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.ReqUpdateStatus'
       produces:
       - application/json
       responses:
@@ -1601,7 +1648,7 @@ paths:
             $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
       security:
       - BearerAuth: []
-      summary: Update Shopping Is Complete
+      summary: Update Shopping Status
       tags:
       - shopping
   /shoppings/read-receipt:

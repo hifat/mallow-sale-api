@@ -16,7 +16,8 @@ func ShoppingRouter(r *gin.RouterGroup, cfg *config.Config, db *mongo.Database, 
 		GET("/:id", h.Rest.FindByID).
 		POST("", h.Rest.Create).
 		POST("/read-receipt", h.ReceiptRest.Reader).
-		PATCH("/:id/is-complete", h.Rest.UpdateIsComplete).
+		PUT("/:id", h.Rest.UpdateByID).
+		PATCH("/:id/status", h.Rest.UpdateStatus).
 		DELETE("/:id", h.Rest.DeleteByID)
 
 	r.Group("/shopping-inventories").

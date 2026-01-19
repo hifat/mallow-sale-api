@@ -9,6 +9,21 @@ const (
 	EnumCodeShoppingCancel     EnumCodeShoppingStatusType = "CANCEL"
 )
 
+func (c EnumCodeShoppingStatusType) GetShoppingStatusName() string {
+	switch c {
+	case EnumCodeShoppingPending:
+		return "pending"
+	case EnumCodeShoppingInProgress:
+		return "in_progress"
+	case EnumCodeShoppingSuccess:
+		return "success"
+	case EnumCodeShoppingCancel:
+		return "cancel"
+	default:
+		return ""
+	}
+}
+
 type EnumCodeInventoryStatusType string
 
 const (

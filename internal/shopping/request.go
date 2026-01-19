@@ -4,6 +4,7 @@ import (
 	"mime/multipart"
 
 	usageUnitModule "github.com/hifat/mallow-sale-api/internal/usageUnit"
+	"github.com/hifat/mallow-sale-api/pkg/define"
 )
 
 type RequestInventory struct {
@@ -51,8 +52,20 @@ type ReqReOrder struct {
 	OrderNo uint   `fake:"{uintrange:0,100}" json:"orderNo"`
 }
 
-type ReqUpdateIsComplete struct {
-	IsComplete bool `json:"isComplete"`
+type ReqUpdateStatus struct {
+	StatusCode EnumCodeShoppingStatusType `validate:"required,oneof=PENDING IN_PROGRESS SUCCESS CANCEL" json:"statusCode"`
+}
+
+func (r *ReqUpdateStatus) ValidateStatusCode() error {
+	switch r.StatusCode {
+	case EnumCodeShoppingPending,
+		EnumCodeShoppingInProgress,
+		EnumCodeShoppingSuccess,
+		EnumCodeShoppingCancel:
+		return nil
+	default:
+		return define.ErrInvalidShoppingStatus
+	}
 }
 
 /* --------------------------- Shopping Inventory --------------------------- */

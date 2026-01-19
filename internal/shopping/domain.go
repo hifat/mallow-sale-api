@@ -6,12 +6,13 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 )
 
-//go:generate mockgen -source=./repository.go -destination=./mock/repository.go -package=mockShoppingRepository
+//go:generate mockgen -source=./domain.go -destination=./repository/mock/repository.go -package=mockShoppingRepository
 type IRepository interface {
 	Find(ctx context.Context) ([]Response, error)
 	FindByID(ctx context.Context, id string) (*Response, error)
 	Create(ctx context.Context, req *Request) error
-	UpdateIsComplete(ctx context.Context, id string, req *ReqUpdateIsComplete) error
+	UpdateByID(ctx context.Context, id string, req *Request) error
+	UpdateStatus(ctx context.Context, id string, req *ReqUpdateStatus) error
 	ReOrderNo(ctx context.Context, reqs []ReqReOrder) error
 	DeleteByID(ctx context.Context, id string) error
 }
@@ -20,7 +21,8 @@ type IService interface {
 	Find(ctx context.Context) (*handling.ResponseItems[Response], error)
 	FindByID(ctx context.Context, id string) (*handling.ResponseItem[*Response], error)
 	Create(ctx context.Context, req *Request) (*handling.ResponseItem[*Request], error)
-	UpdateIsComplete(ctx context.Context, id string, req *ReqUpdateIsComplete) (*handling.Response, error)
+	UpdateByID(ctx context.Context, id string, req *Request) (*handling.ResponseItem[*Request], error)
+	UpdateStatus(ctx context.Context, id string, req *ReqUpdateStatus) (*handling.Response, error)
 	DeleteByID(ctx context.Context, id string) (*handling.Response, error)
 }
 

@@ -81,28 +81,58 @@ func (r *Rest) FindByID(c *gin.Context) {
 	handling.ResponseSuccess(c, *res)
 }
 
-// @Summary 	Update Shopping Is Complete
+// @Summary 	Update Shopping
 // @security 	BearerAuth
 // @Tags 		shopping
 // @Accept 		json
 // @Produce 	json
-// @Param 		id path string true "shopping ID"
-// @Param 		shopping body shoppingModule.ReqUpdateIsComplete true "Updated shopping is complete"
-// @Success 	200 {object} handling.Response
+// @Param 		id path string true "Shopping ID"
+// @Param 		shopping body shoppingModule.Request true "Updated shopping data"
+// @Success 	200 {object} handling.ResponseItem[shoppingModule.Request]
 // @Failure 	400 {object} handling.ErrorResponse
 // @Failure 	404 {object} handling.ErrorResponse
 // @Failure 	500 {object} handling.ErrorResponse
-// @Router 		/shoppings/{id}/is-complete [patch]
-func (r *Rest) UpdateIsComplete(c *gin.Context) {
+// @Router 		/shoppings/{id} [put]
+func (r *Rest) UpdateByID(c *gin.Context) {
 	id := c.Param("id")
 
-	var req shoppingModule.ReqUpdateIsComplete
+	var req shoppingModule.Request
 	if err := c.ShouldBindJSON(&req); err != nil {
 		handling.ResponseFormErr(c, err)
 		return
 	}
 
-	res, err := r.shoppingService.UpdateIsComplete(c.Request.Context(), id, &req)
+	res, err := r.shoppingService.UpdateByID(c.Request.Context(), id, &req)
+	if err != nil {
+		handling.ResponseErr(c, err)
+		return
+	}
+
+	handling.ResponseSuccess(c, *res)
+}
+
+// @Summary 	Update Shopping Status
+// @security 	BearerAuth
+// @Tags 		shopping
+// @Accept 		json
+// @Produce 	json
+// @Param 		id path string true "shopping ID"
+// @Param 		shopping body shoppingModule.ReqUpdateStatus true "Updated shopping status"
+// @Success 	200 {object} handling.Response
+// @Failure 	400 {object} handling.ErrorResponse
+// @Failure 	404 {object} handling.ErrorResponse
+// @Failure 	500 {object} handling.ErrorResponse
+// @Router 		/shoppings/{id}/status [patch]
+func (r *Rest) UpdateStatus(c *gin.Context) {
+	id := c.Param("id")
+
+	var req shoppingModule.ReqUpdateStatus
+	if err := c.ShouldBindJSON(&req); err != nil {
+		handling.ResponseFormErr(c, err)
+		return
+	}
+
+	res, err := r.shoppingService.UpdateStatus(c.Request.Context(), id, &req)
 	if err != nil {
 		handling.ResponseErr(c, err)
 		return

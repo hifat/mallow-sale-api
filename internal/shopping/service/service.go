@@ -132,8 +132,7 @@ func (s *service) Create(ctx context.Context, req *shoppingModule.Request) (*han
 	}, nil
 }
 
-// TODO: Wait destroy this function
-func (s *service) UpdateIsComplete(ctx context.Context, id string, req *shoppingModule.ReqUpdateIsComplete) (*handling.Response, error) {
+func (s *service) UpdateByID(ctx context.Context, id string, req *shoppingModule.Request) (*handling.ResponseItem[*shoppingModule.Request], error) {
 	_, err := s.shoppingRepo.FindByID(ctx, id)
 	if err != nil {
 		if !errors.Is(define.ErrRecordNotFound, err) {
@@ -143,7 +142,78 @@ func (s *service) UpdateIsComplete(ctx context.Context, id string, req *shopping
 		return nil, handling.ThrowErr(err)
 	}
 
-	if err := s.shoppingRepo.UpdateIsComplete(ctx, id, req); err != nil {
+	findSupplierByID, err := s.supplierHelper.FindAndGetByID(ctx, []string{req.SupplierID})
+	if err != nil {
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
+	supplier := findSupplierByID(req.SupplierID)
+	if supplier == nil {
+		return nil, handling.ThrowErrByCode(define.CodeInvalidSupplierID)
+	}
+
+	req.SupplierName = supplier.Name
+
+	getNameByCode, err := s.usageUnitHelper.GetNameByCode(ctx, req.GetPurchaseUnitCodes())
+	if err != nil {
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
+	findInventoryByID, err := s.inventoryHelper.FindAndGetByID(ctx, req.GetInventoryIDs())
+	if err != nil {
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
+	for i, v := range req.Inventories {
+		inventory := findInventoryByID(v.InventoryID)
+		if inventory == nil {
+			return nil, handling.ThrowErrByCode(define.CodeInvalidInventoryID)
+		}
+
+		req.Inventories[i].InventoryName = inventory.Name
+
+		purchaseUnitName := getNameByCode(v.PurchaseUnit.Code)
+		if purchaseUnitName == "" {
+			return nil, handling.ThrowErrByCode(define.CodeInvalidPurchaseUnit)
+		}
+
+		req.Inventories[i].PurchaseUnit.Name = purchaseUnitName
+
+		req.Inventories[i].Status = shoppingModule.InventoryStatus{
+			Code: shoppingModule.EnumCodeInventoryPending,
+			Name: v.Status.Name,
+		}
+	}
+
+	err = s.shoppingRepo.UpdateByID(ctx, id, req)
+	if err != nil {
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
+	return &handling.ResponseItem[*shoppingModule.Request]{
+		Item: req,
+	}, nil
+}
+
+func (s *service) UpdateStatus(ctx context.Context, id string, req *shoppingModule.ReqUpdateStatus) (*handling.Response, error) {
+	if err := req.ValidateStatusCode(); err != nil {
+		return nil, handling.ThrowErrByCode(define.CodeInvalidShoppingStatus)
+	}
+
+	_, err := s.shoppingRepo.FindByID(ctx, id)
+	if err != nil {
+		if !errors.Is(define.ErrRecordNotFound, err) {
+			s.logger.Error(err)
+		}
+
+		return nil, handling.ThrowErr(err)
+	}
+
+	if err := s.shoppingRepo.UpdateStatus(ctx, id, req); err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}

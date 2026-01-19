@@ -1094,7 +1094,7 @@ const docTemplate = `{
                 "tags": [
                     "Shopping Inventory"
                 ],
-                "summary": "Find ShoppingInventory",
+                "summary": "Find Shopping Inventory",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1398,6 +1398,67 @@ const docTemplate = `{
                     }
                 }
             },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "shopping"
+                ],
+                "summary": "Update Shopping",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Shopping ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated shopping data",
+                        "name": "shopping",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_shopping_Request"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            },
             "delete": {
                 "security": [
                     {
@@ -1451,7 +1512,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/shoppings/{id}/is-complete": {
+        "/shoppings/{id}/status": {
             "patch": {
                 "security": [
                     {
@@ -1467,7 +1528,7 @@ const docTemplate = `{
                 "tags": [
                     "shopping"
                 ],
-                "summary": "Update Shopping Is Complete",
+                "summary": "Update Shopping Status",
                 "parameters": [
                     {
                         "type": "string",
@@ -1477,12 +1538,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Updated shopping is complete",
+                        "description": "Updated shopping status",
                         "name": "shopping",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.ReqUpdateIsComplete"
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.ReqUpdateStatus"
                         }
                     }
                 ],
@@ -2558,11 +2619,24 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_hifat_mallow-sale-api_internal_shopping.ReqUpdateIsComplete": {
+        "github_com_hifat_mallow-sale-api_internal_shopping.ReqUpdateStatus": {
             "type": "object",
+            "required": [
+                "statusCode"
+            ],
             "properties": {
-                "isComplete": {
-                    "type": "boolean"
+                "statusCode": {
+                    "enum": [
+                        "PENDING",
+                        "IN_PROGRESS",
+                        "SUCCESS",
+                        "CANCEL"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.EnumCodeShoppingStatusType"
+                        }
+                    ]
                 }
             }
         },

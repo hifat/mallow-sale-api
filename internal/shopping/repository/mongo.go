@@ -122,12 +122,51 @@ func (r *mongoRepository) Create(ctx context.Context, req *shoppingModule.Reques
 	return err
 }
 
-func (r *mongoRepository) UpdateIsComplete(ctx context.Context, id string, req *shoppingModule.ReqUpdateIsComplete) error {
+func (r *mongoRepository) UpdateByID(ctx context.Context, id string, req *shoppingModule.Request) error {
+	newShopping := shoppingModule.Entity{
+		SupplierID:   req.SupplierID,
+		SupplierName: req.SupplierName,
+		Status:       shoppingModule.Status(req.Status),
+		Inventories:  make([]shoppingModule.Inventory, 0, len(req.Inventories)),
+		Base: utilsModule.Base{
+			UpdatedAt: time.Now(),
+		},
+	}
+
+	for _, v := range req.Inventories {
+		newShopping.Inventories = append(newShopping.Inventories, shoppingModule.Inventory{
+			OrderNo:          v.OrderNo,
+			InventoryID:      v.InventoryID,
+			InventoryName:    v.InventoryName,
+			PurchaseUnit:     usageUnitModule.Entity(v.PurchaseUnit),
+			PurchaseQuantity: v.PurchaseQuantity,
+			Status:           shoppingModule.InventoryStatus(v.Status),
+		})
+	}
+
 	_, err := r.db.Collection("shoppings").
 		UpdateOne(ctx, bson.M{
 			"_id": database.MustObjectIDFromHex(id),
 		}, bson.M{"$set": bson.M{
-			"is_complete": req.IsComplete,
+			"supplier_id":   newShopping.SupplierID,
+			"supplier_name": newShopping.SupplierName,
+			"inventories":   newShopping.Inventories,
+			"updated_at":    newShopping.UpdatedAt,
+		}})
+
+	return err
+}
+
+func (r *mongoRepository) UpdateStatus(ctx context.Context, id string, req *shoppingModule.ReqUpdateStatus) error {
+	_, err := r.db.Collection("shoppings").
+		UpdateOne(ctx, bson.M{
+			"_id": database.MustObjectIDFromHex(id),
+		}, bson.M{"$set": bson.M{
+			"status": bson.M{
+				"code": req.StatusCode,
+				"name": req.StatusCode.GetShoppingStatusName(),
+			},
+			"updated_at": time.Now(),
 		}})
 
 	return err

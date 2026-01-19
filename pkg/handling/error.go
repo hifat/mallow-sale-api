@@ -81,6 +81,11 @@ func getErrObject(code string) ErrorResponse {
 			Message: define.MsgInvalidPurchaseUnit,
 			Status:  http.StatusBadRequest,
 		},
+		define.CodeInvalidShoppingStatus: {
+			Code:    define.CodeInvalidShoppingStatus,
+			Message: define.MsgInvalidShoppingStatus,
+			Status:  http.StatusBadRequest,
+		},
 	}
 
 	errObj, ok := mapErr[code]
