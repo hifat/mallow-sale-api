@@ -1099,7 +1099,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_shopping_Response"
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_shopping_InventoryResponse"
                         }
                     },
                     "500": {
@@ -2566,6 +2566,26 @@ const docTemplate = `{
                 "EnumCodeShoppingCancel"
             ]
         },
+        "github_com_hifat_mallow-sale-api_internal_shopping.InventoryResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "inventoryID": {
+                    "type": "string"
+                },
+                "inventoryName": {
+                    "type": "string"
+                },
+                "supplierID": {
+                    "type": "string"
+                },
+                "supplierName": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_hifat_mallow-sale-api_internal_shopping.PrototypeInventory": {
             "type": "object",
             "properties": {
@@ -3099,6 +3119,20 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.Response"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_shopping_InventoryResponse": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.InventoryResponse"
                     }
                 },
                 "meta": {

@@ -71,10 +71,11 @@ func (r *ReqUpdateStatus) ValidateStatusCode() error {
 /* --------------------------- Shopping Inventory --------------------------- */
 
 type RequestShoppingInventory struct {
-	InventoryID   string `validate:"required" json:"inventoryID"`
-	InventoryName string `validate:"required" json:"inventoryName"`
-	SupplierID    string `validate:"required" json:"supplierID"`
-	SupplierName  string `validate:"required" json:"supplierName"`
+	InventoryID string `validate:"required" json:"inventoryID"`
+	SupplierID  string `validate:"required" json:"supplierID"`
+
+	InventoryName string `validate:"required" json:"-"`
+	SupplierName  string `validate:"required" json:"-"`
 }
 
 /* --------------------------------- Receipt -------------------------------- */
