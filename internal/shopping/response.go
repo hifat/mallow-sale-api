@@ -23,10 +23,15 @@ type ResReceiptReader struct {
 
 /* --------------------------- Shopping Inventory --------------------------- */
 
-type InventoryResponse struct {
-	ID            string `bson:"_id" json:"id"`
-	InventoryID   string `bson:"inventory_id" json:"inventoryID"`
-	InventoryName string `bson:"inventory_name" json:"inventoryName"`
-	SupplierID    string `bson:"supplier_id" json:"supplierID"`
-	SupplierName  string `bson:"supplier_name" json:"supplierName"`
+type ResInventory struct {
+	ID            string `bson:"id" json:"id"`
+	InventoryID   string `bson:"inventoryID" json:"inventoryID"`
+	InventoryName string `bson:"inventoryName" json:"inventoryName"`
+}
+
+type ResShoppingInventory struct {
+	ID           string         `bson:"_id" json:"id"`
+	SupplierID   string         `bson:"supplierID" json:"supplierID"`
+	SupplierName string         `bson:"supplierName" json:"supplierName"`
+	Inventories  []ResInventory `bson:"inventories" json:"inventories"`
 }

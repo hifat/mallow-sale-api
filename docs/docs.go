@@ -1099,7 +1099,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_shopping_InventoryResponse"
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_shopping_ResShoppingInventory"
                         }
                     },
                     "500": {
@@ -2566,26 +2566,6 @@ const docTemplate = `{
                 "EnumCodeShoppingCancel"
             ]
         },
-        "github_com_hifat_mallow-sale-api_internal_shopping.InventoryResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "inventoryID": {
-                    "type": "string"
-                },
-                "inventoryName": {
-                    "type": "string"
-                },
-                "supplierID": {
-                    "type": "string"
-                },
-                "supplierName": {
-                    "type": "string"
-                }
-            }
-        },
         "github_com_hifat_mallow-sale-api_internal_shopping.PrototypeInventory": {
             "type": "object",
             "properties": {
@@ -2703,21 +2683,27 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "inventoryID",
-                "inventoryName",
-                "supplierID",
-                "supplierName"
+                "supplierID"
             ],
             "properties": {
                 "inventoryID": {
                     "type": "string"
                 },
-                "inventoryName": {
-                    "type": "string"
-                },
                 "supplierID": {
                     "type": "string"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_shopping.ResInventory": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
                 },
-                "supplierName": {
+                "inventoryID": {
+                    "type": "string"
+                },
+                "inventoryName": {
                     "type": "string"
                 }
             }
@@ -2742,6 +2728,26 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "remark": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_shopping.ResShoppingInventory": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "inventories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.ResInventory"
+                    }
+                },
+                "supplierID": {
+                    "type": "string"
+                },
+                "supplierName": {
                     "type": "string"
                 }
             }
@@ -3126,20 +3132,6 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_shopping_InventoryResponse": {
-            "type": "object",
-            "properties": {
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.InventoryResponse"
-                    }
-                },
-                "meta": {
-                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse"
-                }
-            }
-        },
         "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_shopping_ResReceiptReader": {
             "type": "object",
             "properties": {
@@ -3147,6 +3139,20 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.ResReceiptReader"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_shopping_ResShoppingInventory": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.ResShoppingInventory"
                     }
                 },
                 "meta": {

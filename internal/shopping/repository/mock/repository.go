@@ -306,10 +306,10 @@ func (mr *MockIInventoryRepositoryMockRecorder) DeleteByID(ctx, id any) *gomock.
 }
 
 // Find mocks base method.
-func (m *MockIInventoryRepository) Find(ctx context.Context) ([]shoppingModule.InventoryResponse, error) {
+func (m *MockIInventoryRepository) Find(ctx context.Context) ([]shoppingModule.ResShoppingInventory, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Find", ctx)
-	ret0, _ := ret[0].([]shoppingModule.InventoryResponse)
+	ret0, _ := ret[0].([]shoppingModule.ResShoppingInventory)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -373,10 +373,10 @@ func (mr *MockIInventoryServiceMockRecorder) DeleteByID(ctx, id any) *gomock.Cal
 }
 
 // Find mocks base method.
-func (m *MockIInventoryService) Find(ctx context.Context) (*handling.ResponseItems[shoppingModule.InventoryResponse], error) {
+func (m *MockIInventoryService) Find(ctx context.Context) (*handling.ResponseItems[shoppingModule.ResShoppingInventory], error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Find", ctx)
-	ret0, _ := ret[0].(*handling.ResponseItems[shoppingModule.InventoryResponse])
+	ret0, _ := ret[0].(*handling.ResponseItems[shoppingModule.ResShoppingInventory])
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

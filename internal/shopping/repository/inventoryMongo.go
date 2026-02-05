@@ -33,27 +33,33 @@ func (r *inventoryMongoRepository) Create(ctx context.Context, req *shoppingModu
 	return nil
 }
 
-func (r *inventoryMongoRepository) Find(ctx context.Context) ([]shoppingModule.InventoryResponse, error) {
-	cur, err := r.db.Collection("shopping_inventories").Find(ctx, bson.M{})
+func (r *inventoryMongoRepository) Find(ctx context.Context) ([]shoppingModule.ResShoppingInventory, error) {
+	pipeline := mongo.Pipeline{
+		{{Key: "$group", Value: bson.D{
+			{Key: "_id", Value: "$supplier_id"},
+			{Key: "supplierName", Value: bson.D{{Key: "$first", Value: "$supplier_name"}}},
+			{Key: "inventories", Value: bson.D{{Key: "$push", Value: bson.D{
+				{Key: "id", Value: "$_id"},
+				{Key: "inventoryID", Value: "$inventory_id"},
+				{Key: "inventoryName", Value: "$inventory_name"},
+			}}}},
+		}}},
+		{{Key: "$project", Value: bson.D{
+			{Key: "supplierID", Value: "$supplier_id"},
+			{Key: "supplierName", Value: 1},
+			{Key: "inventories", Value: 1},
+		}}},
+	}
+
+	cur, err := r.db.Collection("shopping_inventories").Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
 	defer cur.Close(ctx)
 
-	var invShoppings []shoppingModule.InventoryEntity
-	if err := cur.All(ctx, &invShoppings); err != nil {
+	var responses []shoppingModule.ResShoppingInventory
+	if err := cur.All(ctx, &responses); err != nil {
 		return nil, err
-	}
-
-	var responses []shoppingModule.InventoryResponse
-	for _, inv := range invShoppings {
-		responses = append(responses, shoppingModule.InventoryResponse{
-			ID:            inv.ID.Hex(),
-			InventoryID:   inv.InventoryID,
-			InventoryName: inv.InventoryName,
-			SupplierID:    inv.SupplierID,
-			SupplierName:  inv.SupplierName,
-		})
 	}
 
 	return responses, nil

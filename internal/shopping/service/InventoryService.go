@@ -63,15 +63,18 @@ func (s *inventoryService) Create(ctx context.Context, req *shoppingModule.Reque
 	}, nil
 }
 
-func (s *inventoryService) Find(ctx context.Context) (*handling.ResponseItems[shoppingModule.InventoryResponse], error) {
+func (s *inventoryService) Find(ctx context.Context) (*handling.ResponseItems[shoppingModule.ResShoppingInventory], error) {
 	shoppingInvs, err := s.repo.Find(ctx)
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
 
-	return &handling.ResponseItems[shoppingModule.InventoryResponse]{
+	return &handling.ResponseItems[shoppingModule.ResShoppingInventory]{
 		Items: shoppingInvs,
+		Meta: handling.MetaResponse{
+			Total: int64(len(shoppingInvs)),
+		},
 	}, nil
 }
 

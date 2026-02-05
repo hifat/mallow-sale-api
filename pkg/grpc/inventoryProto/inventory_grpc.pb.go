@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v5.29.3
-// source: internal/inventory/proto/inventory.proto
+// source: pkg/grpc/inventoryProto/inventory.proto
 
 package inventoryProto
 
@@ -22,6 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type InventoryGrpcServiceClient interface {
+	// Find retrieves all inventory items.
 	Find(ctx context.Context, in *Query, opts ...grpc.CallOption) (*InventoryResponse, error)
 }
 
@@ -46,6 +47,7 @@ func (c *inventoryGrpcServiceClient) Find(ctx context.Context, in *Query, opts .
 // All implementations must embed UnimplementedInventoryGrpcServiceServer
 // for forward compatibility
 type InventoryGrpcServiceServer interface {
+	// Find retrieves all inventory items.
 	Find(context.Context, *Query) (*InventoryResponse, error)
 	mustEmbedUnimplementedInventoryGrpcServiceServer()
 }
@@ -101,5 +103,5 @@ var InventoryGrpcService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "internal/inventory/proto/inventory.proto",
+	Metadata: "pkg/grpc/inventoryProto/inventory.proto",
 }

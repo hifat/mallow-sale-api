@@ -46,7 +46,7 @@ func (r *InventoryRest) Create(c *gin.Context) {
 // @Tags 		Shopping Inventory
 // @Accept 		json
 // @Produce 	json
-// @Success 	200 {object} handling.ResponseItems[shoppingModule.InventoryResponse]
+// @Success 	200 {object} handling.ResponseItems[shoppingModule.ResShoppingInventory]
 // @Failure 	500 {object} handling.ErrorResponse
 // @Router 		/shopping-inventories [get]
 func (r *InventoryRest) Find(c *gin.Context) {

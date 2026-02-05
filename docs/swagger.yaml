@@ -293,19 +293,6 @@ definitions:
     - EnumCodeShoppingInProgress
     - EnumCodeShoppingSuccess
     - EnumCodeShoppingCancel
-  github_com_hifat_mallow-sale-api_internal_shopping.InventoryResponse:
-    properties:
-      id:
-        type: string
-      inventoryID:
-        type: string
-      inventoryName:
-        type: string
-      supplierID:
-        type: string
-      supplierName:
-        type: string
-    type: object
   github_com_hifat_mallow-sale-api_internal_shopping.PrototypeInventory:
     properties:
       inventoryID:
@@ -383,17 +370,20 @@ definitions:
     properties:
       inventoryID:
         type: string
-      inventoryName:
-        type: string
       supplierID:
-        type: string
-      supplierName:
         type: string
     required:
     - inventoryID
-    - inventoryName
     - supplierID
-    - supplierName
+    type: object
+  github_com_hifat_mallow-sale-api_internal_shopping.ResInventory:
+    properties:
+      id:
+        type: string
+      inventoryID:
+        type: string
+      inventoryName:
+        type: string
     type: object
   github_com_hifat_mallow-sale-api_internal_shopping.ResReceiptReader:
     properties:
@@ -409,6 +399,19 @@ definitions:
       purchaseQuantity:
         type: number
       remark:
+        type: string
+    type: object
+  github_com_hifat_mallow-sale-api_internal_shopping.ResShoppingInventory:
+    properties:
+      id:
+        type: string
+      inventories:
+        items:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.ResInventory'
+        type: array
+      supplierID:
+        type: string
+      supplierName:
         type: string
     type: object
   github_com_hifat_mallow-sale-api_internal_shopping.Response:
@@ -656,20 +659,20 @@ definitions:
       meta:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse'
     type: object
-  github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_shopping_InventoryResponse:
-    properties:
-      items:
-        items:
-          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.InventoryResponse'
-        type: array
-      meta:
-        $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse'
-    type: object
   github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_shopping_ResReceiptReader:
     properties:
       items:
         items:
           $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.ResReceiptReader'
+        type: array
+      meta:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse'
+    type: object
+  ? github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_shopping_ResShoppingInventory
+  : properties:
+      items:
+        items:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.ResShoppingInventory'
         type: array
       meta:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse'
@@ -1403,7 +1406,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_shopping_InventoryResponse'
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_shopping_ResShoppingInventory'
         "500":
           description: Internal Server Error
           schema:

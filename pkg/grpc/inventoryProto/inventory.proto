@@ -6,15 +6,16 @@ option go_package = "./inventoryProto";
 message Query {}
 
 message Inventory {
-    string ID = 1;
-    string Name = 2;
+    string id = 1;
+    string name = 2;
 }
 
 message InventoryResponse {
     repeated Inventory items = 1;
 }
 
-
+// InventoryGrpcService provides RPC methods for inventory operations.
 service InventoryGrpcService {
+    // Find retrieves all inventory items.
     rpc Find(Query) returns (InventoryResponse);
 }

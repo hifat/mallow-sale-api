@@ -32,13 +32,13 @@ type IService interface {
 
 type IInventoryRepository interface {
 	Create(ctx context.Context, req *RequestShoppingInventory) error
-	Find(ctx context.Context) ([]InventoryResponse, error)
+	Find(ctx context.Context) ([]ResShoppingInventory, error)
 	DeleteByID(ctx context.Context, id string) error
 }
 
 type IInventoryService interface {
 	Create(ctx context.Context, req *RequestShoppingInventory) (*handling.ResponseItem[*RequestShoppingInventory], error)
-	Find(ctx context.Context) (*handling.ResponseItems[InventoryResponse], error)
+	Find(ctx context.Context) (*handling.ResponseItems[ResShoppingInventory], error)
 	DeleteByID(ctx context.Context, id string) error
 }
 

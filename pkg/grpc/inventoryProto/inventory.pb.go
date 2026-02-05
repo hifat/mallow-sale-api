@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.6
 // 	protoc        v5.29.3
-// source: internal/inventory/proto/inventory.proto
+// source: pkg/grpc/inventoryProto/inventory.proto
 
 package inventoryProto
 
@@ -29,7 +29,7 @@ type Query struct {
 
 func (x *Query) Reset() {
 	*x = Query{}
-	mi := &file_internal_inventory_proto_inventory_proto_msgTypes[0]
+	mi := &file_pkg_grpc_inventoryProto_inventory_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -41,7 +41,7 @@ func (x *Query) String() string {
 func (*Query) ProtoMessage() {}
 
 func (x *Query) ProtoReflect() protoreflect.Message {
-	mi := &file_internal_inventory_proto_inventory_proto_msgTypes[0]
+	mi := &file_pkg_grpc_inventoryProto_inventory_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -54,20 +54,20 @@ func (x *Query) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Query.ProtoReflect.Descriptor instead.
 func (*Query) Descriptor() ([]byte, []int) {
-	return file_internal_inventory_proto_inventory_proto_rawDescGZIP(), []int{0}
+	return file_pkg_grpc_inventoryProto_inventory_proto_rawDescGZIP(), []int{0}
 }
 
 type Inventory struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ID            string                 `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=Name,proto3" json:"Name,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Inventory) Reset() {
 	*x = Inventory{}
-	mi := &file_internal_inventory_proto_inventory_proto_msgTypes[1]
+	mi := &file_pkg_grpc_inventoryProto_inventory_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -79,7 +79,7 @@ func (x *Inventory) String() string {
 func (*Inventory) ProtoMessage() {}
 
 func (x *Inventory) ProtoReflect() protoreflect.Message {
-	mi := &file_internal_inventory_proto_inventory_proto_msgTypes[1]
+	mi := &file_pkg_grpc_inventoryProto_inventory_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -92,12 +92,12 @@ func (x *Inventory) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Inventory.ProtoReflect.Descriptor instead.
 func (*Inventory) Descriptor() ([]byte, []int) {
-	return file_internal_inventory_proto_inventory_proto_rawDescGZIP(), []int{1}
+	return file_pkg_grpc_inventoryProto_inventory_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *Inventory) GetID() string {
+func (x *Inventory) GetId() string {
 	if x != nil {
-		return x.ID
+		return x.Id
 	}
 	return ""
 }
@@ -118,7 +118,7 @@ type InventoryResponse struct {
 
 func (x *InventoryResponse) Reset() {
 	*x = InventoryResponse{}
-	mi := &file_internal_inventory_proto_inventory_proto_msgTypes[2]
+	mi := &file_pkg_grpc_inventoryProto_inventory_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -130,7 +130,7 @@ func (x *InventoryResponse) String() string {
 func (*InventoryResponse) ProtoMessage() {}
 
 func (x *InventoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_internal_inventory_proto_inventory_proto_msgTypes[2]
+	mi := &file_pkg_grpc_inventoryProto_inventory_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -143,7 +143,7 @@ func (x *InventoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InventoryResponse.ProtoReflect.Descriptor instead.
 func (*InventoryResponse) Descriptor() ([]byte, []int) {
-	return file_internal_inventory_proto_inventory_proto_rawDescGZIP(), []int{2}
+	return file_pkg_grpc_inventoryProto_inventory_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *InventoryResponse) GetItems() []*Inventory {
@@ -153,39 +153,39 @@ func (x *InventoryResponse) GetItems() []*Inventory {
 	return nil
 }
 
-var File_internal_inventory_proto_inventory_proto protoreflect.FileDescriptor
+var File_pkg_grpc_inventoryProto_inventory_proto protoreflect.FileDescriptor
 
-const file_internal_inventory_proto_inventory_proto_rawDesc = "" +
+const file_pkg_grpc_inventoryProto_inventory_proto_rawDesc = "" +
 	"\n" +
-	"(internal/inventory/proto/inventory.proto\x12\x0einventoryProto\"\a\n" +
+	"'pkg/grpc/inventoryProto/inventory.proto\x12\x0einventoryProto\"\a\n" +
 	"\x05Query\"/\n" +
 	"\tInventory\x12\x0e\n" +
-	"\x02ID\x18\x01 \x01(\tR\x02ID\x12\x12\n" +
-	"\x04Name\x18\x02 \x01(\tR\x04Name\"D\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\"D\n" +
 	"\x11InventoryResponse\x12/\n" +
 	"\x05items\x18\x01 \x03(\v2\x19.inventoryProto.InventoryR\x05items2X\n" +
 	"\x14InventoryGrpcService\x12@\n" +
 	"\x04Find\x12\x15.inventoryProto.Query\x1a!.inventoryProto.InventoryResponseB\x12Z\x10./inventoryProtob\x06proto3"
 
 var (
-	file_internal_inventory_proto_inventory_proto_rawDescOnce sync.Once
-	file_internal_inventory_proto_inventory_proto_rawDescData []byte
+	file_pkg_grpc_inventoryProto_inventory_proto_rawDescOnce sync.Once
+	file_pkg_grpc_inventoryProto_inventory_proto_rawDescData []byte
 )
 
-func file_internal_inventory_proto_inventory_proto_rawDescGZIP() []byte {
-	file_internal_inventory_proto_inventory_proto_rawDescOnce.Do(func() {
-		file_internal_inventory_proto_inventory_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_internal_inventory_proto_inventory_proto_rawDesc), len(file_internal_inventory_proto_inventory_proto_rawDesc)))
+func file_pkg_grpc_inventoryProto_inventory_proto_rawDescGZIP() []byte {
+	file_pkg_grpc_inventoryProto_inventory_proto_rawDescOnce.Do(func() {
+		file_pkg_grpc_inventoryProto_inventory_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_pkg_grpc_inventoryProto_inventory_proto_rawDesc), len(file_pkg_grpc_inventoryProto_inventory_proto_rawDesc)))
 	})
-	return file_internal_inventory_proto_inventory_proto_rawDescData
+	return file_pkg_grpc_inventoryProto_inventory_proto_rawDescData
 }
 
-var file_internal_inventory_proto_inventory_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
-var file_internal_inventory_proto_inventory_proto_goTypes = []any{
+var file_pkg_grpc_inventoryProto_inventory_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_pkg_grpc_inventoryProto_inventory_proto_goTypes = []any{
 	(*Query)(nil),             // 0: inventoryProto.Query
 	(*Inventory)(nil),         // 1: inventoryProto.Inventory
 	(*InventoryResponse)(nil), // 2: inventoryProto.InventoryResponse
 }
-var file_internal_inventory_proto_inventory_proto_depIdxs = []int32{
+var file_pkg_grpc_inventoryProto_inventory_proto_depIdxs = []int32{
 	1, // 0: inventoryProto.InventoryResponse.items:type_name -> inventoryProto.Inventory
 	0, // 1: inventoryProto.InventoryGrpcService.Find:input_type -> inventoryProto.Query
 	2, // 2: inventoryProto.InventoryGrpcService.Find:output_type -> inventoryProto.InventoryResponse
@@ -196,26 +196,26 @@ var file_internal_inventory_proto_inventory_proto_depIdxs = []int32{
 	0, // [0:1] is the sub-list for field type_name
 }
 
-func init() { file_internal_inventory_proto_inventory_proto_init() }
-func file_internal_inventory_proto_inventory_proto_init() {
-	if File_internal_inventory_proto_inventory_proto != nil {
+func init() { file_pkg_grpc_inventoryProto_inventory_proto_init() }
+func file_pkg_grpc_inventoryProto_inventory_proto_init() {
+	if File_pkg_grpc_inventoryProto_inventory_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_internal_inventory_proto_inventory_proto_rawDesc), len(file_internal_inventory_proto_inventory_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pkg_grpc_inventoryProto_inventory_proto_rawDesc), len(file_pkg_grpc_inventoryProto_inventory_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_internal_inventory_proto_inventory_proto_goTypes,
-		DependencyIndexes: file_internal_inventory_proto_inventory_proto_depIdxs,
-		MessageInfos:      file_internal_inventory_proto_inventory_proto_msgTypes,
+		GoTypes:           file_pkg_grpc_inventoryProto_inventory_proto_goTypes,
+		DependencyIndexes: file_pkg_grpc_inventoryProto_inventory_proto_depIdxs,
+		MessageInfos:      file_pkg_grpc_inventoryProto_inventory_proto_msgTypes,
 	}.Build()
-	File_internal_inventory_proto_inventory_proto = out.File
-	file_internal_inventory_proto_inventory_proto_goTypes = nil
-	file_internal_inventory_proto_inventory_proto_depIdxs = nil
+	File_pkg_grpc_inventoryProto_inventory_proto = out.File
+	file_pkg_grpc_inventoryProto_inventory_proto_goTypes = nil
+	file_pkg_grpc_inventoryProto_inventory_proto_depIdxs = nil
 }
