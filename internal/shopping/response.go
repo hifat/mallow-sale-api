@@ -1,6 +1,8 @@
 package shoppingModule
 
-import "time"
+import (
+	"time"
+)
 
 type Response struct {
 	ID           string               `json:"id"`
@@ -27,6 +29,7 @@ type ResInventory struct {
 	ID            string `bson:"id" json:"id"`
 	InventoryID   string `bson:"inventoryID" json:"inventoryID"`
 	InventoryName string `bson:"inventoryName" json:"inventoryName"`
+	UsageUnitCode string `bson:"usageUnitCode" json:"usageUnitCode"`
 }
 
 type ResShoppingInventory struct {

@@ -42,4 +42,5 @@ type InventoryEntity struct {
 	InventoryName string `bson:"inventory_name" json:"inventoryName"`
 	SupplierID    string `bson:"supplier_id" json:"supplierID"`
 	SupplierName  string `bson:"supplier_name" json:"supplierName"`
+	UsageUnitCode string `bson:"usage_unit_code" json:"usageUnitCode"`
 }

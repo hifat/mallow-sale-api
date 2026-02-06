@@ -23,6 +23,7 @@ func (r *inventoryMongoRepository) Create(ctx context.Context, req *shoppingModu
 		InventoryName: req.InventoryName,
 		SupplierID:    req.SupplierID,
 		SupplierName:  req.SupplierName,
+		UsageUnitCode: req.UsageUnitCode,
 	}
 
 	_, err := r.db.Collection("shopping_inventories").InsertOne(ctx, newInvShopping)
@@ -42,6 +43,7 @@ func (r *inventoryMongoRepository) Find(ctx context.Context) ([]shoppingModule.R
 				{Key: "id", Value: "$_id"},
 				{Key: "inventoryID", Value: "$inventory_id"},
 				{Key: "inventoryName", Value: "$inventory_name"},
+				{Key: "usageUnitCode", Value: "$usage_unit_code"},
 			}}}},
 		}}},
 		{{Key: "$project", Value: bson.D{

@@ -76,6 +76,7 @@ type RequestShoppingInventory struct {
 
 	InventoryName string `validate:"required" json:"-"`
 	SupplierName  string `validate:"required" json:"-"`
+	UsageUnitCode string `validate:"required" json:"-"`
 }
 
 /* --------------------------------- Receipt -------------------------------- */

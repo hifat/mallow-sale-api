@@ -2705,6 +2705,9 @@ const docTemplate = `{
                 },
                 "inventoryName": {
                     "type": "string"
+                },
+                "usageUnitCode": {
+                    "type": "string"
                 }
             }
         },
