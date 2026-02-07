@@ -661,6 +661,15 @@ definitions:
       meta:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse'
     type: object
+  github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_shopping_Request:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.Request'
+        type: array
+      meta:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse'
+    type: object
   github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_shopping_ResReceiptReader:
     properties:
       items:
@@ -1676,6 +1685,43 @@ paths:
       security:
       - BearerAuth: []
       summary: Update Shopping Status
+      tags:
+      - shopping
+  /shoppings/batch:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Created shoppings data
+        in: body
+        name: shoppings
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.Request'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_shopping_Request'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create Shoppings
       tags:
       - shopping
   /shoppings/read-receipt:

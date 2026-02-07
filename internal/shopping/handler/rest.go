@@ -41,6 +41,33 @@ func (r *Rest) Create(c *gin.Context) {
 	handling.ResponseCreated(c, *res)
 }
 
+// @Summary 	Create Shoppings
+// @security 	BearerAuth
+// @Tags 		shopping
+// @Accept 		json
+// @Produce 	json
+// @Param 		shoppings body []shoppingModule.Request true "Created shoppings data"
+// @Success 	201 {object} handling.ResponseItems[shoppingModule.Request]
+// @Failure 	400 {object} handling.ErrorResponse
+// @Failure 	404 {object} handling.ErrorResponse
+// @Failure 	500 {object} handling.ErrorResponse
+// @Router 		/shoppings/batch [post]
+func (r *Rest) CreateBatch(c *gin.Context) {
+	var reqs []*shoppingModule.Request
+	if err := c.ShouldBindJSON(&reqs); err != nil {
+		handling.ResponseFormErr(c, err)
+		return
+	}
+
+	res, err := r.shoppingService.CreateBatch(c.Request.Context(), reqs)
+	if err != nil {
+		handling.ResponseErr(c, err)
+		return
+	}
+
+	handling.ResponseCreatedBatch(c, *res)
+}
+
 // @Summary 	Find Shoppings
 // @security 	BearerAuth
 // @Tags 		shopping

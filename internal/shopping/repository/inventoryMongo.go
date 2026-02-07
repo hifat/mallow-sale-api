@@ -38,6 +38,7 @@ func (r *inventoryMongoRepository) Find(ctx context.Context) ([]shoppingModule.R
 	pipeline := mongo.Pipeline{
 		{{Key: "$group", Value: bson.D{
 			{Key: "_id", Value: "$supplier_id"},
+			{Key: "supplierID", Value: bson.D{{Key: "$first", Value: "$supplier_id"}}},
 			{Key: "supplierName", Value: bson.D{{Key: "$first", Value: "$supplier_name"}}},
 			{Key: "inventories", Value: bson.D{{Key: "$push", Value: bson.D{
 				{Key: "id", Value: "$_id"},
@@ -47,7 +48,7 @@ func (r *inventoryMongoRepository) Find(ctx context.Context) ([]shoppingModule.R
 			}}}},
 		}}},
 		{{Key: "$project", Value: bson.D{
-			{Key: "supplierID", Value: "$supplier_id"},
+			{Key: "supplierID", Value: 1},
 			{Key: "supplierName", Value: 1},
 			{Key: "inventories", Value: 1},
 		}}},

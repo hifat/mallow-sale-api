@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"sync"
 
 	inventoryHelper "github.com/hifat/mallow-sale-api/internal/inventory/helper"
 	shoppingModule "github.com/hifat/mallow-sale-api/internal/shopping"
@@ -129,6 +130,38 @@ func (s *service) Create(ctx context.Context, req *shoppingModule.Request) (*han
 
 	return &handling.ResponseItem[*shoppingModule.Request]{
 		Item: req,
+	}, nil
+}
+
+func (s *service) CreateBatch(ctx context.Context, reqs []*shoppingModule.Request) (*handling.ResponseItems[*shoppingModule.Request], error) {
+	var wg sync.WaitGroup
+	errChan := make(chan error, len(reqs))
+	resShoppings := make([]*shoppingModule.Request, 0, len(reqs))
+	for _, v := range reqs {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			res, err := s.Create(ctx, v)
+			if err != nil {
+				errChan <- err
+				return
+			}
+
+			resShoppings = append(resShoppings, res.Item)
+		}()
+	}
+
+	wg.Wait()
+
+	if len(errChan) > 0 {
+		return nil, handling.ThrowErr(<-errChan)
+	}
+
+	return &handling.ResponseItems[*shoppingModule.Request]{
+		Items: resShoppings,
+		Meta: handling.MetaResponse{
+			Total: int64(len(resShoppings)),
+		},
 	}, nil
 }
 

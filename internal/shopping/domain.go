@@ -21,6 +21,7 @@ type IService interface {
 	Find(ctx context.Context) (*handling.ResponseItems[Response], error)
 	FindByID(ctx context.Context, id string) (*handling.ResponseItem[*Response], error)
 	Create(ctx context.Context, req *Request) (*handling.ResponseItem[*Request], error)
+	CreateBatch(ctx context.Context, reqs []*Request) (*handling.ResponseItems[*Request], error)
 	UpdateByID(ctx context.Context, id string, req *Request) (*handling.ResponseItem[*Request], error)
 	UpdateStatus(ctx context.Context, id string, req *ReqUpdateStatus) (*handling.Response, error)
 	DeleteByID(ctx context.Context, id string) (*handling.Response, error)

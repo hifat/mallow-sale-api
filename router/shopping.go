@@ -15,6 +15,7 @@ func ShoppingRouter(r *gin.RouterGroup, cfg *config.Config, db *mongo.Database, 
 		GET("", h.Rest.Find).
 		GET("/:id", h.Rest.FindByID).
 		POST("", h.Rest.Create).
+		POST("/batch", h.Rest.CreateBatch).
 		POST("/read-receipt", h.ReceiptRest.Reader).
 		PUT("/:id", h.Rest.UpdateByID).
 		PATCH("/:id/status", h.Rest.UpdateStatus).

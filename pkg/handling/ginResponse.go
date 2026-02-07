@@ -37,6 +37,10 @@ func ResponseCreated[T comparable](c *gin.Context, res ResponseItem[T]) {
 	c.JSON(http.StatusCreated, res)
 }
 
+func ResponseCreatedBatch[T comparable](c *gin.Context, res ResponseItems[T]) {
+	c.JSON(http.StatusCreated, res)
+}
+
 func ResponseSuccess(c *gin.Context, res any) {
 	c.JSON(http.StatusOK, res)
 }
