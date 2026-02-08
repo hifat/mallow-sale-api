@@ -14,7 +14,7 @@ func (c EnumCodeShoppingStatusType) GetShoppingStatusName() string {
 	case EnumCodeShoppingPending:
 		return "pending"
 	case EnumCodeShoppingInProgress:
-		return "in_progress"
+		return "in progress"
 	case EnumCodeShoppingSuccess:
 		return "success"
 	case EnumCodeShoppingCancel:

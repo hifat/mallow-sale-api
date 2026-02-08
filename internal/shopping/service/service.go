@@ -121,6 +121,7 @@ func (s *service) Create(ctx context.Context, req *shoppingModule.Request) (*han
 	}
 
 	req.Status.Code = shoppingModule.EnumCodeShoppingPending
+	req.Status.Name = shoppingModule.EnumCodeShoppingPending.GetShoppingStatusName()
 
 	err = s.shoppingRepo.Create(ctx, req)
 	if err != nil {
@@ -134,27 +135,60 @@ func (s *service) Create(ctx context.Context, req *shoppingModule.Request) (*han
 }
 
 func (s *service) CreateBatch(ctx context.Context, reqs []*shoppingModule.Request) (*handling.ResponseItems[*shoppingModule.Request], error) {
+	if len(reqs) == 0 {
+		return &handling.ResponseItems[*shoppingModule.Request]{
+			Items: []*shoppingModule.Request{},
+			Meta: handling.MetaResponse{
+				Total: 0,
+			},
+		}, nil
+	}
+
+	numReqs := len(reqs)
+	numWorker := 20
+	if numWorker > numReqs {
+		numWorker = numReqs
+	}
+
+	jobChan := make(chan *shoppingModule.Request, numReqs)
+	resChan := make(chan *shoppingModule.Request, numReqs)
+	errChan := make(chan error, numReqs)
+
 	var wg sync.WaitGroup
-	errChan := make(chan error, len(reqs))
-	resShoppings := make([]*shoppingModule.Request, 0, len(reqs))
-	for _, v := range reqs {
-		wg.Add(1)
+	wg.Add(numWorker)
+
+	for i := 0; i < numWorker; i++ {
 		go func() {
 			defer wg.Done()
-			res, err := s.Create(ctx, v)
-			if err != nil {
-				errChan <- err
-				return
-			}
 
-			resShoppings = append(resShoppings, res.Item)
+			for req := range jobChan {
+				res, err := s.Create(ctx, req)
+				if err != nil {
+					errChan <- err
+					continue
+				}
+
+				resChan <- res.Item
+			}
 		}()
 	}
 
+	for _, req := range reqs {
+		jobChan <- req
+	}
+	close(jobChan)
+
 	wg.Wait()
+	close(errChan)
+	close(resChan)
 
 	if len(errChan) > 0 {
 		return nil, handling.ThrowErr(<-errChan)
+	}
+
+	resShoppings := make([]*shoppingModule.Request, 0, numReqs)
+	for res := range resChan {
+		resShoppings = append(resShoppings, res)
 	}
 
 	return &handling.ResponseItems[*shoppingModule.Request]{
