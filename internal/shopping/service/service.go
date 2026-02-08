@@ -144,28 +144,37 @@ func (s *service) CreateBatch(ctx context.Context, reqs []*shoppingModule.Reques
 		}, nil
 	}
 
-	numReqs := len(reqs)
-	numWorker := 20
-	if numWorker > numReqs {
-		numWorker = numReqs
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	numWorkers := 20
+	if numWorkers > len(reqs) {
+		numWorkers = len(reqs)
 	}
 
-	jobChan := make(chan *shoppingModule.Request, numReqs)
-	resChan := make(chan *shoppingModule.Request, numReqs)
-	errChan := make(chan error, numReqs)
+	jobChan := make(chan *shoppingModule.Request, len(reqs))
+	resChan := make(chan *shoppingModule.Request, len(reqs))
+	errChan := make(chan error, len(reqs))
 
 	var wg sync.WaitGroup
-	wg.Add(numWorker)
+	wg.Add(numWorkers)
 
-	for i := 0; i < numWorker; i++ {
+	for i := 0; i < numWorkers; i++ {
 		go func() {
 			defer wg.Done()
 
 			for req := range jobChan {
+				select {
+				case <-ctx.Done():
+					return
+				default:
+				}
+
 				res, err := s.Create(ctx, req)
 				if err != nil {
+					cancel()
 					errChan <- err
-					continue
+					return
 				}
 
 				resChan <- res.Item
@@ -186,7 +195,7 @@ func (s *service) CreateBatch(ctx context.Context, reqs []*shoppingModule.Reques
 		return nil, handling.ThrowErr(<-errChan)
 	}
 
-	resShoppings := make([]*shoppingModule.Request, 0, numReqs)
+	resShoppings := make([]*shoppingModule.Request, 0, len(resChan))
 	for res := range resChan {
 		resShoppings = append(resShoppings, res)
 	}
