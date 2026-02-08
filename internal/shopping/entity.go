@@ -44,3 +44,12 @@ type InventoryEntity struct {
 	SupplierName  string `bson:"supplier_name" json:"supplierName"`
 	UsageUnitCode string `bson:"usage_unit_code" json:"usageUnitCode"`
 }
+
+/* --------------------------- Shopping Usage Unit -------------------------- */
+
+type UsageUnitEntity struct {
+	utilsModule.Base `bson:"inline"`
+
+	Code string `bson:"code" json:"code"`
+	Name string `bson:"name" json:"name"`
+}

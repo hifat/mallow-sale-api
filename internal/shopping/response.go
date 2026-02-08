@@ -32,6 +32,14 @@ type ResInventory struct {
 	UsageUnitCode string `bson:"usageUnitCode" json:"usageUnitCode"`
 }
 
+/* --------------------------- Shopping Usage Unit -------------------------- */
+
+type ResUsageUnit struct {
+	ID   string `bson:"_id" json:"id"`
+	Code string `bson:"code" json:"code"`
+	Name string `bson:"name" json:"name"`
+}
+
 type ResShoppingInventory struct {
 	ID           string         `bson:"_id" json:"id"`
 	SupplierID   string         `bson:"supplierID" json:"supplierID"`

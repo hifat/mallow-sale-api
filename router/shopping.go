@@ -26,4 +26,10 @@ func ShoppingRouter(r *gin.RouterGroup, cfg *config.Config, db *mongo.Database, 
 		POST("", h.InventoryRest.Create).
 		DELETE("/:id", h.InventoryRest.DeleteByID)
 
+	r.Group("/shopping-usage-units").
+		GET("", h.UsageUnitRest.Find).
+		GET("/:id", h.UsageUnitRest.FindByID).
+		POST("", h.UsageUnitRest.Create).
+		PUT("/:id", h.UsageUnitRest.UpdateByID).
+		DELETE("/:id", h.UsageUnitRest.DeleteByID)
 }

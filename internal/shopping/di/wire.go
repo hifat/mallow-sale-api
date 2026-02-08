@@ -28,6 +28,7 @@ func Init(cfg *config.Config, db *mongo.Database, grpcConn *grpc.ClientConn) *sh
 		shoppingRepository.NewMongo,
 		shoppingRepository.NewInventoryMongo,
 		shoppingRepository.NewReceiptGRPC,
+		shoppingRepository.NewUsageUnitMongo,
 		usageUnitRepository.NewMongo,
 		supplierRepository.NewMongo,
 		inventoryRepository.NewMongo,
@@ -37,12 +38,14 @@ func Init(cfg *config.Config, db *mongo.Database, grpcConn *grpc.ClientConn) *sh
 		shoppingService.New,
 		shoppingService.NewInventory,
 		shoppingService.NewReceipt,
+		shoppingService.NewUsageUnit,
 
 		// Handler
+		shoppingHandler.New,
+		shoppingHandler.NewRest,
 		shoppingHandler.NewReceiptRest,
 		shoppingHandler.NewInventoryRest,
-		shoppingHandler.NewRest,
-		shoppingHandler.New,
+		shoppingHandler.NewUsageUnitRest,
 
 		// Helper
 		usageUnitHelper.New,

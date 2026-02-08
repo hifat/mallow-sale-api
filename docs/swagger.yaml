@@ -376,6 +376,16 @@ definitions:
     - inventoryID
     - supplierID
     type: object
+  github_com_hifat_mallow-sale-api_internal_shopping.RequestUsageUnit:
+    properties:
+      code:
+        type: string
+      name:
+        type: string
+    required:
+    - code
+    - name
+    type: object
   github_com_hifat_mallow-sale-api_internal_shopping.ResInventory:
     properties:
       id:
@@ -414,6 +424,15 @@ definitions:
       supplierID:
         type: string
       supplierName:
+        type: string
+    type: object
+  github_com_hifat_mallow-sale-api_internal_shopping.ResUsageUnit:
+    properties:
+      code:
+        type: string
+      id:
+        type: string
+      name:
         type: string
     type: object
   github_com_hifat_mallow-sale-api_internal_shopping.Response:
@@ -609,6 +628,16 @@ definitions:
       item:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.RequestShoppingInventory'
     type: object
+  github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_shopping_RequestUsageUnit:
+    properties:
+      item:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.RequestUsageUnit'
+    type: object
+  github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_shopping_ResUsageUnit:
+    properties:
+      item:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.ResUsageUnit'
+    type: object
   github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_shopping_Response:
     properties:
       item:
@@ -684,6 +713,15 @@ definitions:
       items:
         items:
           $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.ResShoppingInventory'
+        type: array
+      meta:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse'
+    type: object
+  github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_shopping_ResUsageUnit:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.ResUsageUnit'
         type: array
       meta:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse'
@@ -1491,6 +1529,174 @@ paths:
       summary: Delete Shopping Inventory by ID
       tags:
       - Shopping Inventory
+  /shopping-usage-units:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_shopping_ResUsageUnit'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Find Usage Unit
+      tags:
+      - Usage Unit
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Created usage unit data
+        in: body
+        name: usageUnit
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.RequestUsageUnit'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_shopping_RequestUsageUnit'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create Usage Unit
+      tags:
+      - Usage Unit
+  /shopping-usage-units/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Usage Unit ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_shopping_RequestUsageUnit'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete Usage Unit by ID
+      tags:
+      - Usage Unit
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Usage Unit ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_shopping_ResUsageUnit'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Find Usage Unit by ID
+      tags:
+      - Usage Unit
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Usage Unit ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated usage unit data
+        in: body
+        name: usageUnit
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_shopping.RequestUsageUnit'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_shopping_RequestUsageUnit'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update Usage Unit by ID
+      tags:
+      - Usage Unit
   /shoppings:
     get:
       consumes:

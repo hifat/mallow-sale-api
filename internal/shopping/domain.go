@@ -44,6 +44,26 @@ type IInventoryService interface {
 }
 
 /* -------------------------------------------------------------------------- */
+/*                             Shopping Usage Unit                            */
+/* -------------------------------------------------------------------------- */
+
+type IUsageUnitRepository interface {
+	Create(ctx context.Context, req *RequestUsageUnit) error
+	Find(ctx context.Context) ([]ResUsageUnit, error)
+	FindByID(ctx context.Context, id string) (*ResUsageUnit, error)
+	UpdateByID(ctx context.Context, id string, req *RequestUsageUnit) error
+	DeleteByID(ctx context.Context, id string) error
+}
+
+type IUsageUnitService interface {
+	Create(ctx context.Context, req *RequestUsageUnit) (*handling.ResponseItem[*RequestUsageUnit], error)
+	Find(ctx context.Context) (*handling.ResponseItems[ResUsageUnit], error)
+	FindByID(ctx context.Context, id string) (*handling.ResponseItem[*ResUsageUnit], error)
+	UpdateByID(ctx context.Context, id string, req *RequestUsageUnit) (*handling.ResponseItem[*RequestUsageUnit], error)
+	DeleteByID(ctx context.Context, id string) error
+}
+
+/* -------------------------------------------------------------------------- */
 /*                                   Receipt                                  */
 /* -------------------------------------------------------------------------- */
 

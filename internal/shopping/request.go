@@ -79,6 +79,13 @@ type RequestShoppingInventory struct {
 	UsageUnitCode string `validate:"required" json:"-"`
 }
 
+/* --------------------------- Shopping Usage Unit -------------------------- */
+
+type RequestUsageUnit struct {
+	Code string `validate:"required" json:"code"`
+	Name string `validate:"required" json:"name"`
+}
+
 /* --------------------------------- Receipt -------------------------------- */
 
 type ReqReceiptReader struct {

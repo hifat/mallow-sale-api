@@ -43,6 +43,9 @@ func Init(cfg *config.Config, db *mongo.Database, grpcConn *grpc.ClientConn) *sh
 	iReceiptGrpcRepository := shoppingRepository.NewReceiptGRPC(grpcConn)
 	iReceiptService := shoppingService.NewReceipt(iLogger, iReceiptGrpcRepository)
 	receiptRest := shoppingHandler.NewReceiptRest(iReceiptService)
-	handler := shoppingHandler.New(rest, inventoryRest, receiptRest)
+	iUsageUnitRepository := shoppingRepository.NewUsageUnitMongo(db)
+	iUsageUnitService := shoppingService.NewUsageUnit(iLogger, iUsageUnitRepository)
+	usageUnitRest := shoppingHandler.NewUsageUnitRest(iUsageUnitService)
+	handler := shoppingHandler.New(rest, inventoryRest, receiptRest, usageUnitRest)
 	return handler
 }
