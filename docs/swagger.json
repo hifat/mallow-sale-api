@@ -1220,7 +1220,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Usage Unit"
+                    "Shopping Usage Unit"
                 ],
                 "summary": "Find Usage Unit",
                 "responses": {
@@ -1263,7 +1263,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Usage Unit"
+                    "Shopping Usage Unit"
                 ],
                 "summary": "Create Usage Unit",
                 "parameters": [
@@ -1319,7 +1319,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Usage Unit"
+                    "Shopping Usage Unit"
                 ],
                 "summary": "Find Usage Unit by ID",
                 "parameters": [
@@ -1371,7 +1371,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Usage Unit"
+                    "Shopping Usage Unit"
                 ],
                 "summary": "Update Usage Unit by ID",
                 "parameters": [
@@ -1432,7 +1432,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Usage Unit"
+                    "Shopping Usage Unit"
                 ],
                 "summary": "Delete Usage Unit by ID",
                 "parameters": [

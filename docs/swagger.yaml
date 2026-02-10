@@ -1556,7 +1556,7 @@ paths:
       - BearerAuth: []
       summary: Find Usage Unit
       tags:
-      - Usage Unit
+      - Shopping Usage Unit
     post:
       consumes:
       - application/json
@@ -1590,7 +1590,7 @@ paths:
       - BearerAuth: []
       summary: Create Usage Unit
       tags:
-      - Usage Unit
+      - Shopping Usage Unit
   /shopping-usage-units/{id}:
     delete:
       consumes:
@@ -1624,7 +1624,7 @@ paths:
       - BearerAuth: []
       summary: Delete Usage Unit by ID
       tags:
-      - Usage Unit
+      - Shopping Usage Unit
     get:
       consumes:
       - application/json
@@ -1657,7 +1657,7 @@ paths:
       - BearerAuth: []
       summary: Find Usage Unit by ID
       tags:
-      - Usage Unit
+      - Shopping Usage Unit
     put:
       consumes:
       - application/json
@@ -1696,7 +1696,7 @@ paths:
       - BearerAuth: []
       summary: Update Usage Unit by ID
       tags:
-      - Usage Unit
+      - Shopping Usage Unit
   /shoppings:
     get:
       consumes:

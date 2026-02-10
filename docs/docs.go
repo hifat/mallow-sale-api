@@ -1227,7 +1227,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Usage Unit"
+                    "Shopping Usage Unit"
                 ],
                 "summary": "Find Usage Unit",
                 "responses": {
@@ -1270,7 +1270,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Usage Unit"
+                    "Shopping Usage Unit"
                 ],
                 "summary": "Create Usage Unit",
                 "parameters": [
@@ -1326,7 +1326,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Usage Unit"
+                    "Shopping Usage Unit"
                 ],
                 "summary": "Find Usage Unit by ID",
                 "parameters": [
@@ -1378,7 +1378,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Usage Unit"
+                    "Shopping Usage Unit"
                 ],
                 "summary": "Update Usage Unit by ID",
                 "parameters": [
@@ -1439,7 +1439,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Usage Unit"
+                    "Shopping Usage Unit"
                 ],
                 "summary": "Delete Usage Unit by ID",
                 "parameters": [

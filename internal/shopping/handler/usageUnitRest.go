@@ -16,7 +16,7 @@ func NewUsageUnitRest(service shoppingModule.IUsageUnitService) *UsageUnitRest {
 
 // @Summary 	Create Usage Unit
 // @security 	BearerAuth
-// @Tags 		Usage Unit
+// @Tags 		Shopping Usage Unit
 // @Accept 		json
 // @Produce 	json
 // @Param 		usageUnit body shoppingModule.RequestUsageUnit true "Created usage unit data"
@@ -43,7 +43,7 @@ func (r *UsageUnitRest) Create(c *gin.Context) {
 
 // @Summary		Find Usage Unit
 // @security	BearerAuth
-// @Tags		Usage Unit
+// @Tags		Shopping Usage Unit
 // @Accept		json
 // @Produce		json
 // @Success		200 {object} handling.ResponseItems[shoppingModule.ResUsageUnit]
@@ -63,7 +63,7 @@ func (r *UsageUnitRest) Find(c *gin.Context) {
 
 // @Summary		Find Usage Unit by ID
 // @security	BearerAuth
-// @Tags		Usage Unit
+// @Tags		Shopping Usage Unit
 // @Accept		json
 // @Produce		json
 // @Param		id path string true "Usage Unit ID"
@@ -85,7 +85,7 @@ func (r *UsageUnitRest) FindByID(c *gin.Context) {
 
 // @Summary		Update Usage Unit by ID
 // @security	BearerAuth
-// @Tags		Usage Unit
+// @Tags		Shopping Usage Unit
 // @Accept		json
 // @Produce		json
 // @Param		id path string true "Usage Unit ID"
@@ -114,7 +114,7 @@ func (r *UsageUnitRest) UpdateByID(c *gin.Context) {
 
 // @Summary		Delete Usage Unit by ID
 // @security		BearerAuth
-// @Tags		Usage Unit
+// @Tags		Shopping Usage Unit
 // @Accept		json
 // @Produce		json
 // @Param		id path string true "Usage Unit ID"

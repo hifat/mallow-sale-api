@@ -13,8 +13,6 @@ require (
 	github.com/hifat/billing-reader v0.0.0-20251103023851-4835461af793
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.11.1
-	github.com/swaggo/files v1.0.1
-	github.com/swaggo/gin-swagger v1.6.0
 	github.com/swaggo/swag v1.16.4
 	go.mongodb.org/mongo-driver v1.14.0
 	go.uber.org/mock v0.6.0

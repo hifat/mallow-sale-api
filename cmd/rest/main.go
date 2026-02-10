@@ -17,8 +17,6 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/config"
 	"github.com/hifat/mallow-sale-api/pkg/database"
 	"github.com/hifat/mallow-sale-api/router"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -83,7 +81,10 @@ func main() {
 	r.Use(gin.Recovery())
 	r.Use(cors.New(configCors()))
 
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	// Swagger
+	// r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.StaticFile("/docs/doc.json", "./docs/swagger.json")
+	r.StaticFile("/docs", "./docs/scalar.html")
 
 	v1 := r.Group("/api/v1")
 
