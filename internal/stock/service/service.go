@@ -3,8 +3,8 @@ package stockService
 import (
 	"context"
 
+	inventoryModule "github.com/hifat/mallow-sale-api/internal/inventory"
 	inventoryHelper "github.com/hifat/mallow-sale-api/internal/inventory/helper"
-	inventoryRepository "github.com/hifat/mallow-sale-api/internal/inventory/repository"
 	stockModule "github.com/hifat/mallow-sale-api/internal/stock"
 	stockRepository "github.com/hifat/mallow-sale-api/internal/stock/repository"
 	supplierHelper "github.com/hifat/mallow-sale-api/internal/supplier/helper"
@@ -28,7 +28,7 @@ type IService interface {
 
 type service struct {
 	stockRepository     stockRepository.IRepository
-	inventoryRepository inventoryRepository.IRepository
+	inventoryRepository inventoryModule.IRepository
 	supplierRepository  supplierRepository.IRepository
 	usageUnitRepository usageUnitRepository.IRepository
 	inventoryHelper     inventoryHelper.IHelper
@@ -39,7 +39,7 @@ type service struct {
 
 func New(
 	stockRepository stockRepository.IRepository,
-	inventoryRepository inventoryRepository.IRepository,
+	inventoryRepository inventoryModule.IRepository,
 	supplierRepository supplierRepository.IRepository,
 	usageUnitRepository usageUnitRepository.IRepository,
 	inventoryHelper inventoryHelper.IHelper,

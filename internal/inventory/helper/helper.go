@@ -4,7 +4,6 @@ import (
 	"context"
 
 	inventoryModule "github.com/hifat/mallow-sale-api/internal/inventory"
-	inventoryRepository "github.com/hifat/mallow-sale-api/internal/inventory/repository"
 	"github.com/hifat/mallow-sale-api/pkg/utils"
 )
 
@@ -16,10 +15,10 @@ type IHelper interface {
 }
 
 type helper struct {
-	inventoryRepo inventoryRepository.IRepository
+	inventoryRepo inventoryModule.IRepository
 }
 
-func New(inventoryRepo inventoryRepository.IRepository) IHelper {
+func New(inventoryRepo inventoryModule.IRepository) IHelper {
 	return &helper{
 		inventoryRepo: inventoryRepo,
 	}

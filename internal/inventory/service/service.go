@@ -6,7 +6,6 @@ import (
 	"sync"
 
 	inventoryModule "github.com/hifat/mallow-sale-api/internal/inventory"
-	inventoryRepository "github.com/hifat/mallow-sale-api/internal/inventory/repository"
 	usageUnitRepository "github.com/hifat/mallow-sale-api/internal/usageUnit/repository"
 	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 	"github.com/hifat/mallow-sale-api/pkg/define"
@@ -25,13 +24,13 @@ type IService interface {
 type service struct {
 	mu            sync.Mutex
 	logger        logger.ILogger
-	inventoryRepo inventoryRepository.IRepository
+	inventoryRepo inventoryModule.IRepository
 	usageUnitRepo usageUnitRepository.IRepository
 }
 
 func New(
 	logger logger.ILogger,
-	inventoryRepo inventoryRepository.IRepository,
+	inventoryRepo inventoryModule.IRepository,
 	usageUnitRepo usageUnitRepository.IRepository,
 ) IService {
 	return &service{

@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	inventoryRepository "github.com/hifat/mallow-sale-api/internal/inventory/repository"
+	inventoryModule "github.com/hifat/mallow-sale-api/internal/inventory"
 	shoppingModule "github.com/hifat/mallow-sale-api/internal/shopping"
 	supplierRepository "github.com/hifat/mallow-sale-api/internal/supplier/repository"
 	"github.com/hifat/mallow-sale-api/pkg/define"
@@ -14,12 +14,12 @@ import (
 
 type inventoryService struct {
 	repo          shoppingModule.IInventoryRepository
-	inventoryRepo inventoryRepository.IRepository
+	inventoryRepo inventoryModule.IRepository
 	supplierRepo  supplierRepository.IRepository
 	logger        logger.ILogger
 }
 
-func NewInventory(repo shoppingModule.IInventoryRepository, inventoryRepo inventoryRepository.IRepository, supplierRepo supplierRepository.IRepository, logger logger.ILogger) shoppingModule.IInventoryService {
+func NewInventory(repo shoppingModule.IInventoryRepository, inventoryRepo inventoryModule.IRepository, supplierRepo supplierRepository.IRepository, logger logger.ILogger) shoppingModule.IInventoryService {
 	return &inventoryService{
 		repo:          repo,
 		inventoryRepo: inventoryRepo,

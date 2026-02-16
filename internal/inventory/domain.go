@@ -1,30 +1,20 @@
 package inventoryModule
 
 import (
-	"time"
+	"context"
 
-	usageUnitModule "github.com/hifat/mallow-sale-api/internal/usageUnit"
+	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 )
 
-type Prototype struct {
-	ID               string                    `fake:"{uuid}" json:"id"`
-	Name             string                    `fake:"{name}" json:"name"`
-	PurchasePrice    float64                   `fake:"{float64}" json:"purchasePrice"`
-	PurchaseQuantity float64                   `fake:"{float64}" json:"purchaseQuantity"`
-	PurchaseUnit     usageUnitModule.Prototype `json:"purchaseUnit"`
-	YieldPercentage  float32                   `fake:"{float32}" json:"yieldPercentage"`
-	Remark           string                    `fake:"{sentence}" json:"remark"`
-	CreatedAt        *time.Time                `json:"createdAt"`
-	UpdatedAt        *time.Time                `json:"updatedAt"`
-}
-
-type Request struct {
-	Name            string                       `fake:"{name}" validate:"required" json:"name"`
-	PurchaseUnit    usageUnitModule.UsageUnitReq `json:"purchaseUnit"`
-	YieldPercentage float32                      `fake:"{float32}" validate:"required" json:"yieldPercentage"`
-	Remark          string                       `fake:"{sentence}" json:"remark"`
-}
-
-type Response struct {
-	Prototype
+//go:generate mockgen -source=./repository.go -destination=./mock/repository/mock/mongo.go -package=mockInventoryRepository
+type IRepository interface {
+	Create(ctx context.Context, req *Request) error
+	Find(ctx context.Context, query *utilsModule.QueryReq) ([]Response, error)
+	FindByID(ctx context.Context, id string) (*Response, error)
+	FindByName(ctx context.Context, name string) (*Response, error)
+	FindInIDs(ctx context.Context, ids []string) ([]Response, error)
+	UpdateByID(ctx context.Context, id string, req *Request) error
+	DeleteByID(ctx context.Context, id string) error
+	Count(ctx context.Context) (int64, error)
+	UpdateStock(ctx context.Context, id string, quantity float64, purchasePrice float64) error
 }

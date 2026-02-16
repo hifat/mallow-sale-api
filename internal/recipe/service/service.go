@@ -5,8 +5,8 @@ import (
 	"errors"
 	"sync"
 
+	inventoryModule "github.com/hifat/mallow-sale-api/internal/inventory"
 	inventoryHelper "github.com/hifat/mallow-sale-api/internal/inventory/helper"
-	inventoryRepo "github.com/hifat/mallow-sale-api/internal/inventory/repository"
 	recipeModule "github.com/hifat/mallow-sale-api/internal/recipe"
 	recipeHelper "github.com/hifat/mallow-sale-api/internal/recipe/helper"
 	recipeRepo "github.com/hifat/mallow-sale-api/internal/recipe/repository"
@@ -29,7 +29,7 @@ type IService interface {
 type service struct {
 	logger           logger.ILogger
 	recipeRepo       recipeRepo.IRepository
-	inventoryRepo    inventoryRepo.IRepository
+	inventoryRepo    inventoryModule.IRepository
 	usageUnitRepo    usageUnitRepository.IRepository
 	usageUnitHelper  usageUnitHelper.IHelper
 	inventoryHelper  inventoryHelper.IHelper
@@ -39,7 +39,7 @@ type service struct {
 func New(
 	logger logger.ILogger,
 	recipeRepo recipeRepo.IRepository,
-	inventoryRepo inventoryRepo.IRepository,
+	inventoryRepo inventoryModule.IRepository,
 	usageUnitRepo usageUnitRepository.IRepository,
 	usageUnitHelper usageUnitHelper.IHelper,
 	inventoryHelper inventoryHelper.IHelper,
