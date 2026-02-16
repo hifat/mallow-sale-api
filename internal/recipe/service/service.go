@@ -17,15 +17,6 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 )
 
-type IService interface {
-	Create(ctx context.Context, req *recipeModule.Request) (*handling.ResponseItem[*recipeModule.Request], error)
-	Find(ctx context.Context, query *recipeModule.QueryReq) (*handling.ResponseItems[recipeModule.Response], error)
-	FindByID(ctx context.Context, id string) (*handling.ResponseItem[*recipeModule.Response], error)
-	UpdateByID(ctx context.Context, id string, req *recipeModule.Request) (*handling.ResponseItem[*recipeModule.Request], error)
-	DeleteByID(ctx context.Context, id string) (*handling.ResponseItem[*recipeModule.Request], error)
-	UpdateNoBatch(ctx context.Context, reqs []recipeModule.UpdateOrderNoRequest) error
-}
-
 type service struct {
 	logger           logger.ILogger
 	recipeRepo       recipeRepo.IRepository
@@ -44,7 +35,7 @@ func New(
 	usageUnitHelper usageUnitHelper.IHelper,
 	inventoryHelper inventoryHelper.IHelper,
 	recipeTypeHelper recipeHelper.IRecipeTypeHelper,
-) IService {
+) recipeModule.IService {
 	return &service{
 		logger:           logger,
 		recipeRepo:       recipeRepo,

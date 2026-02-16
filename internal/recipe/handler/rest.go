@@ -3,15 +3,14 @@ package recipeHandler
 import (
 	"github.com/gin-gonic/gin"
 	recipeModule "github.com/hifat/mallow-sale-api/internal/recipe"
-	recipeService "github.com/hifat/mallow-sale-api/internal/recipe/service"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 )
 
 type Rest struct {
-	recipeService recipeService.IService
+	recipeService recipeModule.IService
 }
 
-func NewRest(recipeService recipeService.IService) *Rest {
+func NewRest(recipeService recipeModule.IService) *Rest {
 	return &Rest{recipeService: recipeService}
 }
 
