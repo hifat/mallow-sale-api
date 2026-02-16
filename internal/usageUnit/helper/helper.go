@@ -3,7 +3,7 @@ package usageUnitHelper
 import (
 	"context"
 
-	usageUnitRepository "github.com/hifat/mallow-sale-api/internal/usageUnit/repository"
+	usageUnitModule "github.com/hifat/mallow-sale-api/internal/usageUnit"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 )
 
@@ -14,12 +14,12 @@ type IHelper interface {
 
 type helper struct {
 	logger        logger.ILogger
-	usageUnitRepo usageUnitRepository.IRepository
+	usageUnitRepo usageUnitModule.IRepository
 }
 
 func New(
 	logger logger.ILogger,
-	usageUnitRepo usageUnitRepository.IRepository,
+	usageUnitRepo usageUnitModule.IRepository,
 ) IHelper {
 	return &helper{
 		logger:        logger,

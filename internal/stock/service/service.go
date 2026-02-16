@@ -8,8 +8,8 @@ import (
 	stockModule "github.com/hifat/mallow-sale-api/internal/stock"
 	supplierModule "github.com/hifat/mallow-sale-api/internal/supplier"
 	supplierHelper "github.com/hifat/mallow-sale-api/internal/supplier/helper"
+	usageUnitModule "github.com/hifat/mallow-sale-api/internal/usageUnit"
 	usageUnitHelper "github.com/hifat/mallow-sale-api/internal/usageUnit/helper"
-	usageUnitRepository "github.com/hifat/mallow-sale-api/internal/usageUnit/repository"
 	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 	"github.com/hifat/mallow-sale-api/pkg/define"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
@@ -21,7 +21,7 @@ type service struct {
 	stockRepository     stockModule.IRepository
 	inventoryRepository inventoryModule.IRepository
 	supplierRepository  supplierModule.IRepository
-	usageUnitRepository usageUnitRepository.IRepository
+	usageUnitRepository usageUnitModule.IRepository
 	inventoryHelper     inventoryHelper.IHelper
 	supplierHelper      supplierHelper.IHelper
 	usageUnitHelper     usageUnitHelper.IHelper
@@ -32,7 +32,7 @@ func New(
 	stockRepository stockModule.IRepository,
 	inventoryRepository inventoryModule.IRepository,
 	supplierRepository supplierModule.IRepository,
-	usageUnitRepository usageUnitRepository.IRepository,
+	usageUnitRepository usageUnitModule.IRepository,
 	inventoryHelper inventoryHelper.IHelper,
 	supplierHelper supplierHelper.IHelper,
 	usageUnitHelper usageUnitHelper.IHelper,
