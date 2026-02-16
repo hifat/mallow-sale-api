@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	middlewareModule "github.com/hifat/mallow-sale-api/internal/middleware"
-	userRepository "github.com/hifat/mallow-sale-api/internal/user/repository"
+	userModule "github.com/hifat/mallow-sale-api/internal/user"
 	"github.com/hifat/mallow-sale-api/pkg/config"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
@@ -15,13 +15,13 @@ import (
 type service struct {
 	logger   logger.ILogger
 	cfg      *config.Config
-	userRepo userRepository.IRepository
+	userRepo userModule.IRepository
 }
 
 func New(
 	logger logger.ILogger,
 	cfg *config.Config,
-	userRepo userRepository.IRepository,
+	userRepo userModule.IRepository,
 ) middlewareModule.IService {
 	return &service{
 		logger,
