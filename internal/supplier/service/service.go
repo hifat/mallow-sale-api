@@ -5,30 +5,21 @@ import (
 	"errors"
 
 	supplierModule "github.com/hifat/mallow-sale-api/internal/supplier"
-	supplierRepository "github.com/hifat/mallow-sale-api/internal/supplier/repository"
 	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 	"github.com/hifat/mallow-sale-api/pkg/define"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 )
 
-type IService interface {
-	Create(ctx context.Context, req *supplierModule.Request) (*handling.ResponseItem[*supplierModule.Request], error)
-	Find(ctx context.Context, query *utilsModule.QueryReq) (*handling.ResponseItems[supplierModule.Response], error)
-	FindByID(ctx context.Context, id string) (*handling.ResponseItem[*supplierModule.Response], error)
-	UpdateByID(ctx context.Context, id string, req *supplierModule.Request) (*handling.ResponseItem[*supplierModule.Request], error)
-	DeleteByID(ctx context.Context, id string) error
-}
-
 type service struct {
 	logger             logger.ILogger
-	supplierRepository supplierRepository.IRepository
+	supplierRepository supplierModule.IRepository
 }
 
 func New(
 	logger logger.ILogger,
-	supplierRepository supplierRepository.IRepository,
-) IService {
+	supplierRepository supplierModule.IRepository,
+) supplierModule.IService {
 	return &service{
 		logger:             logger,
 		supplierRepository: supplierRepository,

@@ -4,7 +4,6 @@ import (
 	"context"
 
 	supplierModule "github.com/hifat/mallow-sale-api/internal/supplier"
-	supplierRepository "github.com/hifat/mallow-sale-api/internal/supplier/repository"
 )
 
 type IHelper interface {
@@ -12,10 +11,10 @@ type IHelper interface {
 }
 
 type helper struct {
-	supplierRepository supplierRepository.IRepository
+	supplierRepository supplierModule.IRepository
 }
 
-func New(supplierRepository supplierRepository.IRepository) IHelper {
+func New(supplierRepository supplierModule.IRepository) IHelper {
 	return &helper{
 		supplierRepository: supplierRepository,
 	}
