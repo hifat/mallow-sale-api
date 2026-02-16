@@ -15,10 +15,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type IService interface {
-	Signin(ctx context.Context, req *authModule.SigninReq) (*authModule.Passport, error)
-}
-
 type service struct {
 	logger   logger.ILogger
 	cfg      *config.Config
@@ -29,7 +25,7 @@ func New(
 	logger logger.ILogger,
 	cfg *config.Config,
 	userRepo userRepository.IRepository,
-) IService {
+) authModule.IService {
 	return &service{
 		logger,
 		cfg,
