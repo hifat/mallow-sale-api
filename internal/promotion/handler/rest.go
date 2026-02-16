@@ -3,16 +3,15 @@ package promotionHandler
 import (
 	"github.com/gin-gonic/gin"
 	promotionModule "github.com/hifat/mallow-sale-api/internal/promotion"
-	promotionService "github.com/hifat/mallow-sale-api/internal/promotion/service"
 	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 )
 
 type Rest struct {
-	promotionService promotionService.IService
+	promotionService promotionModule.IService
 }
 
-func NewRest(promotionService promotionService.IService) *Rest {
+func NewRest(promotionService promotionModule.IService) *Rest {
 	return &Rest{promotionService: promotionService}
 }
 
