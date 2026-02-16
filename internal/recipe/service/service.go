@@ -9,7 +9,6 @@ import (
 	inventoryHelper "github.com/hifat/mallow-sale-api/internal/inventory/helper"
 	recipeModule "github.com/hifat/mallow-sale-api/internal/recipe"
 	recipeHelper "github.com/hifat/mallow-sale-api/internal/recipe/helper"
-	recipeRepo "github.com/hifat/mallow-sale-api/internal/recipe/repository"
 	usageUnitHelper "github.com/hifat/mallow-sale-api/internal/usageUnit/helper"
 	usageUnitRepository "github.com/hifat/mallow-sale-api/internal/usageUnit/repository"
 	"github.com/hifat/mallow-sale-api/pkg/define"
@@ -19,7 +18,7 @@ import (
 
 type service struct {
 	logger           logger.ILogger
-	recipeRepo       recipeRepo.IRepository
+	recipeRepo       recipeModule.IRepository
 	inventoryRepo    inventoryModule.IRepository
 	usageUnitRepo    usageUnitRepository.IRepository
 	usageUnitHelper  usageUnitHelper.IHelper
@@ -29,7 +28,7 @@ type service struct {
 
 func New(
 	logger logger.ILogger,
-	recipeRepo recipeRepo.IRepository,
+	recipeRepo recipeModule.IRepository,
 	inventoryRepo inventoryModule.IRepository,
 	usageUnitRepo usageUnitRepository.IRepository,
 	usageUnitHelper usageUnitHelper.IHelper,

@@ -22,7 +22,7 @@ type testInventoryServiceSuite struct {
 	mockLogger      *mockLogger.MockLogger
 	mockSettingRepo *mockSettingRepository.MockIRepository
 
-	underTest IService
+	underTest settingModule.IService
 }
 
 func (s *testInventoryServiceSuite) SetupTest() {

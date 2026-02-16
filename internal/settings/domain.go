@@ -1,9 +1,18 @@
 package settingModule
 
-type Request struct {
-	CostPercentage float32 `fake:"{float32}" json:"costPercentage" validate:"required,gte=0,lte=100"`
+import (
+	"context"
+
+	"github.com/hifat/mallow-sale-api/pkg/handling"
+)
+
+//go:generate mockgen -source=./repository.go -destination=./mock/repository/repository.go -package=mockSettingRepository
+type IRepository interface {
+	Find(ctx context.Context) (*Response, error)
+	Update(ctx context.Context, costPercentage float32) error
 }
 
-type Response struct {
-	CostPercentage float32 `fake:"{float32}" json:"costPercentage"`
+type IService interface {
+	Update(ctx context.Context, costPercentage float32) error
+	Find(ctx context.Context) (*handling.ResponseItem[*Response], error)
 }
