@@ -2,15 +2,15 @@ package middlewareHandler
 
 import (
 	"github.com/gin-gonic/gin"
-	middlewareService "github.com/hifat/mallow-sale-api/internal/middleware/service"
+	middlewareModule "github.com/hifat/mallow-sale-api/internal/middleware"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 )
 
 type Rest struct {
-	middlewareService middlewareService.IService
+	middlewareService middlewareModule.IService
 }
 
-func NewRest(middlewareService middlewareService.IService) *Rest {
+func NewRest(middlewareService middlewareModule.IService) *Rest {
 	return &Rest{middlewareService: middlewareService}
 }
 

@@ -4,16 +4,13 @@ import (
 	"context"
 	"strings"
 
+	middlewareModule "github.com/hifat/mallow-sale-api/internal/middleware"
 	userRepository "github.com/hifat/mallow-sale-api/internal/user/repository"
 	"github.com/hifat/mallow-sale-api/pkg/config"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 	"github.com/hifat/mallow-sale-api/pkg/utils/token"
 )
-
-type IService interface {
-	AuthGuard(ctx context.Context, t string) error
-}
 
 type service struct {
 	logger   logger.ILogger
@@ -25,7 +22,7 @@ func New(
 	logger logger.ILogger,
 	cfg *config.Config,
 	userRepo userRepository.IRepository,
-) IService {
+) middlewareModule.IService {
 	return &service{
 		logger,
 		cfg,
