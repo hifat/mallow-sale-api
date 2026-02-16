@@ -1,36 +1,25 @@
 package stockModule
 
 import (
-	"time"
+	"context"
 
-	inventoryModule "github.com/hifat/mallow-sale-api/internal/inventory"
-	supplierModule "github.com/hifat/mallow-sale-api/internal/supplier"
-	usageUnitModule "github.com/hifat/mallow-sale-api/internal/usageUnit"
+	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
+	"github.com/hifat/mallow-sale-api/pkg/handling"
 )
 
-type Request struct {
-	InventoryID      string                       `validate:"required" json:"inventoryID"`
-	SupplierID       string                       `validate:"required" json:"supplierID"`
-	PurchasePrice    float64                      `validate:"required" json:"purchasePrice"`
-	PurchaseQuantity float64                      `validate:"required" json:"purchaseQuantity"`
-	PurchaseUnit     usageUnitModule.UsageUnitReq `validate:"required" json:"purchaseUnit"`
-	Remark           string                       `json:"remark"`
+type IRepository interface {
+	Create(ctx context.Context, req *Request) error
+	Find(ctx context.Context, query *utilsModule.QueryReq) ([]Response, error)
+	FindByID(ctx context.Context, id string) (*Response, error)
+	UpdateByID(ctx context.Context, id string, req *Request) error
+	DeleteByID(ctx context.Context, id string) error
+	Count(ctx context.Context) (int64, error)
 }
 
-type Prototype struct {
-	ID               string                     `json:"id"`
-	InventoryID      string                     `json:"inventoryID"`
-	Inventory        *inventoryModule.Prototype `json:"inventory"`
-	SupplierID       string                     `json:"supplierID"`
-	Supplier         *supplierModule.Prototype  `json:"supplier"`
-	PurchasePrice    float64                    `json:"purchasePrice"`
-	PurchaseQuantity float64                    `json:"purchaseQuantity"`
-	PurchaseUnit     usageUnitModule.Prototype  `json:"purchaseUnit"`
-	Remark           string                     `json:"remark"`
-	CreatedAt        *time.Time                 `json:"createdAt"`
-	UpdatedAt        *time.Time                 `json:"updatedAt"`
-}
-
-type Response struct {
-	Prototype
+type IService interface {
+	Create(ctx context.Context, req *Request) (*handling.ResponseItem[*Request], error)
+	Find(ctx context.Context, query *utilsModule.QueryReq) (*handling.ResponseItems[Response], error)
+	FindByID(ctx context.Context, id string) (*handling.ResponseItem[*Response], error)
+	UpdateByID(ctx context.Context, id string, req *Request) (*handling.ResponseItem[*Request], error)
+	DeleteByID(ctx context.Context, id string) error
 }

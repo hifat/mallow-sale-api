@@ -6,7 +6,6 @@ import (
 	inventoryModule "github.com/hifat/mallow-sale-api/internal/inventory"
 	inventoryHelper "github.com/hifat/mallow-sale-api/internal/inventory/helper"
 	stockModule "github.com/hifat/mallow-sale-api/internal/stock"
-	stockRepository "github.com/hifat/mallow-sale-api/internal/stock/repository"
 	supplierHelper "github.com/hifat/mallow-sale-api/internal/supplier/helper"
 	supplierRepository "github.com/hifat/mallow-sale-api/internal/supplier/repository"
 	usageUnitHelper "github.com/hifat/mallow-sale-api/internal/usageUnit/helper"
@@ -18,16 +17,8 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/utils"
 )
 
-type IService interface {
-	Create(ctx context.Context, req *stockModule.Request) (*handling.ResponseItem[*stockModule.Request], error)
-	Find(ctx context.Context, query *utilsModule.QueryReq) (*handling.ResponseItems[stockModule.Response], error)
-	FindByID(ctx context.Context, id string) (*handling.ResponseItem[*stockModule.Response], error)
-	UpdateByID(ctx context.Context, id string, req *stockModule.Request) (*handling.ResponseItem[*stockModule.Request], error)
-	DeleteByID(ctx context.Context, id string) error
-}
-
 type service struct {
-	stockRepository     stockRepository.IRepository
+	stockRepository     stockModule.IRepository
 	inventoryRepository inventoryModule.IRepository
 	supplierRepository  supplierRepository.IRepository
 	usageUnitRepository usageUnitRepository.IRepository
@@ -38,7 +29,7 @@ type service struct {
 }
 
 func New(
-	stockRepository stockRepository.IRepository,
+	stockRepository stockModule.IRepository,
 	inventoryRepository inventoryModule.IRepository,
 	supplierRepository supplierRepository.IRepository,
 	usageUnitRepository usageUnitRepository.IRepository,
@@ -46,7 +37,7 @@ func New(
 	supplierHelper supplierHelper.IHelper,
 	usageUnitHelper usageUnitHelper.IHelper,
 	logger logger.ILogger,
-) IService {
+) stockModule.IService {
 	return &service{
 		stockRepository:     stockRepository,
 		inventoryRepository: inventoryRepository,
