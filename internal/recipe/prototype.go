@@ -31,6 +31,7 @@ type Prototype struct {
 	UpdatedAt       *time.Time            `json:"updatedAt"`
 	RecipeType      RecipeTypePrototype   `json:"recipeType"`
 	No              int                   `json:"no"`
+	Cost            float64               `json:"cost"`
 }
 
 func (p *Prototype) GetInventoryIDs() []string {

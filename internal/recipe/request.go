@@ -30,6 +30,8 @@ type Request struct {
 	Ingredients     []IngredientRequest `validate:"required,dive" json:"ingredients"`
 	RecipeType      RecipeTypeRequest   `validate:"required" json:"recipeType"`
 	No              int                 `json:"no"`
+
+	Cost float64 `json:"-"`
 }
 
 func (r *Request) GetUsageUnitCodes() []string {

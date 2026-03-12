@@ -14,6 +14,7 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/define"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
+	"github.com/hifat/mallow-sale-api/pkg/utils"
 )
 
 type service struct {
@@ -98,14 +99,21 @@ func (s *service) Create(ctx context.Context, req *recipeModule.Request) (*handl
 		}
 	}
 
-	inventories, err := s.inventoryRepo.FindInIDs(ctx, req.GetInventoryIDs())
+	getInventoryByID, err := s.inventoryHelper.FindAndGetByID(ctx, req.GetInventoryIDs())
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
 
-	if len(inventories) != len(req.GetInventoryIDs()) {
-		return nil, handling.ThrowErrByCode(define.CodeInvalidInventoryID)
+	for _, v := range req.Ingredients {
+		inventory := getInventoryByID(v.InventoryID)
+		if inventory == nil {
+			return nil, handling.ThrowErrByCode(define.CodeInvalidInventoryID)
+		}
+
+		actualPrice := utils.CalculateActualPrice(inventory.PurchasePrice, float64(inventory.YieldPercentage))
+		pricePerUnit := actualPrice / inventory.PurchaseQuantity
+		req.Cost += pricePerUnit * float64(v.Quantity)
 	}
 
 	err = s.recipeRepo.Create(ctx, req)
@@ -113,6 +121,8 @@ func (s *service) Create(ctx context.Context, req *recipeModule.Request) (*handl
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
+
+	// TODO: กำไรลงใน DB ด้วย
 
 	return &handling.ResponseItem[*recipeModule.Request]{
 		Item: req,
@@ -195,13 +205,21 @@ func (s *service) UpdateByID(ctx context.Context, id string, req *recipeModule.R
 
 	req.RecipeType.Name = recipeType.Name
 
-	inventories, err := s.inventoryRepo.FindInIDs(ctx, req.GetInventoryIDs())
+	getInventoryByID, err := s.inventoryHelper.FindAndGetByID(ctx, req.GetInventoryIDs())
 	if err != nil {
+		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
 
-	if len(inventories) != len(req.GetInventoryIDs()) {
-		return nil, handling.ThrowErrByCode(define.CodeInvalidInventoryID)
+	for _, v := range req.Ingredients {
+		inventory := getInventoryByID(v.InventoryID)
+		if inventory == nil {
+			return nil, handling.ThrowErrByCode(define.CodeInvalidInventoryID)
+		}
+
+		actualPrice := utils.CalculateActualPrice(inventory.PurchasePrice, float64(inventory.YieldPercentage))
+		pricePerUnit := actualPrice / inventory.PurchaseQuantity
+		req.Cost += pricePerUnit * float64(v.Quantity)
 	}
 
 	err = s.recipeRepo.UpdateByID(ctx, id, req)
