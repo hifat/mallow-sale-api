@@ -4,22 +4,16 @@ import (
 	"context"
 
 	settingModule "github.com/hifat/mallow-sale-api/internal/settings"
-	settingRepository "github.com/hifat/mallow-sale-api/internal/settings/repository"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 )
 
-type IService interface {
-	Update(ctx context.Context, costPercentage float32) error
-	Find(ctx context.Context) (*handling.ResponseItem[*settingModule.Response], error)
-}
-
 type service struct {
-	settingRepo settingRepository.IRepository
+	settingRepo settingModule.IRepository
 	logger      logger.ILogger
 }
 
-func New(settingRepo settingRepository.IRepository, logger logger.ILogger) IService {
+func New(settingRepo settingModule.IRepository, logger logger.ILogger) settingModule.IService {
 	return &service{settingRepo: settingRepo, logger: logger}
 }
 

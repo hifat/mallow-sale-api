@@ -4,7 +4,6 @@ import (
 	"context"
 
 	recipeModule "github.com/hifat/mallow-sale-api/internal/recipe"
-	recipeRepository "github.com/hifat/mallow-sale-api/internal/recipe/repository"
 )
 
 //go:generate mockgen -source=./typeHelper.go -destination=./mock/typeHelper.go -package=mockRecipeHelper
@@ -13,10 +12,10 @@ type IRecipeTypeHelper interface {
 }
 
 type recipeTypeHelper struct {
-	recipeTypeRepository recipeRepository.TypeRepository
+	recipeTypeRepository recipeModule.TypeRepository
 }
 
-func NewRecipeTypeHelper(recipeTypeRepository recipeRepository.TypeRepository) IRecipeTypeHelper {
+func NewRecipeTypeHelper(recipeTypeRepository recipeModule.TypeRepository) IRecipeTypeHelper {
 	return &recipeTypeHelper{
 		recipeTypeRepository: recipeTypeRepository,
 	}

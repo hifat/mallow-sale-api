@@ -6,7 +6,6 @@ import (
 
 	authModule "github.com/hifat/mallow-sale-api/internal/auth"
 	userModule "github.com/hifat/mallow-sale-api/internal/user"
-	userRepository "github.com/hifat/mallow-sale-api/internal/user/repository"
 	"github.com/hifat/mallow-sale-api/pkg/config"
 	"github.com/hifat/mallow-sale-api/pkg/define"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
@@ -15,21 +14,17 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type IService interface {
-	Signin(ctx context.Context, req *authModule.SigninReq) (*authModule.Passport, error)
-}
-
 type service struct {
 	logger   logger.ILogger
 	cfg      *config.Config
-	userRepo userRepository.IRepository
+	userRepo userModule.IRepository
 }
 
 func New(
 	logger logger.ILogger,
 	cfg *config.Config,
-	userRepo userRepository.IRepository,
-) IService {
+	userRepo userModule.IRepository,
+) authModule.IService {
 	return &service{
 		logger,
 		cfg,

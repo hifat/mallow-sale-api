@@ -14,7 +14,7 @@ type mongoTypeRepository struct {
 	db *mongo.Database
 }
 
-func NewTypeMongo(db *mongo.Database) TypeRepository {
+func NewTypeMongo(db *mongo.Database) recipeModule.TypeRepository {
 	return &mongoTypeRepository{db: db}
 }
 

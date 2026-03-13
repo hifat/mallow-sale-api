@@ -3,16 +3,15 @@ package stockHandler
 import (
 	"github.com/gin-gonic/gin"
 	stockModule "github.com/hifat/mallow-sale-api/internal/stock"
-	stockService "github.com/hifat/mallow-sale-api/internal/stock/service"
 	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 )
 
 type Rest struct {
-	stockService stockService.IService
+	stockService stockModule.IService
 }
 
-func NewRest(stockService stockService.IService) *Rest {
+func NewRest(stockService stockModule.IService) *Rest {
 	return &Rest{stockService: stockService}
 }
 

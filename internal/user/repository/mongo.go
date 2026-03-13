@@ -14,7 +14,7 @@ type mongoRepository struct {
 	db *mongo.Database
 }
 
-func NewMongo(db *mongo.Database) IRepository {
+func NewMongo(db *mongo.Database) userModule.IRepository {
 	return &mongoRepository{
 		db: db,
 	}

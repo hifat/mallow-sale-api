@@ -2794,6 +2794,9 @@ const docTemplate = `{
         "github_com_hifat_mallow-sale-api_internal_recipe.Response": {
             "type": "object",
             "properties": {
+                "cost": {
+                    "type": "number"
+                },
                 "costPercentage": {
                     "type": "number"
                 },

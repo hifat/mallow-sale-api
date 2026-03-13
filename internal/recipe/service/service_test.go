@@ -5,6 +5,7 @@ import (
 
 	mockInventoryHelper "github.com/hifat/mallow-sale-api/internal/inventory/helper/mock"
 	mockInventoryRepository "github.com/hifat/mallow-sale-api/internal/inventory/repository/mock"
+	recipeModule "github.com/hifat/mallow-sale-api/internal/recipe"
 	mockRecipeHelper "github.com/hifat/mallow-sale-api/internal/recipe/helper/mock"
 	mockRecipeRepository "github.com/hifat/mallow-sale-api/internal/recipe/repository/mock"
 	mockUsageUnitHelper "github.com/hifat/mallow-sale-api/internal/usageUnit/helper/mock"
@@ -25,7 +26,7 @@ type testRecipeServiceSuite struct {
 	mockInventoryHelper  *mockInventoryHelper.MockIHelper
 	mockRecipeTypeHelper *mockRecipeHelper.MockIRecipeTypeHelper
 
-	underTest IService
+	underTest recipeModule.IService
 }
 
 func (s *testRecipeServiceSuite) SetupTest() {

@@ -4,7 +4,6 @@ import (
 	"context"
 
 	recipeModule "github.com/hifat/mallow-sale-api/internal/recipe"
-	recipeRepository "github.com/hifat/mallow-sale-api/internal/recipe/repository"
 )
 
 //go:generate mockgen -source=./helper.go -destination=./mock/helper.go -package=mockRecipeHelper
@@ -13,10 +12,10 @@ type IHelper interface {
 }
 
 type helper struct {
-	recipeRepository recipeRepository.IRepository
+	recipeRepository recipeModule.IRepository
 }
 
-func New(recipeRepository recipeRepository.IRepository) IHelper {
+func New(recipeRepository recipeModule.IRepository) IHelper {
 	return &helper{
 		recipeRepository: recipeRepository,
 	}

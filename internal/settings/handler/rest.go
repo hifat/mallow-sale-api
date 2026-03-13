@@ -5,15 +5,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 	settingModule "github.com/hifat/mallow-sale-api/internal/settings"
-	settingService "github.com/hifat/mallow-sale-api/internal/settings/service"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 )
 
 type Rest struct {
-	service settingService.IService
+	service settingModule.IService
 }
 
-func NewRest(service settingService.IService) *Rest {
+func NewRest(service settingModule.IService) *Rest {
 	return &Rest{service: service}
 }
 

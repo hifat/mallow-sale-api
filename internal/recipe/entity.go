@@ -31,6 +31,7 @@ type Entity struct {
 	CostPercentage  float32            `bson:"cost_percentage" json:"costPercentage"`
 	OtherPercentage float32            `bson:"other_percentage" json:"otherPercentage"`
 	Price           float32            `bson:"price" json:"price"`
+	Cost            float64            `bson:"cost_with_other" json:"cost"`
 	RecipeType      RecipeTypeEntity   `bson:"recipe_type" json:"recipeType"`
 	Ingredients     []IngredientEntity `bson:"ingredients" json:"ingredients"`
 	OrderNo         int                `bson:"order_no" json:"orderNo"`

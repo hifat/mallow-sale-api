@@ -1,20 +1,27 @@
 package supplierModule
 
-import "time"
+import (
+	"context"
 
-type Request struct {
-	Name   string `fake:"{name}" validate:"required" json:"name"`
-	ImgUrl string `fake:"{url}" json:"imgUrl"`
+	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
+	"github.com/hifat/mallow-sale-api/pkg/handling"
+)
+
+//go:generate mockgen -source=./repository.go -destination=./mock/repository/repository.go -package=mockSupplierRepository
+type IRepository interface {
+	Create(ctx context.Context, req *Request) error
+	Find(ctx context.Context, query *utilsModule.QueryReq) ([]Response, error)
+	FindByID(ctx context.Context, id string) (*Response, error)
+	UpdateByID(ctx context.Context, id string, req *Request) error
+	DeleteByID(ctx context.Context, id string) error
+	Count(ctx context.Context) (int64, error)
+	FindInIDs(ctx context.Context, ids []string) ([]Response, error)
 }
 
-type Prototype struct {
-	ID        string     `fake:"{uuid}" json:"id"`
-	Name      string     `fake:"{name}" json:"name"`
-	ImgUrl    string     `fake:"{url}" json:"imgUrl"`
-	CreatedAt *time.Time `json:"createdAt"`
-	UpdatedAt *time.Time `json:"updatedAt"`
-}
-
-type Response struct {
-	Prototype
+type IService interface {
+	Create(ctx context.Context, req *Request) (*handling.ResponseItem[*Request], error)
+	Find(ctx context.Context, query *utilsModule.QueryReq) (*handling.ResponseItems[Response], error)
+	FindByID(ctx context.Context, id string) (*handling.ResponseItem[*Response], error)
+	UpdateByID(ctx context.Context, id string, req *Request) (*handling.ResponseItem[*Request], error)
+	DeleteByID(ctx context.Context, id string) error
 }

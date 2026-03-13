@@ -42,3 +42,7 @@ func GetCodes[T ICode](items []T) []string {
 
 	return codes
 }
+
+func CalculateActualPrice(purchasePrice float64, yieldPercentage float64) float64 {
+	return (purchasePrice + (purchasePrice*(100-yieldPercentage))/100)
+}

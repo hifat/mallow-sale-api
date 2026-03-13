@@ -3,15 +3,14 @@ package authHandler
 import (
 	"github.com/gin-gonic/gin"
 	authModule "github.com/hifat/mallow-sale-api/internal/auth"
-	authService "github.com/hifat/mallow-sale-api/internal/auth/service"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 )
 
 type Rest struct {
-	authService authService.IService
+	authService authModule.IService
 }
 
-func NewRest(authService authService.IService) *Rest {
+func NewRest(authService authModule.IService) *Rest {
 	return &Rest{authService: authService}
 }
 

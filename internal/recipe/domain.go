@@ -1,103 +1,35 @@
 package recipeModule
 
 import (
-	"time"
+	"context"
 
-	inventoryModule "github.com/hifat/mallow-sale-api/internal/inventory"
-	usageUnitModule "github.com/hifat/mallow-sale-api/internal/usageUnit"
 	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
+	"github.com/hifat/mallow-sale-api/pkg/handling"
 )
 
-type IngredientRequest struct {
-	InventoryID string                       `validate:"required" json:"inventoryID"`
-	Quantity    float32                      `validate:"required" json:"quantity"`
-	Unit        usageUnitModule.UsageUnitReq `validate:"required" json:"unit"`
+//go:generate mockgen -source=./repository.go -destination=./repository/mock/repository.go -package=mockRecipeRepository
+type IRepository interface {
+	Create(ctx context.Context, recipe *Request) error
+	Find(ctx context.Context, query *QueryReq) ([]Response, error)
+	FindInIDs(ctx context.Context, ids []string) ([]Response, error)
+	FindByID(ctx context.Context, id string) (*Response, error)
+	UpdateByID(ctx context.Context, id string, recipe *Request) error
+	DeleteByID(ctx context.Context, id string) error
+	Count(ctx context.Context) (int64, error)
+	UpdateNoBatch(ctx context.Context, reqs []UpdateOrderNoRequest) error
 }
 
-type RecipeTypeRequest struct {
-	Code EnumCodeRecipeType `validate:"required" json:"code"`
-	Name string             `json:"-"`
+type IService interface {
+	Create(ctx context.Context, req *Request) (*handling.ResponseItem[*Request], error)
+	Find(ctx context.Context, query *QueryReq) (*handling.ResponseItems[Response], error)
+	FindByID(ctx context.Context, id string) (*handling.ResponseItem[*Response], error)
+	UpdateByID(ctx context.Context, id string, req *Request) (*handling.ResponseItem[*Request], error)
+	DeleteByID(ctx context.Context, id string) (*handling.ResponseItem[*Request], error)
+	UpdateNoBatch(ctx context.Context, reqs []UpdateOrderNoRequest) error
 }
 
-type Request struct {
-	Name            string              `validate:"required" json:"name"`
-	CostPercentage  float32             `validate:"required" json:"costPercentage"`
-	OtherPercentage float32             `json:"otherPercentage"`
-	Price           float32             `validate:"gte=0" json:"price"`
-	Ingredients     []IngredientRequest `validate:"required,dive" json:"ingredients"`
-	RecipeType      RecipeTypeRequest   `validate:"required" json:"recipeType"`
-	No              int                 `json:"no"`
-}
-
-func (r *Request) GetUsageUnitCodes() []string {
-	usageUnitCodes := make([]string, 0, len(r.Ingredients))
-	for _, ingredient := range r.Ingredients {
-		usageUnitCodes = append(usageUnitCodes, ingredient.Unit.Code)
-	}
-
-	return usageUnitCodes
-}
-
-func (r *Request) GetInventoryIDs() []string {
-	inventoryIDs := make([]string, 0, len(r.Ingredients))
-	for _, ingredient := range r.Ingredients {
-		inventoryIDs = append(inventoryIDs, ingredient.InventoryID)
-	}
-
-	return inventoryIDs
-}
-
-type IngredientPrototype struct {
-	InventoryID string                     `json:"-"`
-	Inventory   *inventoryModule.Prototype `json:"inventory"`
-
-	Quantity float32                   `json:"quantity"`
-	Unit     usageUnitModule.Prototype `json:"unit"`
-}
-
-type RecipeTypePrototype struct {
-	Code EnumCodeRecipeType `json:"code"`
-	Name string             `json:"name"`
-}
-
-type Prototype struct {
-	ID              string                `json:"id"`
-	Name            string                `json:"name"`
-	CostPercentage  float32               `json:"costPercentage"`
-	OtherPercentage float32               `json:"otherPercentage"`
-	Price           float32               `json:"price"`
-	Ingredients     []IngredientPrototype `json:"ingredients"`
-	CreatedAt       *time.Time            `json:"createdAt"`
-	UpdatedAt       *time.Time            `json:"updatedAt"`
-	RecipeType      RecipeTypePrototype   `json:"recipeType"`
-	No              int                   `json:"no"`
-}
-
-func (p *Prototype) GetInventoryIDs() []string {
-	inventoryIDs := make([]string, 0, len(p.Ingredients))
-	for _, ingredient := range p.Ingredients {
-		inventoryIDs = append(inventoryIDs, ingredient.InventoryID)
-	}
-
-	return inventoryIDs
-}
-
-type Response struct {
-	Prototype
-}
-
-type UpdateOrderNoRequest struct {
-	ID      string `json:"id"`
-	OrderNo int    `json:"orderNo"`
-}
-
-type RecipeTypeResponse struct {
-	Code EnumCodeRecipeType `json:"code"`
-	Name string             `json:"name"`
-}
-
-type QueryReq struct {
-	utilsModule.QueryReq
-
-	RecipeTypeCode string `form:"recipeTypeCode"`
+type TypeRepository interface {
+	Find(ctx context.Context, query *utilsModule.QueryReq) ([]RecipeTypeResponse, error)
+	FindByCode(ctx context.Context, code EnumCodeRecipeType) (*RecipeTypeResponse, error)
+	FindInCodes(ctx context.Context, codes []EnumCodeRecipeType) ([]RecipeTypeResponse, error)
 }

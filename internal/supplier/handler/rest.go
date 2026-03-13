@@ -3,16 +3,15 @@ package supplierHandler
 import (
 	"github.com/gin-gonic/gin"
 	supplierModule "github.com/hifat/mallow-sale-api/internal/supplier"
-	supplierService "github.com/hifat/mallow-sale-api/internal/supplier/service"
 	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 )
 
 type Rest struct {
-	supplierService supplierService.IService
+	supplierService supplierModule.IService
 }
 
-func NewRest(supplierService supplierService.IService) *Rest {
+func NewRest(supplierService supplierModule.IService) *Rest {
 	return &Rest{supplierService: supplierService}
 }
 

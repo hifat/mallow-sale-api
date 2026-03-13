@@ -4,7 +4,6 @@ import (
 	"context"
 
 	promotionModule "github.com/hifat/mallow-sale-api/internal/promotion"
-	promotionRepository "github.com/hifat/mallow-sale-api/internal/promotion/repository"
 	recipeModule "github.com/hifat/mallow-sale-api/internal/recipe"
 	recipeHelper "github.com/hifat/mallow-sale-api/internal/recipe/helper"
 	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
@@ -12,25 +11,17 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/logger"
 )
 
-type IService interface {
-	Create(ctx context.Context, req *promotionModule.Request) (*handling.ResponseItem[*promotionModule.Request], error)
-	Find(ctx context.Context, query *utilsModule.QueryReq) (*handling.ResponseItems[promotionModule.Response], error)
-	FindByID(ctx context.Context, id string) (*handling.ResponseItem[*promotionModule.Response], error)
-	UpdateByID(ctx context.Context, id string, req *promotionModule.Request) (*handling.ResponseItem[*promotionModule.Request], error)
-	DeleteByID(ctx context.Context, id string) error
-}
-
 type service struct {
 	logger              logger.ILogger
-	promotionRepository promotionRepository.IRepository
+	promotionRepository promotionModule.IRepository
 	recipeHelper        recipeHelper.IHelper
 }
 
 func New(
 	logger logger.ILogger,
-	promotionRepository promotionRepository.IRepository,
+	promotionRepository promotionModule.IRepository,
 	recipeHelper recipeHelper.IHelper,
-) IService {
+) promotionModule.IService {
 	return &service{
 		logger:              logger,
 		promotionRepository: promotionRepository,

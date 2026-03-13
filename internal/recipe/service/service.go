@@ -5,32 +5,23 @@ import (
 	"errors"
 	"sync"
 
+	inventoryModule "github.com/hifat/mallow-sale-api/internal/inventory"
 	inventoryHelper "github.com/hifat/mallow-sale-api/internal/inventory/helper"
-	inventoryRepo "github.com/hifat/mallow-sale-api/internal/inventory/repository"
 	recipeModule "github.com/hifat/mallow-sale-api/internal/recipe"
 	recipeHelper "github.com/hifat/mallow-sale-api/internal/recipe/helper"
-	recipeRepo "github.com/hifat/mallow-sale-api/internal/recipe/repository"
+	usageUnitModule "github.com/hifat/mallow-sale-api/internal/usageUnit"
 	usageUnitHelper "github.com/hifat/mallow-sale-api/internal/usageUnit/helper"
-	usageUnitRepository "github.com/hifat/mallow-sale-api/internal/usageUnit/repository"
 	"github.com/hifat/mallow-sale-api/pkg/define"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
+	"github.com/hifat/mallow-sale-api/pkg/utils"
 )
-
-type IService interface {
-	Create(ctx context.Context, req *recipeModule.Request) (*handling.ResponseItem[*recipeModule.Request], error)
-	Find(ctx context.Context, query *recipeModule.QueryReq) (*handling.ResponseItems[recipeModule.Response], error)
-	FindByID(ctx context.Context, id string) (*handling.ResponseItem[*recipeModule.Response], error)
-	UpdateByID(ctx context.Context, id string, req *recipeModule.Request) (*handling.ResponseItem[*recipeModule.Request], error)
-	DeleteByID(ctx context.Context, id string) (*handling.ResponseItem[*recipeModule.Request], error)
-	UpdateNoBatch(ctx context.Context, reqs []recipeModule.UpdateOrderNoRequest) error
-}
 
 type service struct {
 	logger           logger.ILogger
-	recipeRepo       recipeRepo.IRepository
-	inventoryRepo    inventoryRepo.IRepository
-	usageUnitRepo    usageUnitRepository.IRepository
+	recipeRepo       recipeModule.IRepository
+	inventoryRepo    inventoryModule.IRepository
+	usageUnitRepo    usageUnitModule.IRepository
 	usageUnitHelper  usageUnitHelper.IHelper
 	inventoryHelper  inventoryHelper.IHelper
 	recipeTypeHelper recipeHelper.IRecipeTypeHelper
@@ -38,13 +29,13 @@ type service struct {
 
 func New(
 	logger logger.ILogger,
-	recipeRepo recipeRepo.IRepository,
-	inventoryRepo inventoryRepo.IRepository,
-	usageUnitRepo usageUnitRepository.IRepository,
+	recipeRepo recipeModule.IRepository,
+	inventoryRepo inventoryModule.IRepository,
+	usageUnitRepo usageUnitModule.IRepository,
 	usageUnitHelper usageUnitHelper.IHelper,
 	inventoryHelper inventoryHelper.IHelper,
 	recipeTypeHelper recipeHelper.IRecipeTypeHelper,
-) IService {
+) recipeModule.IService {
 	return &service{
 		logger:           logger,
 		recipeRepo:       recipeRepo,
@@ -108,14 +99,21 @@ func (s *service) Create(ctx context.Context, req *recipeModule.Request) (*handl
 		}
 	}
 
-	inventories, err := s.inventoryRepo.FindInIDs(ctx, req.GetInventoryIDs())
+	getInventoryByID, err := s.inventoryHelper.FindAndGetByID(ctx, req.GetInventoryIDs())
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
 
-	if len(inventories) != len(req.GetInventoryIDs()) {
-		return nil, handling.ThrowErrByCode(define.CodeInvalidInventoryID)
+	for _, v := range req.Ingredients {
+		inventory := getInventoryByID(v.InventoryID)
+		if inventory == nil {
+			return nil, handling.ThrowErrByCode(define.CodeInvalidInventoryID)
+		}
+
+		actualPrice := utils.CalculateActualPrice(inventory.PurchasePrice, float64(inventory.YieldPercentage))
+		pricePerUnit := actualPrice / inventory.PurchaseQuantity
+		req.Cost += pricePerUnit * float64(v.Quantity)
 	}
 
 	err = s.recipeRepo.Create(ctx, req)
@@ -123,6 +121,8 @@ func (s *service) Create(ctx context.Context, req *recipeModule.Request) (*handl
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
+
+	// TODO: กำไรลงใน DB ด้วย
 
 	return &handling.ResponseItem[*recipeModule.Request]{
 		Item: req,
@@ -205,13 +205,21 @@ func (s *service) UpdateByID(ctx context.Context, id string, req *recipeModule.R
 
 	req.RecipeType.Name = recipeType.Name
 
-	inventories, err := s.inventoryRepo.FindInIDs(ctx, req.GetInventoryIDs())
+	getInventoryByID, err := s.inventoryHelper.FindAndGetByID(ctx, req.GetInventoryIDs())
 	if err != nil {
+		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
 
-	if len(inventories) != len(req.GetInventoryIDs()) {
-		return nil, handling.ThrowErrByCode(define.CodeInvalidInventoryID)
+	for _, v := range req.Ingredients {
+		inventory := getInventoryByID(v.InventoryID)
+		if inventory == nil {
+			return nil, handling.ThrowErrByCode(define.CodeInvalidInventoryID)
+		}
+
+		actualPrice := utils.CalculateActualPrice(inventory.PurchasePrice, float64(inventory.YieldPercentage))
+		pricePerUnit := actualPrice / inventory.PurchaseQuantity
+		req.Cost += pricePerUnit * float64(v.Quantity)
 	}
 
 	err = s.recipeRepo.UpdateByID(ctx, id, req)
