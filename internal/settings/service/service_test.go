@@ -59,7 +59,8 @@ func (s *testInventoryServiceSuite) TestInventoryService_Create() {
 			Error(mockErr).
 			Times(1)
 
-		err := s.underTest.Update(ctx, req)
+		res, err := s.underTest.Update(ctx, req)
+		s.Require().Nil(res)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
 
@@ -82,8 +83,10 @@ func (s *testInventoryServiceSuite) TestInventoryService_Create() {
 			Return(nil).
 			Times(1)
 
-		err := s.underTest.Update(ctx, req)
+		res, err := s.underTest.Update(ctx, req)
 		s.Require().Nil(err)
+		s.Require().NotNil(res)
+		s.Require().Equal(req, res.Item)
 	})
 }
 

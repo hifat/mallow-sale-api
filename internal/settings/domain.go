@@ -13,6 +13,6 @@ type IRepository interface {
 }
 
 type IService interface {
-	Update(ctx context.Context, req *Request) error
+	Update(ctx context.Context, req *Request) (*handling.ResponseItem[*Request], error)
 	Find(ctx context.Context) (*handling.ResponseItem[*Response], error)
 }

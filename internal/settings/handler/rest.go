@@ -33,12 +33,13 @@ func (h *Rest) Update(c *gin.Context) {
 		return
 	}
 
-	if err := h.service.Update(c.Request.Context(), req); err != nil {
+	res, err := h.service.Update(c.Request.Context(), req)
+	if err != nil {
 		handling.ResponseErr(c, err)
 		return
 	}
 
-	handling.ResponseSuccess(c, nil)
+	handling.ResponseSuccess(c, res)
 }
 
 // @Summary     Get Settings
