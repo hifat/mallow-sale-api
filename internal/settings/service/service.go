@@ -17,8 +17,8 @@ func New(settingRepo settingModule.IRepository, logger logger.ILogger) settingMo
 	return &service{settingRepo: settingRepo, logger: logger}
 }
 
-func (s *service) Update(ctx context.Context, costPercentage float32) error {
-	err := s.settingRepo.Update(ctx, costPercentage)
+func (s *service) Update(ctx context.Context, req *settingModule.Request) error {
+	err := s.settingRepo.Update(ctx, req)
 	if err != nil {
 		s.logger.Error(err)
 		return handling.ThrowErr(err)

@@ -27,13 +27,13 @@ func NewRest(service settingModule.IService) *Rest {
 // @Failure     500 {object} handling.ErrorResponse
 // @Router      /settings [put]
 func (h *Rest) Update(c *gin.Context) {
-	var req settingModule.Request
-	if err := c.ShouldBindJSON(&req); err != nil {
+	req := new(settingModule.Request)
+	if err := c.ShouldBindJSON(req); err != nil {
 		handling.ResponseFormErr(c, err)
 		return
 	}
 
-	if err := h.service.Update(c.Request.Context(), req.CostPercentage); err != nil {
+	if err := h.service.Update(c.Request.Context(), req); err != nil {
 		handling.ResponseErr(c, err)
 		return
 	}

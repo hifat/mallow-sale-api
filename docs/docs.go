@@ -2862,16 +2862,34 @@ const docTemplate = `{
             "properties": {
                 "costPercentage": {
                     "type": "number"
+                },
+                "grabGP": {
+                    "type": "number"
+                },
+                "linemanGP": {
+                    "type": "number"
                 }
             }
         },
         "github_com_hifat_mallow-sale-api_internal_settings.Request": {
             "type": "object",
             "required": [
-                "costPercentage"
+                "costPercentage",
+                "grabGP",
+                "linemanGP"
             ],
             "properties": {
                 "costPercentage": {
+                    "type": "number",
+                    "maximum": 100,
+                    "minimum": 0
+                },
+                "grabGP": {
+                    "type": "number",
+                    "maximum": 100,
+                    "minimum": 0
+                },
+                "linemanGP": {
                     "type": "number",
                     "maximum": 100,
                     "minimum": 0

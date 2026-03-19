@@ -22,8 +22,8 @@ import (
 func Init(cfg *config.Config, db *mongo.Database) *promotionHandler.Handler {
 	iLogger := logger.New()
 	iRepository := promotionRepository.NewMongo(db)
-	recipeRepositoryIRepository := recipeRepository.NewMongo(db)
-	iHelper := recipeHelper.New(recipeRepositoryIRepository)
+	recipeModuleIRepository := recipeRepository.NewMongo(db)
+	iHelper := recipeHelper.New(recipeModuleIRepository)
 	iService := recipeService.New(iLogger, iRepository, iHelper)
 	rest := promotionHandler.NewRest(iService)
 	handler := promotionHandler.New(rest)

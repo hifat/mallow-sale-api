@@ -271,6 +271,10 @@ definitions:
     properties:
       costPercentage:
         type: number
+      grabGP:
+        type: number
+      linemanGP:
+        type: number
     type: object
   github_com_hifat_mallow-sale-api_internal_settings.Request:
     properties:
@@ -278,8 +282,18 @@ definitions:
         maximum: 100
         minimum: 0
         type: number
+      grabGP:
+        maximum: 100
+        minimum: 0
+        type: number
+      linemanGP:
+        maximum: 100
+        minimum: 0
+        type: number
     required:
     - costPercentage
+    - grabGP
+    - linemanGP
     type: object
   github_com_hifat_mallow-sale-api_internal_shopping.EnumCodeInventoryStatusType:
     enum:

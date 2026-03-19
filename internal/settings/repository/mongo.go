@@ -22,7 +22,11 @@ func (r *mongoRepository) Find(ctx context.Context) (*settingModule.Response, er
 	err := r.db.Collection("settings").FindOne(ctx, bson.M{}).Decode(&settings)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return &settingModule.Response{CostPercentage: 0}, nil
+			return &settingModule.Response{
+				CostPercentage: 0,
+				LinemanGP:      0,
+				GrabGP:         0,
+			}, nil
 		}
 
 		return nil, err
@@ -30,11 +34,17 @@ func (r *mongoRepository) Find(ctx context.Context) (*settingModule.Response, er
 
 	return &settingModule.Response{
 		CostPercentage: settings.CostPercentage,
+		LinemanGP:      settings.LinemanGP,
+		GrabGP:         settings.GrabGP,
 	}, nil
 }
 
-func (r *mongoRepository) Update(ctx context.Context, costPercentage float32) error {
-	update := bson.M{"$set": bson.M{"cost_percentage": costPercentage}}
+func (r *mongoRepository) Update(ctx context.Context, req *settingModule.Request) error {
+	update := bson.M{"$set": bson.M{
+		"cost_percentage": req.CostPercentage,
+		"lineman_gp":      req.LinemanGP,
+		"grab_gp":         req.GrabGP,
+	}}
 	_, err := r.db.Collection("settings").UpdateOne(ctx, bson.M{}, update, &options.UpdateOptions{Upsert: new(bool)})
 	return err
 }

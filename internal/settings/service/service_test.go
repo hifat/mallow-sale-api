@@ -44,11 +44,14 @@ func TestInventoryServiceSuite(t *testing.T) {
 func (s *testInventoryServiceSuite) TestInventoryService_Create() {
 	s.Run("failed - update setting other error", func() {
 		ctx := context.Background()
-		var costPercentage float32 = 49.99
+		req := &settingModule.Request{}
+		if err := gofakeit.Struct(&req); err != nil {
+			s.T().Fatal(err)
+		}
 
 		mockErr := errors.New("mock err")
 		s.mockSettingRepo.EXPECT().
-			Update(ctx, costPercentage).
+			Update(ctx, req).
 			Return(mockErr).
 			Times(1)
 
@@ -56,7 +59,7 @@ func (s *testInventoryServiceSuite) TestInventoryService_Create() {
 			Error(mockErr).
 			Times(1)
 
-		err := s.underTest.Update(ctx, costPercentage)
+		err := s.underTest.Update(ctx, req)
 		s.Require().NotNil(err)
 		s.Require().IsType(handling.ErrorResponse{}, err)
 
@@ -69,20 +72,23 @@ func (s *testInventoryServiceSuite) TestInventoryService_Create() {
 
 	s.Run("succeed - update setting", func() {
 		ctx := context.Background()
-		var costPercentage float32 = 49.99
+		req := &settingModule.Request{}
+		if err := gofakeit.Struct(&req); err != nil {
+			s.T().Fatal(err)
+		}
 
 		s.mockSettingRepo.EXPECT().
-			Update(ctx, costPercentage).
+			Update(ctx, req).
 			Return(nil).
 			Times(1)
 
-		err := s.underTest.Update(ctx, costPercentage)
+		err := s.underTest.Update(ctx, req)
 		s.Require().Nil(err)
 	})
 }
 
 func (s *testInventoryServiceSuite) TestInventoryService_Find() {
-	s.Run("failed - update setting other error", func() {
+	s.Run("failed - find setting other error", func() {
 		ctx := context.Background()
 
 		mockErr := errors.New("mock err")
@@ -107,7 +113,7 @@ func (s *testInventoryServiceSuite) TestInventoryService_Find() {
 		s.Require().Equal(http.StatusInternalServerError, resErr.Status)
 	})
 
-	s.Run("succeed - update setting", func() {
+	s.Run("succeed - find setting", func() {
 		ctx := context.Background()
 		mockSetting := &settingModule.Response{}
 		if err := gofakeit.Struct(&mockSetting); err != nil {

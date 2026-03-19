@@ -25,14 +25,14 @@ import (
 
 func Init(cfg *config.Config, db *mongo.Database) *stockHandler.Handler {
 	iRepository := stockRepository.NewMongo(db)
-	inventoryRepositoryIRepository := inventoryRepository.NewMongo(db)
-	supplierRepositoryIRepository := supplierRepository.NewMongo(db)
-	usageUnitRepositoryIRepository := usageUnitRepository.NewMongo(db)
-	iHelper := inventoryHelper.New(inventoryRepositoryIRepository)
-	supplierHelperIHelper := supplierHelper.New(supplierRepositoryIRepository)
+	inventoryModuleIRepository := inventoryRepository.NewMongo(db)
+	supplierModuleIRepository := supplierRepository.NewMongo(db)
+	usageUnitModuleIRepository := usageUnitRepository.NewMongo(db)
+	iHelper := inventoryHelper.New(inventoryModuleIRepository)
+	supplierHelperIHelper := supplierHelper.New(supplierModuleIRepository)
 	iLogger := logger.New()
-	usageUnitHelperIHelper := usageUnitHelper.New(iLogger, usageUnitRepositoryIRepository)
-	iService := stockService.New(iRepository, inventoryRepositoryIRepository, supplierRepositoryIRepository, usageUnitRepositoryIRepository, iHelper, supplierHelperIHelper, usageUnitHelperIHelper, iLogger)
+	usageUnitHelperIHelper := usageUnitHelper.New(iLogger, usageUnitModuleIRepository)
+	iService := stockService.New(iRepository, inventoryModuleIRepository, supplierModuleIRepository, usageUnitModuleIRepository, iHelper, supplierHelperIHelper, usageUnitHelperIHelper, iLogger)
 	rest := stockHandler.NewRest(iService)
 	handler := stockHandler.New(rest)
 	return handler
