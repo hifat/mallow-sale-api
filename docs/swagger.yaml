@@ -202,10 +202,16 @@ definitions:
     properties:
       costPercentage:
         type: number
+      grabPrice:
+        minimum: 0
+        type: number
       ingredients:
         items:
           $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.IngredientRequest'
         type: array
+      linemanPrice:
+        minimum: 0
+        type: number
       name:
         type: string
       "no":
@@ -231,12 +237,16 @@ definitions:
         type: number
       createdAt:
         type: string
+      grabPrice:
+        type: number
       id:
         type: string
       ingredients:
         items:
           $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.IngredientPrototype'
         type: array
+      linemanPrice:
+        type: number
       name:
         type: string
       "no":

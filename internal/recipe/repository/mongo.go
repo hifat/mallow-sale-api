@@ -42,8 +42,10 @@ func (r *mongoRepository) Create(ctx context.Context, req *recipeModule.Request)
 		Name:            req.Name,
 		CostPercentage:  req.CostPercentage,
 		OtherPercentage: req.OtherPercentage,
-		Price:           req.Price,
 		Cost:            req.Cost,
+		Price:           req.Price,
+		LinemanPrice:    req.LinemanPrice,
+		GrabPrice:       req.GrabPrice,
 		RecipeType: recipeModule.RecipeTypeEntity{
 			Code: req.RecipeType.Code,
 			Name: req.RecipeType.Name,
@@ -135,6 +137,8 @@ func (r *mongoRepository) Find(ctx context.Context, query *recipeModule.QueryReq
 				OtherPercentage: recipe.OtherPercentage,
 				Price:           recipe.Price,
 				Cost:            recipe.Cost,
+				LinemanPrice:    recipe.LinemanPrice,
+				GrabPrice:       recipe.GrabPrice,
 				RecipeType: recipeModule.RecipeTypePrototype{
 					Code: recipe.RecipeType.Code,
 					Name: recipe.RecipeType.Name,
@@ -227,6 +231,8 @@ func (r *mongoRepository) FindByID(ctx context.Context, id string) (*recipeModul
 			OtherPercentage: recipe.OtherPercentage,
 			Price:           recipe.Price,
 			Cost:            recipe.Cost,
+			LinemanPrice:    recipe.LinemanPrice,
+			GrabPrice:       recipe.GrabPrice,
 			RecipeType: recipeModule.RecipeTypePrototype{
 				Code: recipe.RecipeType.Code,
 				Name: recipe.RecipeType.Name,
@@ -246,6 +252,8 @@ func (r *mongoRepository) UpdateByID(ctx context.Context, id string, req *recipe
 		OtherPercentage: req.OtherPercentage,
 		Price:           req.Price,
 		Cost:            req.Cost,
+		LinemanPrice:    req.LinemanPrice,
+		GrabPrice:       req.GrabPrice,
 		RecipeType: recipeModule.RecipeTypeEntity{
 			Code: req.RecipeType.Code,
 			Name: req.RecipeType.Name,

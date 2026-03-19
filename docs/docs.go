@@ -2767,11 +2767,19 @@ const docTemplate = `{
                 "costPercentage": {
                     "type": "number"
                 },
+                "grabPrice": {
+                    "type": "number",
+                    "minimum": 0
+                },
                 "ingredients": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.IngredientRequest"
                     }
+                },
+                "linemanPrice": {
+                    "type": "number",
+                    "minimum": 0
                 },
                 "name": {
                     "type": "string"
@@ -2803,6 +2811,9 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
+                "grabPrice": {
+                    "type": "number"
+                },
                 "id": {
                     "type": "string"
                 },
@@ -2811,6 +2822,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_recipe.IngredientPrototype"
                     }
+                },
+                "linemanPrice": {
+                    "type": "number"
                 },
                 "name": {
                     "type": "string"

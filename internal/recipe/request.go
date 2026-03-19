@@ -27,6 +27,8 @@ type Request struct {
 	CostPercentage  float32             `validate:"required" json:"costPercentage"`
 	OtherPercentage float32             `json:"otherPercentage"`
 	Price           float32             `validate:"gte=0" json:"price"`
+	LinemanPrice    float64             `validate:"gte=0" json:"linemanPrice"`
+	GrabPrice       float64             `validate:"gte=0" json:"grabPrice"`
 	Ingredients     []IngredientRequest `validate:"required,dive" json:"ingredients"`
 	RecipeType      RecipeTypeRequest   `validate:"required" json:"recipeType"`
 	No              int                 `json:"no"`

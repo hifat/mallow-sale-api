@@ -32,6 +32,8 @@ type Prototype struct {
 	RecipeType      RecipeTypePrototype   `json:"recipeType"`
 	No              int                   `json:"no"`
 	Cost            float64               `json:"cost"`
+	LinemanPrice    float64               `json:"linemanPrice"`
+	GrabPrice       float64               `json:"grabPrice"`
 }
 
 func (p *Prototype) GetInventoryIDs() []string {
