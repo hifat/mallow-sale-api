@@ -14,6 +14,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/hifat/mallow-sale-api/docs" // This will be generated
+	middlewareHandler "github.com/hifat/mallow-sale-api/internal/middleware/handler"
 	"github.com/hifat/mallow-sale-api/pkg/config"
 	"github.com/hifat/mallow-sale-api/pkg/database"
 	"github.com/hifat/mallow-sale-api/router"
@@ -80,6 +81,7 @@ func main() {
 
 	r.Use(gin.Recovery())
 	r.Use(cors.New(configCors()))
+	r.Use(middlewareHandler.RateLimit())
 
 	// Swagger
 	// r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

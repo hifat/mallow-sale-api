@@ -91,6 +91,11 @@ func getErrObject(code string) ErrorResponse {
 			Message: define.MsgInvalidLoginType,
 			Status:  http.StatusBadRequest,
 		},
+		define.CodeRateLimitExceeded: {
+			Code:    define.CodeRateLimitExceeded,
+			Message: define.MsgRateLimitExceeded,
+			Status:  http.StatusTooManyRequests,
+		},
 	}
 
 	errObj, ok := mapErr[code]

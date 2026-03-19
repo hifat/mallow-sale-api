@@ -15,6 +15,7 @@ const CodeInvalidCredentials = "INVALID_CREDENTIALS"
 const CodeInvalidToken = "INVALID_TOKEN"
 const CodeTokenExpired = "TOKEN_EXPIRED"
 const CodeInvalidLoginType = "INVALID_LOGIN_TYPE"
+const CodeRateLimitExceeded = "RATE_LIMIT_EXCEEDED"
 
 /* --------------------------------- Message -------------------------------- */
 
@@ -29,6 +30,7 @@ const MsgInvalidCredentials = "invalid username or password"
 const MsgInvalidToken = "invalid token"
 const MsgTokenExpired = "token expired"
 const MsgInvalidLoginType = "invalid login type"
+const MsgRateLimitExceeded = "too many requests, please slow down"
 
 /* ---------------------------------- Error --------------------------------- */
 
