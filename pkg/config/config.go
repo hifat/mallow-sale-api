@@ -44,12 +44,17 @@ type BLLReader struct {
 	GRPCKey  string
 }
 
+type Google struct {
+	ClientID string
+}
+
 type Config struct {
 	App       App
 	DB        DB
 	GRPC      GRPC
 	Auth      Auth
 	BLLReader BLLReader
+	Google    Google
 }
 
 func LoadConfig(path string) (*Config, error) {
@@ -98,6 +103,9 @@ func LoadConfig(path string) (*Config, error) {
 		BLLReader: BLLReader{
 			GRPCHost: viper.GetString("GRPC_BLL_HOST"),
 			GRPCKey:  viper.GetString("GRPC_BLL_KEY"),
+		},
+		Google: Google{
+			ClientID: viper.GetString("GOOGLE_CLIENT_ID"),
 		},
 	}
 

@@ -31,7 +31,7 @@ func (r *Rest) Signin(c *gin.Context) {
 		return
 	}
 
-	res, err := r.authService.Signin(c.Request.Context(), &req)
+	res, err := r.authService.Auth(c.Request.Context(), &req)
 	if err != nil {
 		handling.ResponseErr(c, err)
 		return

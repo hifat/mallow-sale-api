@@ -14,6 +14,7 @@ const CodeUnauthorized = "UNAUTHORIZED"
 const CodeInvalidCredentials = "INVALID_CREDENTIALS"
 const CodeInvalidToken = "INVALID_TOKEN"
 const CodeTokenExpired = "TOKEN_EXPIRED"
+const CodeInvalidLoginType = "INVALID_LOGIN_TYPE"
 
 /* --------------------------------- Message -------------------------------- */
 
@@ -27,7 +28,9 @@ const MsgUnauthorized = "unauthorized"
 const MsgInvalidCredentials = "invalid username or password"
 const MsgInvalidToken = "invalid token"
 const MsgTokenExpired = "token expired"
+const MsgInvalidLoginType = "invalid login type"
 
 /* ---------------------------------- Error --------------------------------- */
 
 var ErrRecordNotFound = errors.New(MsgRecordNotFound)
+var ErrMsgInvalidLoginType = errors.New(MsgInvalidLoginType)

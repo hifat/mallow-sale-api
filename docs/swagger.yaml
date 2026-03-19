@@ -13,6 +13,14 @@ definitions:
       username:
         type: string
     type: object
+  github_com_hifat_mallow-sale-api_internal_auth.EnumCodeAuthType:
+    enum:
+    - INTERNAL
+    - GOOGLE
+    type: string
+    x-enum-varnames:
+    - EnumInternal
+    - EnumGoogle
   github_com_hifat_mallow-sale-api_internal_auth.Passport:
     properties:
       authID:
@@ -22,10 +30,16 @@ definitions:
     type: object
   github_com_hifat_mallow-sale-api_internal_auth.SigninReq:
     properties:
+      loginType:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_auth.EnumCodeAuthType'
       password:
+        type: string
+      token:
         type: string
       username:
         type: string
+    required:
+    - loginType
     type: object
   github_com_hifat_mallow-sale-api_internal_inventory.Prototype:
     properties:

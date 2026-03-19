@@ -20,9 +20,7 @@ func NewMongo(db *mongo.Database) userModule.IRepository {
 	}
 }
 
-func (r *mongoRepository) FindByUsername(ctx context.Context, username string) (*userModule.Response, error) {
-	filter := bson.M{"username": username}
-
+func (r *mongoRepository) FindOne(ctx context.Context, filter bson.M) (*userModule.Response, error) {
 	var user userModule.Entity
 	err := r.db.Collection("users").
 		FindOne(ctx, filter).
@@ -44,4 +42,26 @@ func (r *mongoRepository) FindByUsername(ctx context.Context, username string) (
 	}
 
 	return res, nil
+}
+
+func (r *mongoRepository) FindByUsername(ctx context.Context, username string) (*userModule.Response, error) {
+	filter := bson.M{"username": username}
+
+	user, err := r.FindOne(ctx, filter)
+	if err != nil {
+		return nil, define.ErrRecordNotFound
+	}
+
+	return user, nil
+}
+
+func (r *mongoRepository) FindByEmail(ctx context.Context, email string) (*userModule.Response, error) {
+	filter := bson.M{"email": email}
+
+	user, err := r.FindOne(ctx, filter)
+	if err != nil {
+		return nil, define.ErrRecordNotFound
+	}
+
+	return user, nil
 }

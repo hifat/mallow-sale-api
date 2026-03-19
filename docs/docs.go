@@ -2478,6 +2478,17 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_hifat_mallow-sale-api_internal_auth.EnumCodeAuthType": {
+            "type": "string",
+            "enum": [
+                "INTERNAL",
+                "GOOGLE"
+            ],
+            "x-enum-varnames": [
+                "EnumInternal",
+                "EnumGoogle"
+            ]
+        },
         "github_com_hifat_mallow-sale-api_internal_auth.Passport": {
             "type": "object",
             "properties": {
@@ -2491,8 +2502,17 @@ const docTemplate = `{
         },
         "github_com_hifat_mallow-sale-api_internal_auth.SigninReq": {
             "type": "object",
+            "required": [
+                "loginType"
+            ],
             "properties": {
+                "loginType": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_auth.EnumCodeAuthType"
+                },
                 "password": {
+                    "type": "string"
+                },
+                "token": {
                     "type": "string"
                 },
                 "username": {
