@@ -1,6 +1,9 @@
 package logger
 
 import (
+	"strconv"
+	"strings"
+
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -21,6 +24,17 @@ type zapLogger struct {
 	sugar *zap.SugaredLogger
 }
 
+func customCallerEncoder(caller zapcore.EntryCaller, enc zapcore.PrimitiveArrayEncoder) {
+	parts := strings.Split(caller.File, "/")
+
+	const depth = 3
+	if len(parts) >= depth {
+		parts = parts[len(parts)-depth:]
+	}
+
+	enc.AppendString(strings.Join(parts, "/") + ":" + strconv.Itoa(caller.Line))
+}
+
 func init() {
 	// object key support cloud run logging
 	config := zap.NewProductionConfig()
@@ -28,6 +42,8 @@ func init() {
 	config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 	config.EncoderConfig.StacktraceKey = ""
 	config.EncoderConfig.LevelKey = "severity"
+
+	config.EncoderConfig.EncodeCaller = customCallerEncoder
 
 	var err error
 	log, err = config.Build(zap.AddCallerSkip(1))

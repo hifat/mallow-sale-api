@@ -192,7 +192,7 @@ func (s *service) CreateBatch(ctx context.Context, reqs []*shoppingModule.Reques
 	close(resChan)
 
 	if len(errChan) > 0 {
-		return nil, handling.ThrowErr(<-errChan)
+		return nil, <-errChan
 	}
 
 	resShoppings := make([]*shoppingModule.Request, 0, len(resChan))
