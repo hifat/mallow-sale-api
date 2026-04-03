@@ -11,7 +11,6 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/database"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type mongoRepository struct {
@@ -43,24 +42,51 @@ func (r *mongoRepository) Create(ctx context.Context, req *stockModule.Request) 
 }
 
 func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq) ([]stockModule.Response, error) {
-	filter := bson.M{}
+	pipeline := mongo.Pipeline{}
 	if query.Search != "" {
-		filter["remark"] = bson.M{"$regex": query.Search, "$options": "i"}
-	}
+		setStage := bson.D{
+			{
+				Key: "$set", Value: bson.M{
+					"inventory_id": bson.M{
+						"$toObjectId": "$inventory_id",
+					},
+				},
+			},
+		}
 
-	findOptions := options.Find()
+		lookupStage := bson.D{{Key: "$lookup", Value: bson.M{
+			"from":         "inventories",
+			"localField":   "inventory_id",
+			"foreignField": "_id",
+			"as":           "inventory",
+		}}}
+
+		unwindStage := bson.D{{Key: "$unwind", Value: "$inventory"}}
+
+		matchStage := bson.D{{Key: "$match", Value: bson.M{
+			"inventory.name": bson.M{
+				"$regex":   query.Search,
+				"$options": "i",
+			},
+		}}}
+
+		// 4. Run the pipeline
+		pipeline = mongo.Pipeline{setStage, lookupStage, unwindStage, matchStage}
+	}
 
 	if query.Sort != "" && query.Order != "" {
 		order := 1
 		if strings.ToLower(query.Order) == "desc" {
 			order = -1
 		}
-		findOptions.SetSort(bson.M{query.Sort: order})
+		// เพิ่ม stage $sort
+		pipeline = append(pipeline, bson.D{{Key: "$sort", Value: bson.M{query.Sort: order}}})
 	}
 
 	if query.Page > 0 && query.Limit > 0 {
-		findOptions.SetSkip(int64((query.Page - 1) * query.Limit))
-		findOptions.SetLimit(int64(query.Limit))
+		skip := int64((query.Page - 1) * query.Limit)
+		pipeline = append(pipeline, bson.D{{Key: "$skip", Value: skip}})
+		pipeline = append(pipeline, bson.D{{Key: "$limit", Value: int64(query.Limit)}})
 	}
 
 	if query.Fields != "" {
@@ -69,10 +95,11 @@ func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq)
 		for _, field := range fields {
 			projection[field] = 1
 		}
-		findOptions.SetProjection(projection)
+		pipeline = append(pipeline, bson.D{{Key: "$project", Value: projection}})
 	}
 
-	cursor, err := r.db.Collection("stocks").Find(ctx, filter, findOptions)
+	// cursor, err := r.db.Collection("stocks").Find(ctx, filter, findOptions)
+	cursor, err := r.db.Collection("stocks").Aggregate(ctx, pipeline, nil)
 	if err != nil {
 		return nil, err
 	}
