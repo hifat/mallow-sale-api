@@ -121,6 +121,36 @@ func (r *Rest) UpdateByID(c *gin.Context) {
 	handling.ResponseSuccess(c, *res)
 }
 
+// @Summary 	Update Purchase Price by Preset ID
+// @security 	BearerAuth
+// @Tags 		inventory
+// @Accept 		json
+// @Produce 	json
+// @Param 		id path string true "inventory ID"
+// @Param 		inventory body inventoryModule.UpdatePresetPriceReq true "Updated preset price data"
+// @Success 	200 {object} handling.ResponseItem[inventoryModule.Response]
+// @Failure 	400 {object} handling.ErrorResponse
+// @Failure 	404 {object} handling.ErrorResponse
+// @Failure 	500 {object} handling.ErrorResponse
+// @Router 		/inventories/{id}/preset-price [put]
+func (r *Rest) UpdatePurchasePriceByPreset(c *gin.Context) {
+	id := c.Param("id")
+
+	var req inventoryModule.UpdatePresetPriceReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		handling.ResponseFormErr(c, err)
+		return
+	}
+
+	res, err := r.inventoryService.UpdatePurchasePriceByPreset(c.Request.Context(), id, &req)
+	if err != nil {
+		handling.ResponseErr(c, err)
+		return
+	}
+
+	handling.ResponseSuccess(c, *res)
+}
+
 // @Summary 	Delete Inventory by ID
 // @security 	BearerAuth
 // @Tags 		inventory

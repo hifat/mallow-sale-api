@@ -182,6 +182,19 @@ func (r *mongoRepository) FindByInventoryID(ctx context.Context, inventoryID str
 	return &preset, nil
 }
 
+func (r *mongoRepository) FindByPriceID(ctx context.Context, priceID string) (*pricePresetModule.Entity, error) {
+	filter := bson.M{"prices.id": priceID}
+	var preset pricePresetModule.Entity
+	err := r.db.Collection("price_presets").FindOne(ctx, filter).Decode(&preset)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, define.ErrRecordNotFound
+		}
+		return nil, err
+	}
+	return &preset, nil
+}
+
 func (r *mongoRepository) UpdateByID(ctx context.Context, id string, req *pricePresetModule.Request) error {
 	filter := bson.M{"_id": database.MustObjectIDFromHex(id)}
 	update := bson.M{

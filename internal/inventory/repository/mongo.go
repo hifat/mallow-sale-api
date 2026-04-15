@@ -280,3 +280,15 @@ func (r *mongoRepository) UpdateStock(ctx context.Context, id string, currentQua
 	_, err := r.db.Collection("inventories").UpdateOne(ctx, filter, update)
 	return err
 }
+
+func (r *mongoRepository) UpdatePurchasePrice(ctx context.Context, id string, purchasePrice float64) error {
+	filter := bson.M{"_id": database.MustObjectIDFromHex(id)}
+	update := bson.M{
+		"$set": bson.M{
+			"purchase_price": purchasePrice,
+			"updated_at":     time.Now(),
+		},
+	}
+	_, err := r.db.Collection("inventories").UpdateOne(ctx, filter, update)
+	return err
+}

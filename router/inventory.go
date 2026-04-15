@@ -15,5 +15,6 @@ func InventoryRouter(r *gin.RouterGroup, cfg *config.Config, db *mongo.Database)
 		GET("/:id", handler.Rest.FindByID).
 		POST("", handler.Rest.Create).
 		PUT("/:id", handler.Rest.UpdateByID).
+		PUT("/:id/preset-price", handler.Rest.UpdatePurchasePriceByPreset).
 		DELETE("/:id", handler.Rest.DeleteByID)
 }

@@ -109,11 +109,12 @@ func (mr *MockIServiceMockRecorder) Find(ctx any) *gomock.Call {
 }
 
 // Update mocks base method.
-func (m *MockIService) Update(ctx context.Context, req *settingModule.Request) error {
+func (m *MockIService) Update(ctx context.Context, req *settingModule.Request) (*handling.ResponseItem[*settingModule.Request], error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Update", ctx, req)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(*handling.ResponseItem[*settingModule.Request])
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // Update indicates an expected call of Update.

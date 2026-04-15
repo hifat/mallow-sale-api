@@ -6,7 +6,7 @@ import (
 	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 )
 
-//go:generate mockgen -source=./repository.go -destination=./mock/repository/mock/mongo.go -package=mockInventoryRepository
+//go:generate mockgen -source=./domain.go -destination=./mock/repository/mock/mongo.go -package=mockInventoryRepository
 type IRepository interface {
 	Create(ctx context.Context, req *Request) error
 	Find(ctx context.Context, query *utilsModule.QueryReq) ([]Response, error)
@@ -17,4 +17,5 @@ type IRepository interface {
 	DeleteByID(ctx context.Context, id string) error
 	Count(ctx context.Context) (int64, error)
 	UpdateStock(ctx context.Context, id string, quantity float64, purchasePrice float64) error
+	UpdatePurchasePrice(ctx context.Context, id string, purchasePrice float64) error
 }

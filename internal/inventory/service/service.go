@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	inventoryModule "github.com/hifat/mallow-sale-api/internal/inventory"
+	pricePresetModule "github.com/hifat/mallow-sale-api/internal/pricePreset"
 	usageUnitModule "github.com/hifat/mallow-sale-api/internal/usageUnit"
 	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 	"github.com/hifat/mallow-sale-api/pkg/define"
@@ -18,25 +19,29 @@ type IService interface {
 	Find(ctx context.Context, query *utilsModule.QueryReq) (*handling.ResponseItems[inventoryModule.Response], error)
 	FindByID(ctx context.Context, id string) (*handling.ResponseItem[*inventoryModule.Response], error)
 	UpdateByID(ctx context.Context, id string, req *inventoryModule.Request) (*handling.ResponseItem[*inventoryModule.Request], error)
+	UpdatePurchasePriceByPreset(ctx context.Context, id string, req *inventoryModule.UpdatePresetPriceReq) (*handling.ResponseItem[*inventoryModule.Response], error)
 	DeleteByID(ctx context.Context, id string) error
 }
 
 type service struct {
-	mu            sync.Mutex
-	logger        logger.ILogger
-	inventoryRepo inventoryModule.IRepository
-	usageUnitRepo usageUnitModule.IRepository
+	mu                    sync.Mutex
+	logger                logger.ILogger
+	inventoryRepo         inventoryModule.IRepository
+	usageUnitRepo         usageUnitModule.IRepository
+	pricePresetRepository pricePresetModule.IRepository
 }
 
 func New(
 	logger logger.ILogger,
 	inventoryRepo inventoryModule.IRepository,
 	usageUnitRepo usageUnitModule.IRepository,
+	pricePresetRepository pricePresetModule.IRepository,
 ) IService {
 	return &service{
-		logger:        logger,
-		inventoryRepo: inventoryRepo,
-		usageUnitRepo: usageUnitRepo,
+		logger:                logger,
+		inventoryRepo:         inventoryRepo,
+		usageUnitRepo:         usageUnitRepo,
+		pricePresetRepository: pricePresetRepository,
 	}
 }
 
@@ -170,6 +175,56 @@ func (s *service) UpdateByID(ctx context.Context, id string, req *inventoryModul
 
 	return &handling.ResponseItem[*inventoryModule.Request]{
 		Item: req,
+	}, nil
+}
+
+func (s *service) UpdatePurchasePriceByPreset(ctx context.Context, id string, req *inventoryModule.UpdatePresetPriceReq) (*handling.ResponseItem[*inventoryModule.Response], error) {
+	preset, err := s.pricePresetRepository.FindByPriceID(ctx, req.PresetPriceID)
+	if err != nil {
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
+	var priceValue float64
+	var found bool
+	for _, p := range preset.Prices {
+		if p.ID == req.PresetPriceID {
+			priceValue = p.Price
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		return nil, handling.ThrowErrByCode(define.CodeInvalidPricePresetID)
+	}
+
+	if preset.InventoryID != id {
+		return nil, handling.ThrowErrByCode(define.CodeInvalidInventoryID)
+	}
+
+	_, err = s.inventoryRepo.FindByID(ctx, id)
+	if err != nil {
+		if !errors.Is(err, define.ErrRecordNotFound) {
+			s.logger.Error(err)
+		}
+		return nil, handling.ThrowErr(err)
+	}
+
+	err = s.inventoryRepo.UpdatePurchasePrice(ctx, id, priceValue)
+	if err != nil {
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
+	updatedInventory, err := s.inventoryRepo.FindByID(ctx, id)
+	if err != nil {
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
+	return &handling.ResponseItem[*inventoryModule.Response]{
+		Item: updatedInventory,
 	}, nil
 }
 

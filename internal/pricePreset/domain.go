@@ -12,6 +12,7 @@ type IRepository interface {
 	Find(ctx context.Context, query *utilsModule.QueryReq) ([]Response, error)
 	FindByID(ctx context.Context, id string) (*Response, error)
 	FindByInventoryID(ctx context.Context, inventoryID string) (*Entity, error)
+	FindByPriceID(ctx context.Context, priceID string) (*Entity, error)
 	UpdateByID(ctx context.Context, id string, req *Request) error
 	DeleteByID(ctx context.Context, id string) error
 	Count(ctx context.Context) (int64, error)

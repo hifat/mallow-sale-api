@@ -8,6 +8,7 @@ import (
 	inventoryHandler "github.com/hifat/mallow-sale-api/internal/inventory/handler"
 	inventoryRepository "github.com/hifat/mallow-sale-api/internal/inventory/repository"
 	inventoryService "github.com/hifat/mallow-sale-api/internal/inventory/service"
+	pricePresetRepository "github.com/hifat/mallow-sale-api/internal/pricePreset/repository"
 	usageUnitRepository "github.com/hifat/mallow-sale-api/internal/usageUnit/repository"
 	"github.com/hifat/mallow-sale-api/pkg/config"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
@@ -19,6 +20,7 @@ func Init(cfg *config.Config, db *mongo.Database) *inventoryHandler.Handler {
 		// Repository
 		inventoryRepository.NewMongo,
 		usageUnitRepository.NewMongo,
+		pricePresetRepository.NewMongo,
 
 		// Service
 		logger.New,

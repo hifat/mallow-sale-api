@@ -179,6 +179,21 @@ func (mr *MockIServiceMockRecorder) Create(ctx, req any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockIService)(nil).Create), ctx, req)
 }
 
+// CreateBatch mocks base method.
+func (m *MockIService) CreateBatch(ctx context.Context, reqs []*shoppingModule.Request) (*handling.ResponseItems[*shoppingModule.Request], error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateBatch", ctx, reqs)
+	ret0, _ := ret[0].(*handling.ResponseItems[*shoppingModule.Request])
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateBatch indicates an expected call of CreateBatch.
+func (mr *MockIServiceMockRecorder) CreateBatch(ctx, reqs any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateBatch", reflect.TypeOf((*MockIService)(nil).CreateBatch), ctx, reqs)
+}
+
 // DeleteByID mocks base method.
 func (m *MockIService) DeleteByID(ctx context.Context, id string) (*handling.Response, error) {
 	m.ctrl.T.Helper()
@@ -385,6 +400,198 @@ func (m *MockIInventoryService) Find(ctx context.Context) (*handling.ResponseIte
 func (mr *MockIInventoryServiceMockRecorder) Find(ctx any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Find", reflect.TypeOf((*MockIInventoryService)(nil).Find), ctx)
+}
+
+// MockIUsageUnitRepository is a mock of IUsageUnitRepository interface.
+type MockIUsageUnitRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockIUsageUnitRepositoryMockRecorder
+}
+
+// MockIUsageUnitRepositoryMockRecorder is the mock recorder for MockIUsageUnitRepository.
+type MockIUsageUnitRepositoryMockRecorder struct {
+	mock *MockIUsageUnitRepository
+}
+
+// NewMockIUsageUnitRepository creates a new mock instance.
+func NewMockIUsageUnitRepository(ctrl *gomock.Controller) *MockIUsageUnitRepository {
+	mock := &MockIUsageUnitRepository{ctrl: ctrl}
+	mock.recorder = &MockIUsageUnitRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockIUsageUnitRepository) EXPECT() *MockIUsageUnitRepositoryMockRecorder {
+	return m.recorder
+}
+
+// Create mocks base method.
+func (m *MockIUsageUnitRepository) Create(ctx context.Context, req *shoppingModule.RequestUsageUnit) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Create", ctx, req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Create indicates an expected call of Create.
+func (mr *MockIUsageUnitRepositoryMockRecorder) Create(ctx, req any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockIUsageUnitRepository)(nil).Create), ctx, req)
+}
+
+// DeleteByID mocks base method.
+func (m *MockIUsageUnitRepository) DeleteByID(ctx context.Context, id string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteByID", ctx, id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteByID indicates an expected call of DeleteByID.
+func (mr *MockIUsageUnitRepositoryMockRecorder) DeleteByID(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteByID", reflect.TypeOf((*MockIUsageUnitRepository)(nil).DeleteByID), ctx, id)
+}
+
+// Find mocks base method.
+func (m *MockIUsageUnitRepository) Find(ctx context.Context) ([]shoppingModule.ResUsageUnit, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Find", ctx)
+	ret0, _ := ret[0].([]shoppingModule.ResUsageUnit)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Find indicates an expected call of Find.
+func (mr *MockIUsageUnitRepositoryMockRecorder) Find(ctx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Find", reflect.TypeOf((*MockIUsageUnitRepository)(nil).Find), ctx)
+}
+
+// FindByID mocks base method.
+func (m *MockIUsageUnitRepository) FindByID(ctx context.Context, id string) (*shoppingModule.ResUsageUnit, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindByID", ctx, id)
+	ret0, _ := ret[0].(*shoppingModule.ResUsageUnit)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindByID indicates an expected call of FindByID.
+func (mr *MockIUsageUnitRepositoryMockRecorder) FindByID(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByID", reflect.TypeOf((*MockIUsageUnitRepository)(nil).FindByID), ctx, id)
+}
+
+// UpdateByID mocks base method.
+func (m *MockIUsageUnitRepository) UpdateByID(ctx context.Context, id string, req *shoppingModule.RequestUsageUnit) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateByID", ctx, id, req)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateByID indicates an expected call of UpdateByID.
+func (mr *MockIUsageUnitRepositoryMockRecorder) UpdateByID(ctx, id, req any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateByID", reflect.TypeOf((*MockIUsageUnitRepository)(nil).UpdateByID), ctx, id, req)
+}
+
+// MockIUsageUnitService is a mock of IUsageUnitService interface.
+type MockIUsageUnitService struct {
+	ctrl     *gomock.Controller
+	recorder *MockIUsageUnitServiceMockRecorder
+}
+
+// MockIUsageUnitServiceMockRecorder is the mock recorder for MockIUsageUnitService.
+type MockIUsageUnitServiceMockRecorder struct {
+	mock *MockIUsageUnitService
+}
+
+// NewMockIUsageUnitService creates a new mock instance.
+func NewMockIUsageUnitService(ctrl *gomock.Controller) *MockIUsageUnitService {
+	mock := &MockIUsageUnitService{ctrl: ctrl}
+	mock.recorder = &MockIUsageUnitServiceMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockIUsageUnitService) EXPECT() *MockIUsageUnitServiceMockRecorder {
+	return m.recorder
+}
+
+// Create mocks base method.
+func (m *MockIUsageUnitService) Create(ctx context.Context, req *shoppingModule.RequestUsageUnit) (*handling.ResponseItem[*shoppingModule.RequestUsageUnit], error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Create", ctx, req)
+	ret0, _ := ret[0].(*handling.ResponseItem[*shoppingModule.RequestUsageUnit])
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Create indicates an expected call of Create.
+func (mr *MockIUsageUnitServiceMockRecorder) Create(ctx, req any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockIUsageUnitService)(nil).Create), ctx, req)
+}
+
+// DeleteByID mocks base method.
+func (m *MockIUsageUnitService) DeleteByID(ctx context.Context, id string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteByID", ctx, id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteByID indicates an expected call of DeleteByID.
+func (mr *MockIUsageUnitServiceMockRecorder) DeleteByID(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteByID", reflect.TypeOf((*MockIUsageUnitService)(nil).DeleteByID), ctx, id)
+}
+
+// Find mocks base method.
+func (m *MockIUsageUnitService) Find(ctx context.Context) (*handling.ResponseItems[shoppingModule.ResUsageUnit], error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Find", ctx)
+	ret0, _ := ret[0].(*handling.ResponseItems[shoppingModule.ResUsageUnit])
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Find indicates an expected call of Find.
+func (mr *MockIUsageUnitServiceMockRecorder) Find(ctx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Find", reflect.TypeOf((*MockIUsageUnitService)(nil).Find), ctx)
+}
+
+// FindByID mocks base method.
+func (m *MockIUsageUnitService) FindByID(ctx context.Context, id string) (*handling.ResponseItem[*shoppingModule.ResUsageUnit], error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindByID", ctx, id)
+	ret0, _ := ret[0].(*handling.ResponseItem[*shoppingModule.ResUsageUnit])
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindByID indicates an expected call of FindByID.
+func (mr *MockIUsageUnitServiceMockRecorder) FindByID(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByID", reflect.TypeOf((*MockIUsageUnitService)(nil).FindByID), ctx, id)
+}
+
+// UpdateByID mocks base method.
+func (m *MockIUsageUnitService) UpdateByID(ctx context.Context, id string, req *shoppingModule.RequestUsageUnit) (*handling.ResponseItem[*shoppingModule.RequestUsageUnit], error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateByID", ctx, id, req)
+	ret0, _ := ret[0].(*handling.ResponseItem[*shoppingModule.RequestUsageUnit])
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateByID indicates an expected call of UpdateByID.
+func (mr *MockIUsageUnitServiceMockRecorder) UpdateByID(ctx, id, req any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateByID", reflect.TypeOf((*MockIUsageUnitService)(nil).UpdateByID), ctx, id, req)
 }
 
 // MockIReceiptGrpcRepository is a mock of IReceiptGrpcRepository interface.

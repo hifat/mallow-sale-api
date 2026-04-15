@@ -8,3 +8,7 @@ type Request struct {
 	YieldPercentage float32                      `fake:"{float32}" validate:"required" json:"yieldPercentage"`
 	Remark          string                       `fake:"{sentence}" json:"remark"`
 }
+
+type UpdatePresetPriceReq struct {
+	PresetPriceID string `validate:"required" json:"presetPriceID"`
+}

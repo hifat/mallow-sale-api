@@ -16,6 +16,7 @@ const CodeInvalidToken = "INVALID_TOKEN"
 const CodeTokenExpired = "TOKEN_EXPIRED"
 const CodeInvalidLoginType = "INVALID_LOGIN_TYPE"
 const CodeRateLimitExceeded = "RATE_LIMIT_EXCEEDED"
+const CodeInvalidPricePresetID = "INVALID_PRICE_PRESET_ID"
 
 /* --------------------------------- Message -------------------------------- */
 
@@ -31,8 +32,10 @@ const MsgInvalidToken = "invalid token"
 const MsgTokenExpired = "token expired"
 const MsgInvalidLoginType = "invalid login type"
 const MsgRateLimitExceeded = "too many requests, please slow down"
+const MsgInvalidPricePresetID = "invalid price preset ID"
 
 /* ---------------------------------- Error --------------------------------- */
 
 var ErrRecordNotFound = errors.New(MsgRecordNotFound)
 var ErrMsgInvalidLoginType = errors.New(MsgInvalidLoginType)
+var ErrInvalidPricePresetID = errors.New(MsgInvalidPricePresetID)
