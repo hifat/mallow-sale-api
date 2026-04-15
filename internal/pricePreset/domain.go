@@ -8,11 +8,11 @@ import (
 )
 
 type IRepository interface {
-	Create(ctx context.Context, req *Entity) error
+	Create(ctx context.Context, req *Request) error
 	Find(ctx context.Context, query *utilsModule.QueryReq) ([]Response, error)
 	FindByID(ctx context.Context, id string) (*Response, error)
 	FindByInventoryID(ctx context.Context, inventoryID string) (*Entity, error)
-	UpdateByID(ctx context.Context, id string, req *Entity) error
+	UpdateByID(ctx context.Context, id string, req *Request) error
 	DeleteByID(ctx context.Context, id string) error
 	Count(ctx context.Context) (int64, error)
 }

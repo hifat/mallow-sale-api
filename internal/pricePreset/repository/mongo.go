@@ -11,6 +11,7 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/database"
 	"github.com/hifat/mallow-sale-api/pkg/define"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -22,10 +23,23 @@ func NewMongo(db *mongo.Database) pricePresetModule.IRepository {
 	return &mongoRepository{db: db}
 }
 
-func (r *mongoRepository) Create(ctx context.Context, req *pricePresetModule.Entity) error {
-	req.CreatedAt = time.Now()
-	req.UpdatedAt = time.Now()
-	_, err := r.db.Collection("price_presets").InsertOne(ctx, req)
+func (r *mongoRepository) Create(ctx context.Context, req *pricePresetModule.Request) error {
+	newPreset := &pricePresetModule.Entity{
+		InventoryID: req.InventoryID,
+		Prices: []pricePresetModule.Price{
+			{
+				ID:        primitive.NewObjectID().Hex(),
+				StockID:   req.StockID,
+				Price:     req.Price,
+				CreatedAt: time.Now(),
+			},
+		},
+		Base: utilsModule.Base{
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		},
+	}
+	_, err := r.db.Collection("price_presets").InsertOne(ctx, newPreset)
 	return err
 }
 
@@ -168,12 +182,21 @@ func (r *mongoRepository) FindByInventoryID(ctx context.Context, inventoryID str
 	return &preset, nil
 }
 
-func (r *mongoRepository) UpdateByID(ctx context.Context, id string, req *pricePresetModule.Entity) error {
+func (r *mongoRepository) UpdateByID(ctx context.Context, id string, req *pricePresetModule.Request) error {
 	filter := bson.M{"_id": database.MustObjectIDFromHex(id)}
-	update := bson.M{"$set": bson.M{
-		"prices":     req.Prices,
-		"updated_at": time.Now(),
-	}}
+	update := bson.M{
+		"$push": bson.M{
+			"prices": pricePresetModule.Price{
+				ID:        primitive.NewObjectID().Hex(),
+				StockID:   req.StockID,
+				Price:     req.Price,
+				CreatedAt: time.Now(),
+			},
+		},
+		"$set": bson.M{
+			"updated_at": time.Now(),
+		},
+	}
 	_, err := r.db.Collection("price_presets").UpdateOne(ctx, filter, update)
 	return err
 }

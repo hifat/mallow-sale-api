@@ -2,9 +2,11 @@ package stockService
 
 import (
 	"context"
+	"errors"
 
 	inventoryModule "github.com/hifat/mallow-sale-api/internal/inventory"
 	inventoryHelper "github.com/hifat/mallow-sale-api/internal/inventory/helper"
+	pricePresetModule "github.com/hifat/mallow-sale-api/internal/pricePreset"
 	stockModule "github.com/hifat/mallow-sale-api/internal/stock"
 	supplierModule "github.com/hifat/mallow-sale-api/internal/supplier"
 	supplierHelper "github.com/hifat/mallow-sale-api/internal/supplier/helper"
@@ -18,14 +20,15 @@ import (
 )
 
 type service struct {
-	stockRepository     stockModule.IRepository
-	inventoryRepository inventoryModule.IRepository
-	supplierRepository  supplierModule.IRepository
-	usageUnitRepository usageUnitModule.IRepository
-	inventoryHelper     inventoryHelper.IHelper
-	supplierHelper      supplierHelper.IHelper
-	usageUnitHelper     usageUnitHelper.IHelper
-	logger              logger.ILogger
+	stockRepository       stockModule.IRepository
+	inventoryRepository   inventoryModule.IRepository
+	supplierRepository    supplierModule.IRepository
+	usageUnitRepository   usageUnitModule.IRepository
+	pricePresetRepository pricePresetModule.IRepository
+	inventoryHelper       inventoryHelper.IHelper
+	supplierHelper        supplierHelper.IHelper
+	usageUnitHelper       usageUnitHelper.IHelper
+	logger                logger.ILogger
 }
 
 func New(
@@ -33,20 +36,22 @@ func New(
 	inventoryRepository inventoryModule.IRepository,
 	supplierRepository supplierModule.IRepository,
 	usageUnitRepository usageUnitModule.IRepository,
+	pricePresetRepository pricePresetModule.IRepository,
 	inventoryHelper inventoryHelper.IHelper,
 	supplierHelper supplierHelper.IHelper,
 	usageUnitHelper usageUnitHelper.IHelper,
 	logger logger.ILogger,
 ) stockModule.IService {
 	return &service{
-		stockRepository:     stockRepository,
-		inventoryRepository: inventoryRepository,
-		supplierRepository:  supplierRepository,
-		usageUnitRepository: usageUnitRepository,
-		inventoryHelper:     inventoryHelper,
-		supplierHelper:      supplierHelper,
-		usageUnitHelper:     usageUnitHelper,
-		logger:              logger,
+		stockRepository:       stockRepository,
+		inventoryRepository:   inventoryRepository,
+		supplierRepository:    supplierRepository,
+		usageUnitRepository:   usageUnitRepository,
+		pricePresetRepository: pricePresetRepository,
+		inventoryHelper:       inventoryHelper,
+		supplierHelper:        supplierHelper,
+		usageUnitHelper:       usageUnitHelper,
+		logger:                logger,
 	}
 }
 
@@ -99,17 +104,45 @@ func (s *service) Create(ctx context.Context, req *stockModule.Request) (*handli
 	req.PurchasePrice = utils.RoundToDecimals(req.PurchasePrice, 3)
 	req.PurchaseQuantity = utils.RoundToDecimals(req.PurchaseQuantity, 3)
 
-	err := s.stockRepository.Create(ctx, req)
+	stockID, err := s.stockRepository.Create(ctx, req)
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
 	}
 
-	// err = s.inventoryHelper.IncreaseStock(ctx, req.InventoryID, req.PurchaseQuantity, req.PurchasePrice)
-	// if err != nil {
-	// 	s.logger.Error(err)
-	// 	return nil, handling.ThrowErr(err)
-	// }
+	preset, err := s.pricePresetRepository.FindByInventoryID(ctx, req.InventoryID)
+	if err != nil && !errors.Is(err, define.ErrRecordNotFound) { // FindByInventoryID returns ErrRecordNotFound if none found
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
+	presetReq := &pricePresetModule.Request{
+		InventoryID: req.InventoryID,
+		StockID:     stockID,
+		Price:       req.PurchasePrice,
+	}
+
+	if preset == nil {
+		if err := s.pricePresetRepository.Create(ctx, presetReq); err != nil {
+			s.logger.Error(err)
+			return nil, handling.ThrowErr(err)
+		}
+	} else {
+		var priceExists bool
+		for _, p := range preset.Prices {
+			if p.Price == req.PurchasePrice {
+				priceExists = true
+				break
+			}
+		}
+
+		if !priceExists {
+			if err := s.pricePresetRepository.UpdateByID(ctx, preset.ID.Hex(), presetReq); err != nil {
+				s.logger.Error(err)
+				return nil, handling.ThrowErr(err)
+			}
+		}
+	}
 
 	return &handling.ResponseItem[*stockModule.Request]{Item: req}, nil
 }

@@ -10,6 +10,7 @@ import (
 	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 	"github.com/hifat/mallow-sale-api/pkg/database"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -21,7 +22,7 @@ func NewMongo(db *mongo.Database) stockModule.IRepository {
 	return &mongoRepository{db: db}
 }
 
-func (r *mongoRepository) Create(ctx context.Context, req *stockModule.Request) error {
+func (r *mongoRepository) Create(ctx context.Context, req *stockModule.Request) (string, error) {
 	newStock := &stockModule.Entity{
 		InventoryID:      req.InventoryID,
 		SupplierID:       req.SupplierID,
@@ -37,8 +38,18 @@ func (r *mongoRepository) Create(ctx context.Context, req *stockModule.Request) 
 			UpdatedAt: time.Now(),
 		},
 	}
-	_, err := r.db.Collection("stocks").InsertOne(ctx, newStock)
-	return err
+	res, err := r.db.Collection("stocks").InsertOne(ctx, newStock)
+	if err != nil {
+		return "", err
+	}
+	
+	// Ensure we retrieve the auto-generated ID properly.
+	var idStr string
+	if oid, ok := res.InsertedID.(primitive.ObjectID); ok {
+		idStr = oid.Hex()
+	}
+
+	return idStr, err
 }
 
 func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq) ([]stockModule.Response, error) {

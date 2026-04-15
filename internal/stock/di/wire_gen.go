@@ -9,6 +9,7 @@ package stockDi
 import (
 	"github.com/hifat/mallow-sale-api/internal/inventory/helper"
 	"github.com/hifat/mallow-sale-api/internal/inventory/repository"
+	"github.com/hifat/mallow-sale-api/internal/pricePreset/repository"
 	"github.com/hifat/mallow-sale-api/internal/stock/handler"
 	"github.com/hifat/mallow-sale-api/internal/stock/repository"
 	"github.com/hifat/mallow-sale-api/internal/stock/service"
@@ -28,11 +29,12 @@ func Init(cfg *config.Config, db *mongo.Database) *stockHandler.Handler {
 	inventoryModuleIRepository := inventoryRepository.NewMongo(db)
 	supplierModuleIRepository := supplierRepository.NewMongo(db)
 	usageUnitModuleIRepository := usageUnitRepository.NewMongo(db)
+	pricePresetModuleIRepository := pricePresetRepository.NewMongo(db)
 	iHelper := inventoryHelper.New(inventoryModuleIRepository)
 	supplierHelperIHelper := supplierHelper.New(supplierModuleIRepository)
 	iLogger := logger.New()
 	usageUnitHelperIHelper := usageUnitHelper.New(iLogger, usageUnitModuleIRepository)
-	iService := stockService.New(iRepository, inventoryModuleIRepository, supplierModuleIRepository, usageUnitModuleIRepository, iHelper, supplierHelperIHelper, usageUnitHelperIHelper, iLogger)
+	iService := stockService.New(iRepository, inventoryModuleIRepository, supplierModuleIRepository, usageUnitModuleIRepository, pricePresetModuleIRepository, iHelper, supplierHelperIHelper, usageUnitHelperIHelper, iLogger)
 	rest := stockHandler.NewRest(iService)
 	handler := stockHandler.New(rest)
 	return handler

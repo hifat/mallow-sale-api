@@ -8,7 +8,7 @@ import (
 )
 
 type IRepository interface {
-	Create(ctx context.Context, req *Request) error
+	Create(ctx context.Context, req *Request) (string, error)
 	Find(ctx context.Context, query *utilsModule.QueryReq) ([]Response, error)
 	FindByID(ctx context.Context, id string) (*Response, error)
 	UpdateByID(ctx context.Context, id string, req *Request) error
