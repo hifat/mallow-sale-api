@@ -7,11 +7,13 @@ import (
 
 	inventoryModule "github.com/hifat/mallow-sale-api/internal/inventory"
 	pricePresetModule "github.com/hifat/mallow-sale-api/internal/pricePreset"
+	recipeModule "github.com/hifat/mallow-sale-api/internal/recipe"
 	usageUnitModule "github.com/hifat/mallow-sale-api/internal/usageUnit"
 	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 	"github.com/hifat/mallow-sale-api/pkg/define"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
+	"github.com/hifat/mallow-sale-api/pkg/utils"
 )
 
 type IService interface {
@@ -24,24 +26,27 @@ type IService interface {
 }
 
 type service struct {
-	mu                    sync.Mutex
-	logger                logger.ILogger
-	inventoryRepo         inventoryModule.IRepository
-	usageUnitRepo         usageUnitModule.IRepository
-	pricePresetRepository pricePresetModule.IRepository
+	mu              sync.Mutex
+	logger          logger.ILogger
+	inventoryRepo   inventoryModule.IRepository
+	usageUnitRepo   usageUnitModule.IRepository
+	pricePresetRepo pricePresetModule.IRepository
+	recipeRepo      recipeModule.IRepository
 }
 
 func New(
 	logger logger.ILogger,
 	inventoryRepo inventoryModule.IRepository,
 	usageUnitRepo usageUnitModule.IRepository,
-	pricePresetRepository pricePresetModule.IRepository,
+	pricePresetRepo pricePresetModule.IRepository,
+	recipeRepo recipeModule.IRepository,
 ) IService {
 	return &service{
-		logger:                logger,
-		inventoryRepo:         inventoryRepo,
-		usageUnitRepo:         usageUnitRepo,
-		pricePresetRepository: pricePresetRepository,
+		logger:          logger,
+		inventoryRepo:   inventoryRepo,
+		usageUnitRepo:   usageUnitRepo,
+		pricePresetRepo: pricePresetRepo,
+		recipeRepo:      recipeRepo,
 	}
 }
 
@@ -179,7 +184,7 @@ func (s *service) UpdateByID(ctx context.Context, id string, req *inventoryModul
 }
 
 func (s *service) UpdatePurchasePriceByPreset(ctx context.Context, id string, req *inventoryModule.UpdatePresetPriceReq) (*handling.ResponseItem[*inventoryModule.Response], error) {
-	preset, err := s.pricePresetRepository.FindByPriceID(ctx, req.PresetPriceID)
+	preset, err := s.pricePresetRepo.FindByPriceID(ctx, req.PresetPriceID)
 	if err != nil {
 		s.logger.Error(err)
 		return nil, handling.ThrowErr(err)
@@ -217,6 +222,10 @@ func (s *service) UpdatePurchasePriceByPreset(ctx context.Context, id string, re
 		return nil, handling.ThrowErr(err)
 	}
 
+	if syncErr := s.syncRecipeCosts(ctx, id); syncErr != nil {
+		s.logger.Error(syncErr)
+	}
+
 	updatedInventory, err := s.inventoryRepo.FindByID(ctx, id)
 	if err != nil {
 		s.logger.Error(err)
@@ -226,6 +235,48 @@ func (s *service) UpdatePurchasePriceByPreset(ctx context.Context, id string, re
 	return &handling.ResponseItem[*inventoryModule.Response]{
 		Item: updatedInventory,
 	}, nil
+}
+
+// syncRecipeCosts finds all recipes that use inventoryID and recalculates
+// each recipe's cost using the same logic as recipe.Create (// Total Cost).
+func (s *service) syncRecipeCosts(ctx context.Context, inventoryID string) error {
+	recipes, err := s.recipeRepo.FindByInventoryID(ctx, inventoryID)
+	if err != nil {
+		return err
+	}
+
+	for _, recipe := range recipes {
+		inventoryIDs := recipe.GetInventoryIDs()
+
+		inventories, err := s.inventoryRepo.FindInIDs(ctx, inventoryIDs)
+		if err != nil {
+			return err
+		}
+
+		inventoryByID := make(map[string]*inventoryModule.Response, len(inventories))
+		for i := range inventories {
+			inventoryByID[inventories[i].ID] = &inventories[i]
+		}
+
+		// Total Cost — same logic as recipe/service/service.go Create
+		var newCost float64
+		for _, ingredient := range recipe.Ingredients {
+			inventory := inventoryByID[ingredient.InventoryID]
+			if inventory == nil {
+				continue
+			}
+
+			actualPrice := utils.CalculateActualPrice(inventory.PurchasePrice, float64(inventory.YieldPercentage))
+			pricePerUnit := actualPrice / inventory.PurchaseQuantity
+			newCost += pricePerUnit * float64(ingredient.Quantity)
+		}
+
+		if err := s.recipeRepo.UpdateCost(ctx, recipe.ID, newCost); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (s *service) DeleteByID(ctx context.Context, id string) error {

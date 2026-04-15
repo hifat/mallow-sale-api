@@ -284,6 +284,69 @@ func (r *mongoRepository) UpdateByID(ctx context.Context, id string, req *recipe
 	return nil
 }
 
+func (r *mongoRepository) FindByInventoryID(ctx context.Context, inventoryID string) ([]recipeModule.Response, error) {
+	filter := bson.M{"ingredients.inventory_id": database.MustObjectIDFromHex(inventoryID)}
+
+	recipes := make([]recipeModule.Entity, 0)
+	cursor, err := r.db.Collection("recipes").Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var recipe recipeModule.Entity
+		if err := cursor.Decode(&recipe); err != nil {
+			return nil, err
+		}
+		recipes = append(recipes, recipe)
+	}
+
+	res := make([]recipeModule.Response, 0, len(recipes))
+	for _, recipe := range recipes {
+		ingredients := make([]recipeModule.IngredientPrototype, 0, len(recipe.Ingredients))
+		for _, ingredient := range recipe.Ingredients {
+			ingredients = append(ingredients, recipeModule.IngredientPrototype{
+				InventoryID: ingredient.InventoryID.Hex(),
+				Quantity:    ingredient.Quantity,
+				Unit: usageUnitModule.Prototype{
+					Code: ingredient.Unit.Code,
+					Name: ingredient.Unit.Name,
+				},
+			})
+		}
+
+		res = append(res, recipeModule.Response{
+			Prototype: recipeModule.Prototype{
+				ID:              recipe.ID.Hex(),
+				Name:            recipe.Name,
+				CostPercentage:  recipe.CostPercentage,
+				OtherPercentage: recipe.OtherPercentage,
+				Price:           recipe.Price,
+				Cost:            recipe.Cost,
+				LinemanPrice:    recipe.LinemanPrice,
+				GrabPrice:       recipe.GrabPrice,
+				RecipeType: recipeModule.RecipeTypePrototype{
+					Code: recipe.RecipeType.Code,
+					Name: recipe.RecipeType.Name,
+				},
+				Ingredients: ingredients,
+				CreatedAt:   &recipe.CreatedAt,
+				UpdatedAt:   &recipe.UpdatedAt,
+			},
+		})
+	}
+
+	return res, nil
+}
+
+func (r *mongoRepository) UpdateCost(ctx context.Context, id string, cost float64) error {
+	filter := bson.M{"_id": database.MustObjectIDFromHex(id)}
+	update := bson.M{"$set": bson.M{"cost_with_other": cost, "updated_at": time.Now()}}
+	_, err := r.db.Collection("recipes").UpdateOne(ctx, filter, update)
+	return err
+}
+
 func (r *mongoRepository) DeleteByID(ctx context.Context, id string) error {
 	filter := bson.M{"_id": database.MustObjectIDFromHex(id)}
 	_, err := r.db.Collection("recipes").DeleteOne(ctx, filter)

@@ -7,7 +7,7 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 )
 
-//go:generate mockgen -source=./repository.go -destination=./repository/mock/repository.go -package=mockRecipeRepository
+//go:generate mockgen -source=./domain.go -destination=./repository/mock/repository.go -package=mockRecipeRepository
 type IRepository interface {
 	Create(ctx context.Context, recipe *Request) error
 	Find(ctx context.Context, query *QueryReq) ([]Response, error)
@@ -17,6 +17,8 @@ type IRepository interface {
 	DeleteByID(ctx context.Context, id string) error
 	Count(ctx context.Context) (int64, error)
 	UpdateNoBatch(ctx context.Context, reqs []UpdateOrderNoRequest) error
+	FindByInventoryID(ctx context.Context, inventoryID string) ([]Response, error)
+	UpdateCost(ctx context.Context, id string, cost float64) error
 }
 
 type IService interface {
