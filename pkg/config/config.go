@@ -66,7 +66,7 @@ func LoadConfig(path string) (*Config, error) {
 	viper.SetConfigType("env")
 
 	if err := viper.ReadInConfig(); err != nil {
-		log.Printf("No .env file found, using environment variables")
+		log.Printf("No .env file found, using environment variables: %s", err)
 	}
 
 	viper.AutomaticEnv()
