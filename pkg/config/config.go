@@ -48,13 +48,19 @@ type Google struct {
 	ClientID string
 }
 
+type GRPCStorage struct {
+	Host   string
+	APIKey string
+}
+
 type Config struct {
-	App       App
-	DB        DB
-	GRPC      GRPC
-	Auth      Auth
-	BLLReader BLLReader
-	Google    Google
+	App         App
+	DB          DB
+	GRPC        GRPC
+	Auth        Auth
+	BLLReader   BLLReader
+	Google      Google
+	GRPCStorage GRPCStorage
 }
 
 func LoadConfig(path string) (*Config, error) {
@@ -106,6 +112,10 @@ func LoadConfig(path string) (*Config, error) {
 		},
 		Google: Google{
 			ClientID: viper.GetString("GOOGLE_CLIENT_ID"),
+		},
+		GRPCStorage: GRPCStorage{
+			Host:   viper.GetString("GRPC_STORAGE_HOST"),
+			APIKey: viper.GetString("GRPC_STORAGE_API_KEY"),
 		},
 	}
 
