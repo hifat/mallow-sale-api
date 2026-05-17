@@ -42,7 +42,7 @@ func (r *mongoRepository) Create(ctx context.Context, req *stockModule.Request) 
 	if err != nil {
 		return "", err
 	}
-	
+
 	// Ensure we retrieve the auto-generated ID properly.
 	var idStr string
 	if oid, ok := res.InsertedID.(primitive.ObjectID); ok {

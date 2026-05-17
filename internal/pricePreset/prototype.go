@@ -7,10 +7,10 @@ import (
 )
 
 type PricePrototype struct {
-	ID        string     `json:"id"`
-	StockID   string     `json:"stockID"`
-	Price     float64    `json:"price"`
-	CreatedAt time.Time  `json:"createdAt"`
+	ID        string    `json:"id"`
+	StockID   string    `json:"stockID"`
+	Price     float64   `json:"price"`
+	CreatedAt time.Time `json:"createdAt"`
 }
 
 type Prototype struct {

@@ -13,8 +13,8 @@ import (
 
 const (
 	// Per-IP: 20 requests per second, burst of 40
-	rateLimitPerIP  = 20
-	burstPerIP      = 40
+	rateLimitPerIP = 20
+	burstPerIP     = 40
 	// Global: 500 requests per second, burst of 1000
 	rateLimitGlobal = 500
 	burstGlobal     = 1000
@@ -28,9 +28,9 @@ type visitor struct {
 }
 
 type rateLimiter struct {
-	mu        sync.Mutex
-	visitors  map[string]*visitor
-	global    *rate.Limiter
+	mu       sync.Mutex
+	visitors map[string]*visitor
+	global   *rate.Limiter
 }
 
 func newRateLimiter() *rateLimiter {

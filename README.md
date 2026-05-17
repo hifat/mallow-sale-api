@@ -4,6 +4,10 @@
 
 Mallow Sale API is a Go-based REST API service for managing recipes and inventory. It provides comprehensive CRUD operations for recipe management with MongoDB as the database backend.
 
+## Requirement
+
+- **Go 1.23+** — requires loop variable capture fix ([spec change](https://go.dev/blog/loopvar-preview))
+
 ## Tech Stack
 
 - **Language**: Go

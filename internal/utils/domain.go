@@ -8,3 +8,7 @@ type QueryReq struct {
 	Order  string `form:"order" json:"order" default:"desc"`
 	Fields string `form:"fields" json:"fields"`
 }
+
+type IRepository interface {
+	NewID() string
+}

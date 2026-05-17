@@ -1,0 +1,7 @@
+package purchaseSupplierEvidenceTypeModule
+
+type EnumPurchaseSupplierEvidenceTypeCode string
+
+const EnumPurchaseSupplierEvidenceTypeCodeReceipt EnumPurchaseSupplierEvidenceTypeCode = "RECEIPT"
+const EnumPurchaseSupplierEvidenceTypeCodeSlip EnumPurchaseSupplierEvidenceTypeCode = "SLIP"
+const EnumPurchaseSupplierEvidenceTypeCodeOther EnumPurchaseSupplierEvidenceTypeCode = "OTHER"
