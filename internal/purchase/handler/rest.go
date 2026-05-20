@@ -3,6 +3,7 @@ package purchaseHandler
 import (
 	"github.com/gin-gonic/gin"
 	purchaseModule "github.com/hifat/mallow-sale-api/internal/purchase"
+	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 )
 
@@ -20,7 +21,7 @@ func NewRest(purchaseService purchaseModule.IService) *Rest {
 // @Accept 		json
 // @Produce 	json
 // @Param 		purchase body purchaseModule.CreatePurchaseRequest true "Created purchase data"
-// @Success 	201 {object} handling.ResponseItem[any]
+// @Success 	201 {object} handling.ResponseItem[purchaseModule.CreatePurchaseRequest]
 // @Failure 	400 {object} handling.ErrorResponse
 // @Failure 	404 {object} handling.ErrorResponse
 // @Failure 	500 {object} handling.ErrorResponse
@@ -32,13 +33,38 @@ func (r *Rest) Create(c *gin.Context) {
 		return
 	}
 
-	err := r.purchaseService.Create(c.Request.Context(), &req)
+	res, err := r.purchaseService.Create(c.Request.Context(), &req)
 	if err != nil {
 		handling.ResponseErr(c, err)
 		return
 	}
 
-	handling.ResponseSuccess(c, nil)
+	handling.ResponseCreated(c, *res)
+}
+
+// @Summary 	Find Purchases
+// @security 	BearerAuth
+// @Tags 		purchase
+// @Accept 		json
+// @Produce 	json
+// @Param 		query query utilsModule.QueryReq false "Query parameters"
+// @Success 	200 {object} handling.ResponseItems[purchaseModule.Response]
+// @Failure 	500 {object} handling.ErrorResponse
+// @Router 		/purchases [get]
+func (r *Rest) Find(c *gin.Context) {
+	var query utilsModule.QueryReq
+	if err := c.ShouldBindQuery(&query); err != nil {
+		handling.ResponseFormErr(c, err)
+		return
+	}
+
+	res, err := r.purchaseService.Find(c.Request.Context(), &query)
+	if err != nil {
+		handling.ResponseErr(c, err)
+		return
+	}
+
+	handling.ResponseSuccess(c, *res)
 }
 
 // @Summary 	Find Purchase by ID
@@ -71,7 +97,7 @@ func (r *Rest) FindByID(c *gin.Context) {
 // @Produce 	json
 // @Param 		id path string true "purchase ID"
 // @Param 		purchase body purchaseModule.CreatePurchaseRequest true "Updated purchase data"
-// @Success 	200 {object} handling.ResponseItem[any]
+// @Success 	200 {object} handling.ResponseItem[purchaseModule.CreatePurchaseRequest]
 // @Failure 	400 {object} handling.ErrorResponse
 // @Failure 	404 {object} handling.ErrorResponse
 // @Failure 	500 {object} handling.ErrorResponse
@@ -85,13 +111,13 @@ func (r *Rest) UpdateByID(c *gin.Context) {
 		return
 	}
 
-	err := r.purchaseService.UpdateByID(c.Request.Context(), id, &req)
+	res, err := r.purchaseService.UpdateByID(c.Request.Context(), id, &req)
 	if err != nil {
 		handling.ResponseErr(c, err)
 		return
 	}
 
-	handling.ResponseSuccess(c, nil)
+	handling.ResponseSuccess(c, *res)
 }
 
 // @Summary 	Delete Purchase by ID
@@ -114,5 +140,5 @@ func (r *Rest) DeleteByID(c *gin.Context) {
 		return
 	}
 
-	handling.ResponseSuccess(c, nil)
+	handling.ResponseSuccess(c, gin.H{"message": "Deleted successfully"})
 }

@@ -8,6 +8,8 @@ import (
 	purchaseSupplierEvidenceModule "github.com/hifat/mallow-sale-api/internal/purchase/supplier/evidence"
 	purchaseSupplierOrderModule "github.com/hifat/mallow-sale-api/internal/purchase/supplier/order"
 	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
+	"github.com/hifat/mallow-sale-api/pkg/handling"
+	"github.com/hifat/mallow-sale-api/pkg/logger"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -17,6 +19,7 @@ type service struct {
 	supplierOrderRepo    purchaseSupplierOrderModule.IRepository
 	supplierEvidenceRepo purchaseSupplierEvidenceModule.IRepository
 	utilsRepo            utilsModule.IRepository
+	logger               logger.ILogger
 }
 
 func New(
@@ -25,6 +28,7 @@ func New(
 	supplierOrderRepo purchaseSupplierOrderModule.IRepository,
 	supplierEvidenceRepo purchaseSupplierEvidenceModule.IRepository,
 	utilsRepo utilsModule.IRepository,
+	logger logger.ILogger,
 ) purchaseModule.IService {
 	return &service{
 		repo:                 repo,
@@ -32,16 +36,17 @@ func New(
 		supplierOrderRepo:    supplierOrderRepo,
 		supplierEvidenceRepo: supplierEvidenceRepo,
 		utilsRepo:            utilsRepo,
+		logger:               logger,
 	}
 }
 
-func (s *service) Create(ctx context.Context, req *purchaseModule.CreatePurchaseRequest) error {
+func (s *service) Create(ctx context.Context, req *purchaseModule.CreatePurchaseRequest) (*handling.ResponseItem[*purchaseModule.CreatePurchaseRequest], error) {
 	req.ID = s.utilsRepo.NewID()
 
-	g, ctx := errgroup.WithContext(ctx)
+	g, ctxGroup := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
-		_, err := s.repo.Create(ctx, req)
+		_, err := s.repo.Create(ctxGroup, req)
 		return err
 	})
 
@@ -69,18 +74,39 @@ func (s *service) Create(ctx context.Context, req *purchaseModule.CreatePurchase
 
 	if err := sg.Wait(); err != nil {
 		s.DeleteByID(ctx, req.ID)
-		return err
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
 	}
 
 	if err := g.Wait(); err != nil {
 		s.DeleteByID(ctx, req.ID)
-		return err
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
 	}
 
-	return nil
+	return &handling.ResponseItem[*purchaseModule.CreatePurchaseRequest]{Item: req}, nil
 }
 
-func (s *service) FindByID(ctx context.Context, id string) (*purchaseModule.Response, error) {
+func (s *service) Find(ctx context.Context, query *utilsModule.QueryReq) (*handling.ResponseItems[purchaseModule.Response], error) {
+	count, err := s.repo.Count(ctx)
+	if err != nil {
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
+	purchases, err := s.repo.Find(ctx, query)
+	if err != nil {
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
+	return &handling.ResponseItems[purchaseModule.Response]{
+		Items: purchases,
+		Meta:  handling.MetaResponse{Total: count},
+	}, nil
+}
+
+func (s *service) FindByID(ctx context.Context, id string) (*handling.ResponseItem[*purchaseModule.Response], error) {
 	g, gctx := errgroup.WithContext(ctx)
 
 	var purchase *purchaseModule.Response
@@ -98,7 +124,8 @@ func (s *service) FindByID(ctx context.Context, id string) (*purchaseModule.Resp
 	})
 
 	if err := g.Wait(); err != nil {
-		return nil, err
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
 	}
 
 	sg, sctx := errgroup.WithContext(ctx)
@@ -135,11 +162,12 @@ func (s *service) FindByID(ctx context.Context, id string) (*purchaseModule.Resp
 	}
 
 	if err := sg.Wait(); err != nil {
-		return nil, err
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
 	}
 
 	purchase.Suppliers = suppliers
-	return purchase, nil
+	return &handling.ResponseItem[*purchaseModule.Response]{Item: purchase}, nil
 }
 
 func (s *service) DeleteByID(ctx context.Context, id string) error {
@@ -160,53 +188,60 @@ func (s *service) DeleteByID(ctx context.Context, id string) error {
 		}
 	}
 
-	return s.repo.DeleteByID(ctx, id)
+	err = s.repo.DeleteByID(ctx, id)
+	if err != nil {
+		s.logger.Error(err)
+		return handling.ThrowErr(err)
+	}
+	return nil
 }
 
-func (s *service) UpdateByID(ctx context.Context, id string, req *purchaseModule.CreatePurchaseRequest) error {
+func (s *service) UpdateByID(ctx context.Context, id string, req *purchaseModule.CreatePurchaseRequest) (*handling.ResponseItem[*purchaseModule.CreatePurchaseRequest], error) {
 	if err := s.repo.UpdateByID(ctx, id, req); err != nil {
-		return err
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
 	}
 
 	suppliers, err := s.supplierRepo.FindByPurchaseID(ctx, id)
 	if err != nil {
-		return err
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
 	}
 
 	gDel, ctxDel := errgroup.WithContext(ctx)
 	gDel.SetLimit(10)
 
 	for _, supplier := range suppliers {
-		supplierID := supplier.ID
 		gDel.Go(func() error {
-			if err := s.supplierOrderRepo.DeleteBySupplierID(ctxDel, supplierID); err != nil {
+			if err := s.supplierOrderRepo.DeleteBySupplierID(ctxDel, supplier.ID); err != nil {
 				return err
 			}
 
-			return s.supplierEvidenceRepo.DeleteBySupplierID(ctxDel, supplierID)
+			return s.supplierEvidenceRepo.DeleteBySupplierID(ctxDel, supplier.ID)
 		})
 	}
 
 	if err := gDel.Wait(); err != nil {
-		return err
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
 	}
 
 	if err := s.supplierRepo.DeleteByPurchaseID(ctx, id); err != nil {
-		return err
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
 	}
 
-	g, ctx := errgroup.WithContext(ctx)
+	g, ctxGrp := errgroup.WithContext(ctx)
 	g.SetLimit(10)
 
 	for _, supplierReq := range req.Suppliers {
-		supplierReq := supplierReq
 		g.Go(func() error {
-			supplierID, err := s.supplierRepo.Create(ctx, &supplierReq, id)
+			supplierID, err := s.supplierRepo.Create(ctxGrp, &supplierReq, id)
 			if err != nil {
 				return err
 			}
 
-			sg, sctx := errgroup.WithContext(ctx)
+			sg, sctx := errgroup.WithContext(ctxGrp)
 
 			for _, orderReq := range supplierReq.Orders {
 				orderReq := orderReq
@@ -218,5 +253,11 @@ func (s *service) UpdateByID(ctx context.Context, id string, req *purchaseModule
 			return sg.Wait()
 		})
 	}
-	return g.Wait()
+
+	if err := g.Wait(); err != nil {
+		s.logger.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
+	return &handling.ResponseItem[*purchaseModule.CreatePurchaseRequest]{Item: req}, nil
 }

@@ -3,6 +3,7 @@ package purchaseRepository
 import (
 	"context"
 	"errors"
+	"strings"
 	"time"
 
 	purchaseModule "github.com/hifat/mallow-sale-api/internal/purchase"
@@ -73,4 +74,65 @@ func (r *mongoRepository) UpdateByID(ctx context.Context, id string, req *purcha
 	}
 	_, err := r.db.Collection("purchases").UpdateOne(ctx, filter, bson.M{"$set": entity})
 	return err
+}
+
+func (r *mongoRepository) Count(ctx context.Context) (int64, error) {
+	return r.db.Collection("purchases").CountDocuments(ctx, bson.M{})
+}
+
+func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq) ([]purchaseModule.Response, error) {
+	pipeline := mongo.Pipeline{}
+
+	if query.Sort != "" && query.Order != "" {
+		order := 1
+		if strings.ToLower(query.Order) == "desc" {
+			order = -1
+		}
+		pipeline = append(pipeline, bson.D{{Key: "$sort", Value: bson.M{query.Sort: order}}})
+	}
+
+	if query.Page > 0 && query.Limit > 0 {
+		skip := int64((query.Page - 1) * query.Limit)
+		pipeline = append(pipeline, bson.D{{Key: "$skip", Value: skip}})
+		pipeline = append(pipeline, bson.D{{Key: "$limit", Value: int64(query.Limit)}})
+	}
+
+	if query.Fields != "" {
+		fields := strings.Split(query.Fields, ",")
+		projection := bson.M{}
+		for _, field := range fields {
+			projection[field] = 1
+		}
+		pipeline = append(pipeline, bson.D{{Key: "$project", Value: projection}})
+	}
+
+	if len(pipeline) == 0 {
+		pipeline = append(pipeline, bson.D{{Key: "$match", Value: bson.M{}}})
+	}
+
+	cursor, err := r.db.Collection("purchases").Aggregate(ctx, pipeline, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var entities []purchaseModule.Entity
+	for cursor.Next(ctx) {
+		var entity purchaseModule.Entity
+		if err := cursor.Decode(&entity); err != nil {
+			return nil, err
+		}
+		entities = append(entities, entity)
+	}
+
+	res := make([]purchaseModule.Response, 0, len(entities))
+	for _, entity := range entities {
+		res = append(res, purchaseModule.Response{
+			ID:                 entity.ID.Hex(),
+			PurchaseStatusCode: entity.PurchaseStatusCode,
+			CreatedAt:          entity.CreatedAt,
+			UpdatedAt:          entity.UpdatedAt,
+		})
+	}
+	return res, nil
 }

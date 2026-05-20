@@ -15,6 +15,7 @@ import (
 	"github.com/hifat/mallow-sale-api/internal/purchase/supplier/repository"
 	"github.com/hifat/mallow-sale-api/internal/utils/repository"
 	"github.com/hifat/mallow-sale-api/pkg/config"
+	"github.com/hifat/mallow-sale-api/pkg/logger"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -26,7 +27,8 @@ func Init(cfg *config.Config, db *mongo.Database) *purchaseHandler.Handler {
 	purchaseSupplierOrderModuleIRepository := purchaseSupplierOrderRepository.NewMongo(db)
 	purchaseSupplierEvidenceModuleIRepository := purchaseSupplierEvidenceRepository.NewMongo(db)
 	utilsModuleIRepository := utilsRepository.NewMongo()
-	iService := purchaseService.New(iRepository, purchaseSupplierModuleIRepository, purchaseSupplierOrderModuleIRepository, purchaseSupplierEvidenceModuleIRepository, utilsModuleIRepository)
+	iLogger := logger.New()
+	iService := purchaseService.New(iRepository, purchaseSupplierModuleIRepository, purchaseSupplierOrderModuleIRepository, purchaseSupplierEvidenceModuleIRepository, utilsModuleIRepository, iLogger)
 	rest := purchaseHandler.NewRest(iService)
 	handler := purchaseHandler.New(rest)
 	return handler

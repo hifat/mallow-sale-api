@@ -13,6 +13,7 @@ import (
 	purchaseSupplierRepository "github.com/hifat/mallow-sale-api/internal/purchase/supplier/repository"
 	utilsRepository "github.com/hifat/mallow-sale-api/internal/utils/repository"
 	"github.com/hifat/mallow-sale-api/pkg/config"
+	"github.com/hifat/mallow-sale-api/pkg/logger"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -26,6 +27,7 @@ func Init(cfg *config.Config, db *mongo.Database) *purchaseHandler.Handler {
 		utilsRepository.NewMongo,
 
 		// Service
+		logger.New,
 		purchaseService.New,
 
 		// Handler
