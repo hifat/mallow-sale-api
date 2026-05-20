@@ -22,12 +22,12 @@ func NewMongo(db *mongo.Database) purchaseSupplierModule.IRepository {
 
 func (r *mongoRepository) Create(ctx context.Context, req *purchaseSupplierModule.CreateSupplierRequest, purchaseID string) (string, error) {
 	entity := &purchaseSupplierModule.Entity{
-		ID:                 database.MustObjectIDFromHex(req.PurchaseSupplierID),
-		PurchaseID:         database.MustObjectIDFromHex(purchaseID),
-		SupplierID:         database.MustObjectIDFromHex(req.SupplierID),
-		SupplierName:       req.SupplierName,
-		PurchaseStatusCode: req.Status,
-		PaymentTypeCode:    req.PaymentType,
+		ID:              database.MustObjectIDFromHex(req.PurchaseSupplierID),
+		PurchaseID:      database.MustObjectIDFromHex(purchaseID),
+		SupplierID:      database.MustObjectIDFromHex(req.SupplierID),
+		SupplierName:    req.SupplierName,
+		StatusCode:      req.StatusCode,
+		PaymentTypeCode: req.PaymentType,
 		Base: utilsModule.Base{
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
@@ -38,12 +38,14 @@ func (r *mongoRepository) Create(ctx context.Context, req *purchaseSupplierModul
 	if err != nil {
 		return "", err
 	}
+
 	return res.InsertedID.(primitive.ObjectID).Hex(), nil
 }
 
 func (r *mongoRepository) DeleteByPurchaseID(ctx context.Context, purchaseID string) error {
 	filter := bson.M{"purchase_id": database.MustObjectIDFromHex(purchaseID)}
 	_, err := r.db.Collection("purchase_suppliers").DeleteMany(ctx, filter)
+
 	return err
 }
 
@@ -63,14 +65,14 @@ func (r *mongoRepository) FindByPurchaseID(ctx context.Context, purchaseID strin
 	res := make([]purchaseSupplierModule.Response, 0, len(entities))
 	for _, entity := range entities {
 		res = append(res, purchaseSupplierModule.Response{
-			ID:                 entity.ID.Hex(),
-			PurchaseID:         entity.PurchaseID.Hex(),
-			SupplierID:         entity.SupplierID.Hex(),
-			SupplierName:       entity.SupplierName,
-			PurchaseStatusCode: entity.PurchaseStatusCode,
-			PaymentTypeCode:    entity.PaymentTypeCode,
-			CreatedAt:          entity.CreatedAt,
-			UpdatedAt:          entity.UpdatedAt,
+			ID:              entity.ID.Hex(),
+			PurchaseID:      entity.PurchaseID.Hex(),
+			SupplierID:      entity.SupplierID.Hex(),
+			SupplierName:    entity.SupplierName,
+			StatusCode:      entity.StatusCode,
+			PaymentTypeCode: entity.PaymentTypeCode,
+			CreatedAt:       entity.CreatedAt,
+			UpdatedAt:       entity.UpdatedAt,
 		})
 	}
 	return res, nil

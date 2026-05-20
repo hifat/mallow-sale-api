@@ -27,7 +27,7 @@ func (r *mongoRepository) Create(ctx context.Context, req *purchaseSupplierOrder
 		InventoryName:      req.InventoryName,
 		Quantity:           req.Quantity,
 		UsageUnitCode:      req.UsageUnitCode,
-		PurchaseStatusCode: req.Status,
+		StatusCode:         req.StatusCode,
 		Base: utilsModule.Base{
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
@@ -72,7 +72,7 @@ func (r *mongoRepository) FindBySupplierID(ctx context.Context, supplierID strin
 			InventoryName:      entity.InventoryName,
 			Quantity:           entity.Quantity,
 			UsageUnitCode:      entity.UsageUnitCode,
-			PurchaseStatusCode: entity.PurchaseStatusCode,
+			StatusCode:         entity.StatusCode,
 			CreatedAt:          entity.CreatedAt,
 			UpdatedAt:          entity.UpdatedAt,
 		})

@@ -10,10 +10,10 @@ import (
 type Entity struct {
 	utilsModule.Base `bson:"inline"`
 
-	ID                 primitive.ObjectID                          `bson:"_id,omitempty" json:"id"`
-	PurchaseID         primitive.ObjectID                          `bson:"purchase_id" json:"purchaseID"`
-	SupplierID         primitive.ObjectID                          `bson:"supplier_id" json:"supplierID"`
-	SupplierName       string                                      `bson:"supplier_name" json:"supplierName"`
-	PurchaseStatusCode purchaseStatusModule.EnumPurchaseStatusCode `bson:"purchase_status_code" json:"purchaseStatusCode"`
-	PaymentTypeCode    paymentTypeModule.EnumPaymentTypeCode       `bson:"payment_type_code" json:"paymentTypeCode"`
+	ID              primitive.ObjectID                          `bson:"_id,omitempty" json:"id"`
+	PurchaseID      primitive.ObjectID                          `bson:"purchase_id" json:"purchaseID"`
+	SupplierID      primitive.ObjectID                          `bson:"supplier_id" json:"supplierID"`
+	SupplierName    string                                      `bson:"supplier_name" json:"supplierName"`
+	StatusCode      purchaseStatusModule.EnumPurchaseStatusCode `bson:"status_code" json:"statusCode"`
+	PaymentTypeCode paymentTypeModule.EnumPaymentTypeCode       `bson:"payment_type_code" json:"paymentTypeCode"`
 }

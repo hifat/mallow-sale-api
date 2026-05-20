@@ -37,22 +37,24 @@ func New(
 
 func (s *service) Create(ctx context.Context, req *purchaseModule.CreatePurchaseRequest) error {
 	req.ID = s.utilsRepo.NewID()
-	purchaseID, err := s.repo.Create(ctx, req)
-	if err != nil {
-		return err
-	}
 
 	g, ctx := errgroup.WithContext(ctx)
+
+	g.Go(func() error {
+		_, err := s.repo.Create(ctx, req)
+		return err
+	})
+
+	sg, sctx := errgroup.WithContext(ctx)
+	sg.SetLimit(10)
+
 	for _, supplierReq := range req.Suppliers {
-		g.Go(func() error {
+		sg.Go(func() error {
 			supplierReq.PurchaseSupplierID = s.utilsRepo.NewID()
-			supplierID, err := s.supplierRepo.Create(ctx, &supplierReq, purchaseID)
+			supplierID, err := s.supplierRepo.Create(sctx, &supplierReq, req.ID)
 			if err != nil {
 				return err
 			}
-
-			sg, sctx := errgroup.WithContext(ctx)
-			sg.SetLimit(10)
 
 			for _, orderReq := range supplierReq.Orders {
 				sg.Go(func() error {
@@ -61,52 +63,78 @@ func (s *service) Create(ctx context.Context, req *purchaseModule.CreatePurchase
 				})
 			}
 
-			for _, evidenceReq := range supplierReq.Evidences {
-				sg.Go(func() error {
-					evidenceReq.PurchaseSupplierID = supplierReq.PurchaseSupplierID
-					return s.supplierEvidenceRepo.Create(sctx, &evidenceReq, supplierID)
-				})
-			}
-
-			return sg.Wait()
+			return nil
 		})
 	}
 
-	return g.Wait()
+	if err := sg.Wait(); err != nil {
+		s.DeleteByID(ctx, req.ID)
+		return err
+	}
+
+	if err := g.Wait(); err != nil {
+		s.DeleteByID(ctx, req.ID)
+		return err
+	}
+
+	return nil
 }
 
 func (s *service) FindByID(ctx context.Context, id string) (*purchaseModule.Response, error) {
-	purchase, err := s.repo.FindByID(ctx, id)
-	if err != nil {
+	g, gctx := errgroup.WithContext(ctx)
+
+	var purchase *purchaseModule.Response
+	g.Go(func() error {
+		var err error
+		purchase, err = s.repo.FindByID(gctx, id)
+		return err
+	})
+
+	var suppliers []purchaseSupplierModule.Response
+	g.Go(func() error {
+		var err error
+		suppliers, err = s.supplierRepo.FindByPurchaseID(gctx, id)
+		return err
+	})
+
+	if err := g.Wait(); err != nil {
 		return nil, err
 	}
 
-	suppliers, err := s.supplierRepo.FindByPurchaseID(ctx, purchase.ID)
-	if err != nil {
-		return nil, err
-	}
+	sg, sctx := errgroup.WithContext(ctx)
+	sg.SetLimit(10)
 
-	g, ctx := errgroup.WithContext(ctx)
 	for i := range suppliers {
-		i := i
-		g.Go(func() error {
-			orders, err := s.supplierOrderRepo.FindBySupplierID(ctx, suppliers[i].ID)
-			if err != nil {
-				return err
-			}
-			suppliers[i].Orders = orders
+		sg.Go(func() error {
+			ig, ictx := errgroup.WithContext(sctx)
+			ig.SetLimit(10)
 
-			evidences, err := s.supplierEvidenceRepo.FindBySupplierID(ctx, suppliers[i].ID)
-			if err != nil {
+			var orders []purchaseSupplierOrderModule.Response
+			ig.Go(func() error {
+				var err error
+				orders, err = s.supplierOrderRepo.FindBySupplierID(ictx, suppliers[i].ID)
+				return err
+			})
+
+			var evidences []purchaseSupplierEvidenceModule.Response
+			ig.Go(func() error {
+				var err error
+				evidences, err = s.supplierEvidenceRepo.FindBySupplierID(ictx, suppliers[i].ID)
+				return err
+			})
+
+			if err := ig.Wait(); err != nil {
 				return err
 			}
+
+			suppliers[i].Orders = orders
 			suppliers[i].Evidences = evidences
 
 			return nil
 		})
 	}
 
-	if err := g.Wait(); err != nil {
+	if err := sg.Wait(); err != nil {
 		return nil, err
 	}
 
@@ -141,23 +169,35 @@ func (s *service) UpdateByID(ctx context.Context, id string, req *purchaseModule
 	}
 
 	suppliers, err := s.supplierRepo.FindByPurchaseID(ctx, id)
-	if err == nil {
-		gDel, ctxDel := errgroup.WithContext(ctx)
-		for _, supplier := range suppliers {
-			supplierID := supplier.ID
-			gDel.Go(func() error {
-				if err := s.supplierOrderRepo.DeleteBySupplierID(ctxDel, supplierID); err != nil {
-					return err
-				}
-				return s.supplierEvidenceRepo.DeleteBySupplierID(ctxDel, supplierID)
-			})
-		}
-		if err := gDel.Wait(); err == nil {
-			_ = s.supplierRepo.DeleteByPurchaseID(ctx, id)
-		}
+	if err != nil {
+		return err
+	}
+
+	gDel, ctxDel := errgroup.WithContext(ctx)
+	gDel.SetLimit(10)
+
+	for _, supplier := range suppliers {
+		supplierID := supplier.ID
+		gDel.Go(func() error {
+			if err := s.supplierOrderRepo.DeleteBySupplierID(ctxDel, supplierID); err != nil {
+				return err
+			}
+
+			return s.supplierEvidenceRepo.DeleteBySupplierID(ctxDel, supplierID)
+		})
+	}
+
+	if err := gDel.Wait(); err != nil {
+		return err
+	}
+
+	if err := s.supplierRepo.DeleteByPurchaseID(ctx, id); err != nil {
+		return err
 	}
 
 	g, ctx := errgroup.WithContext(ctx)
+	g.SetLimit(10)
+
 	for _, supplierReq := range req.Suppliers {
 		supplierReq := supplierReq
 		g.Go(func() error {
@@ -172,13 +212,6 @@ func (s *service) UpdateByID(ctx context.Context, id string, req *purchaseModule
 				orderReq := orderReq
 				sg.Go(func() error {
 					return s.supplierOrderRepo.Create(sctx, &orderReq, supplierID)
-				})
-			}
-
-			for _, evidenceReq := range supplierReq.Evidences {
-				evidenceReq := evidenceReq
-				sg.Go(func() error {
-					return s.supplierEvidenceRepo.Create(sctx, &evidenceReq, supplierID)
 				})
 			}
 

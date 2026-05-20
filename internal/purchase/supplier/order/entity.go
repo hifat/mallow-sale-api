@@ -14,6 +14,6 @@ type Entity struct {
 	InventoryID        primitive.ObjectID                          `bson:"inventory_id" json:"inventoryID"`
 	InventoryName      string                                      `bson:"inventory_name" json:"inventoryName"`
 	Quantity           float64                                     `bson:"quantity" json:"quantity"`
-	UsageUnitCode      string                                      `bson:"usage_unit_code" json:"usage_unit_code"`
-	PurchaseStatusCode purchaseStatusModule.EnumPurchaseStatusCode `bson:"purchase_status_code" json:"purchaseStatusCode"`
+	UsageUnitCode      string                                      `bson:"usage_unit_code" json:"usageUnitCode"`
+	StatusCode         purchaseStatusModule.EnumPurchaseStatusCode `bson:"status_code" json:"statusCode"`
 }

@@ -9,9 +9,3 @@ type IRepository interface {
 	DeleteByPurchaseID(ctx context.Context, purchaseID string) error
 	FindByPurchaseID(ctx context.Context, purchaseID string) ([]Response, error)
 }
-
-type IService interface {
-	Create(ctx context.Context, req *CreateSupplierRequest, purchaseID string) error
-	DeleteByPurchaseID(ctx context.Context, purchaseID string) error
-	FindByPurchaseID(ctx context.Context, purchaseID string) ([]Response, error)
-}

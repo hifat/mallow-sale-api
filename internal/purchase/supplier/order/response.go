@@ -13,7 +13,7 @@ type Response struct {
 	InventoryName      string                                      `json:"inventoryName"`
 	Quantity           float64                                     `json:"quantity"`
 	UsageUnitCode      string                                      `json:"usageUnitCode"`
-	PurchaseStatusCode purchaseStatusModule.EnumPurchaseStatusCode `json:"purchaseStatusCode"`
+	StatusCode         purchaseStatusModule.EnumPurchaseStatusCode `json:"statusCode"`
 	CreatedAt          time.Time                                   `json:"createdAt"`
 	UpdatedAt          time.Time                                   `json:"updatedAt"`
 }
