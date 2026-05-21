@@ -97,6 +97,51 @@ definitions:
       yieldPercentage:
         type: number
     type: object
+  github_com_hifat_mallow-sale-api_internal_inventory.UpdatePresetPriceReq:
+    properties:
+      presetPriceID:
+        type: string
+    required:
+    - presetPriceID
+    type: object
+  github_com_hifat_mallow-sale-api_internal_paymentType.EnumPaymentTypeCode:
+    enum:
+    - CASH
+    - E_PAYMENT
+    - CREDIT_CARD
+    type: string
+    x-enum-varnames:
+    - EnumPaymentTypeCodeCash
+    - EnumPaymentTypeCodeEPayment
+    - EnumPaymentTypeCodeCreditCard
+  github_com_hifat_mallow-sale-api_internal_pricePreset.PricePrototype:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      price:
+        type: number
+      stockID:
+        type: string
+    type: object
+  github_com_hifat_mallow-sale-api_internal_pricePreset.Response:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      inventory:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_inventory.Prototype'
+      inventoryID:
+        type: string
+      prices:
+        items:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_pricePreset.PricePrototype'
+        type: array
+      updatedAt:
+        type: string
+    type: object
   github_com_hifat_mallow-sale-api_internal_promotion.PromotionTypeRequest:
     properties:
       code:
@@ -160,6 +205,169 @@ definitions:
       type:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_promotion.PromotionTypeResponse'
       updatedAt:
+        type: string
+    type: object
+  github_com_hifat_mallow-sale-api_internal_purchase.CreatePurchaseRequest:
+    properties:
+      suppliers:
+        items:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_purchase_supplier.CreateSupplierRequest'
+        type: array
+    required:
+    - suppliers
+    type: object
+  github_com_hifat_mallow-sale-api_internal_purchase.Response:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      purchaseStatusCode:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_purchase_status.EnumPurchaseStatusCode'
+      suppliers:
+        items:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_purchase_supplier.Response'
+        type: array
+      updatedAt:
+        type: string
+    type: object
+  github_com_hifat_mallow-sale-api_internal_purchase_status.EnumPurchaseStatusCode:
+    enum:
+    - PENDING
+    - IN_PROGRESS
+    - SUCCESS
+    - CANCEL
+    type: string
+    x-enum-varnames:
+    - EnumPurchaseStatusCodePending
+    - EnumPurchaseStatusCodeInProgress
+    - EnumPurchaseStatusCodeSuccess
+    - EnumPurchaseStatusCodeCancel
+  github_com_hifat_mallow-sale-api_internal_purchase_supplier.CreateSupplierRequest:
+    properties:
+      orders:
+        items:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_purchase_supplier_order.CreateOrderRequest'
+        type: array
+      paymentType:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_paymentType.EnumPaymentTypeCode'
+      statusCode:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_purchase_status.EnumPurchaseStatusCode'
+      supplierId:
+        type: string
+      supplierName:
+        type: string
+    required:
+    - orders
+    - paymentType
+    - statusCode
+    - supplierId
+    - supplierName
+    type: object
+  github_com_hifat_mallow-sale-api_internal_purchase_supplier.Response:
+    properties:
+      createdAt:
+        type: string
+      evidences:
+        items:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_purchase_supplier_evidence.Response'
+        type: array
+      id:
+        type: string
+      orders:
+        items:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_purchase_supplier_order.Response'
+        type: array
+      paymentTypeCode:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_paymentType.EnumPaymentTypeCode'
+      purchaseID:
+        type: string
+      statusCode:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_purchase_status.EnumPurchaseStatusCode'
+      supplierID:
+        type: string
+      supplierName:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  github_com_hifat_mallow-sale-api_internal_purchase_supplier_evidence.Response:
+    properties:
+      createdAt:
+        type: string
+      fileName:
+        type: string
+      fileRename:
+        type: string
+      fileStatusCode:
+        type: string
+      id:
+        type: string
+      path:
+        type: string
+      purchaseSupplierEvidenceTypeCode:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_purchase_supplier_evidence_type.EnumPurchaseSupplierEvidenceTypeCode'
+      purchaseSupplierID:
+        type: string
+      updatedAt:
+        type: string
+      uploadedAt:
+        type: string
+    type: object
+  github_com_hifat_mallow-sale-api_internal_purchase_supplier_evidence_type.EnumPurchaseSupplierEvidenceTypeCode:
+    enum:
+    - RECEIPT
+    - SLIP
+    - OTHER
+    type: string
+    x-enum-varnames:
+    - EnumPurchaseSupplierEvidenceTypeCodeReceipt
+    - EnumPurchaseSupplierEvidenceTypeCodeSlip
+    - EnumPurchaseSupplierEvidenceTypeCodeOther
+  github_com_hifat_mallow-sale-api_internal_purchase_supplier_order.CreateOrderRequest:
+    properties:
+      inventoryID:
+        type: string
+      inventoryName:
+        type: string
+      quantity:
+        type: number
+      statusCode:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_purchase_status.EnumPurchaseStatusCode'
+      totalPrice:
+        type: number
+      unitPrice:
+        type: number
+      usageUnitCode:
+        type: string
+    required:
+    - inventoryID
+    - inventoryName
+    - quantity
+    - statusCode
+    - totalPrice
+    - unitPrice
+    - usageUnitCode
+    type: object
+  github_com_hifat_mallow-sale-api_internal_purchase_supplier_order.Response:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      inventoryID:
+        type: string
+      inventoryName:
+        type: string
+      purchaseSupplierID:
+        type: string
+      quantity:
+        type: number
+      statusCode:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_purchase_status.EnumPurchaseStatusCode'
+      updatedAt:
+        type: string
+      usageUnitCode:
         type: string
     type: object
   github_com_hifat_mallow-sale-api_internal_recipe.EnumCodeRecipeType:
@@ -623,6 +831,10 @@ definitions:
       message:
         type: string
     type: object
+  github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-any:
+    properties:
+      item: {}
+    type: object
   github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_auth_Passport:
     properties:
       item:
@@ -638,6 +850,11 @@ definitions:
       item:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_inventory.Response'
     type: object
+  github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_pricePreset_Response:
+    properties:
+      item:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_pricePreset.Response'
+    type: object
   github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_promotion_Request:
     properties:
       item:
@@ -647,6 +864,16 @@ definitions:
     properties:
       item:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_promotion.Response'
+    type: object
+  ? github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_purchase_CreatePurchaseRequest
+  : properties:
+      item:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_purchase.CreatePurchaseRequest'
+    type: object
+  github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_purchase_Response:
+    properties:
+      item:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_purchase.Response'
     type: object
   github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_recipe_Request:
     properties:
@@ -703,6 +930,11 @@ definitions:
       item:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_supplier.Response'
     type: object
+  github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-storageModule_UploadResponse:
+    properties:
+      item:
+        $ref: '#/definitions/storageModule.UploadResponse'
+    type: object
   github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_inventory_Response:
     properties:
       items:
@@ -712,11 +944,29 @@ definitions:
       meta:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse'
     type: object
+  github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_pricePreset_Response:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_pricePreset.Response'
+        type: array
+      meta:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse'
+    type: object
   github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_promotion_Response:
     properties:
       items:
         items:
           $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_promotion.Response'
+        type: array
+      meta:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse'
+    type: object
+  github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_purchase_Response:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_purchase.Response'
         type: array
       meta:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse'
@@ -801,6 +1051,11 @@ definitions:
         $ref: '#/definitions/textproto.MIMEHeader'
       size:
         type: integer
+    type: object
+  storageModule.UploadResponse:
+    properties:
+      url:
+        type: string
     type: object
   textproto.MIMEHeader:
     additionalProperties:
@@ -1037,6 +1292,123 @@ paths:
       summary: Update Inventory by ID
       tags:
       - inventory
+  /inventories/{id}/preset-price:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: inventory ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated preset price data
+        in: body
+        name: inventory
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_inventory.UpdatePresetPriceReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_inventory_Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update Purchase Price by Preset ID
+      tags:
+      - inventory
+  /price-presets:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: fields
+        type: string
+      - default: 10
+        in: query
+        name: limit
+        type: integer
+      - default: desc
+        in: query
+        name: order
+        type: string
+      - default: 1
+        in: query
+        name: page
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - default: createdAt
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_pricePreset_Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Find Price Presets
+      tags:
+      - price_preset
+  /price-presets/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: pricePresetID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_pricePreset_Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Find Price Preset by ID
+      tags:
+      - price_preset
   /promotions:
     get:
       consumes:
@@ -1220,6 +1592,189 @@ paths:
       summary: Update Promotion by ID
       tags:
       - promotion
+  /purchases:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: fields
+        type: string
+      - default: 10
+        in: query
+        name: limit
+        type: integer
+      - default: desc
+        in: query
+        name: order
+        type: string
+      - default: 1
+        in: query
+        name: page
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - default: createdAt
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_purchase_Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Find Purchases
+      tags:
+      - purchase
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Created purchase data
+        in: body
+        name: purchase
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_purchase.CreatePurchaseRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_purchase_CreatePurchaseRequest'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create Purchase
+      tags:
+      - purchase
+  /purchases/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Purchase ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete Purchase by ID
+      tags:
+      - purchase
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: purchase ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_purchase_Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Find Purchase by ID
+      tags:
+      - purchase
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: purchase ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated purchase data
+        in: body
+        name: purchase
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_purchase.CreatePurchaseRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_purchase_CreatePurchaseRequest'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update Purchase by ID
+      tags:
+      - purchase
   /recipes:
     get:
       consumes:
@@ -2360,6 +2915,41 @@ paths:
       summary: Update Supplier by ID
       tags:
       - supplier
+  /uploads:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: File to upload
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: Service code
+        in: formData
+        name: serviceCode
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-storageModule_UploadResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Upload File
+      tags:
+      - storage
 securityDefinitions:
   BearerAuth:
     description: Type "Bearer" followed by a space and JWT token.

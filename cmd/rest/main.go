@@ -105,7 +105,20 @@ func main() {
 	}
 	defer grpcConn.Close()
 
-	router.RegisterAll(v1, cfg, db, grpcConn)
+	grpcStorageConn, err := grpc.NewClient(
+		cfg.GRPCStorage.Host,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithDefaultCallOptions(
+			grpc.MaxCallRecvMsgSize(MaxContentSize),
+			grpc.MaxCallSendMsgSize(MaxContentSize),
+		),
+	)
+	if err != nil {
+		log.Printf("Warn! Failed to connect GRPC Storage: %v", err)
+	}
+	defer grpcStorageConn.Close()
+
+	router.RegisterAll(v1, cfg, db, grpcConn, grpcStorageConn)
 
 	srv := &http.Server{
 		Addr:           fmt.Sprintf(":%s", cfg.App.Port),

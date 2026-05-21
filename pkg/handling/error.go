@@ -96,6 +96,16 @@ func getErrObject(code string) ErrorResponse {
 			Message: define.MsgRateLimitExceeded,
 			Status:  http.StatusTooManyRequests,
 		},
+		define.CodeInvalidServiceCode: {
+			Code:    define.CodeInvalidServiceCode,
+			Message: define.MsgInvalidServiceCode,
+			Status:  http.StatusBadRequest,
+		},
+		define.CodeFileTooLarge: {
+			Code:    define.CodeFileTooLarge,
+			Message: define.MsgFileTooLarge,
+			Status:  http.StatusBadRequest,
+		},
 	}
 
 	errObj, ok := mapErr[code]

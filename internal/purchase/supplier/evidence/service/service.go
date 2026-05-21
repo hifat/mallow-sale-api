@@ -3,21 +3,16 @@ package purchaseSupplierEvidenceService
 import (
 	"context"
 
-	purchaseSupplierModule "github.com/hifat/mallow-sale-api/internal/purchase/supplier"
 	purchaseSupplierEvidenceModule "github.com/hifat/mallow-sale-api/internal/purchase/supplier/evidence"
-	purchaseSupplierOrderModule "github.com/hifat/mallow-sale-api/internal/purchase/supplier/order"
 	"golang.org/x/sync/errgroup"
 )
 
 type service struct {
-	repo                 purchaseSupplierEvidenceModule.IRepository
-	supplierRepo         purchaseSupplierModule.IRepository
-	supplierEvidanceRepo purchaseSupplierEvidenceModule.IRepository
-	supplierOrderRepo    purchaseSupplierOrderModule.IRepository
+	supplierEvidenceRepo purchaseSupplierEvidenceModule.IRepository
 }
 
-func New(repo purchaseSupplierEvidenceModule.IRepository) purchaseSupplierEvidenceModule.IService {
-	return &service{repo: repo}
+func New(supplierEvidenceRepo purchaseSupplierEvidenceModule.IRepository) purchaseSupplierEvidenceModule.IService {
+	return &service{supplierEvidenceRepo: supplierEvidenceRepo}
 }
 
 func (s *service) CreateMany(ctx context.Context, reqs []purchaseSupplierEvidenceModule.CreateEvidenceRequest, supplierID string) error {
@@ -26,10 +21,10 @@ func (s *service) CreateMany(ctx context.Context, reqs []purchaseSupplierEvidenc
 	}
 
 	g, ctx := errgroup.WithContext(ctx)
+	g.SetLimit(10)
 	for _, req := range reqs {
-		req := req
 		g.Go(func() error {
-			return s.supplierEvidanceRepo.Create(ctx, &req, supplierID)
+			return s.supplierEvidenceRepo.Create(ctx, &req, supplierID)
 		})
 	}
 
@@ -37,9 +32,9 @@ func (s *service) CreateMany(ctx context.Context, reqs []purchaseSupplierEvidenc
 }
 
 func (s *service) DeleteBySupplierID(ctx context.Context, supplierID string) error {
-	return s.repo.DeleteBySupplierID(ctx, supplierID)
+	return s.supplierEvidenceRepo.DeleteBySupplierID(ctx, supplierID)
 }
 
 func (s *service) FindBySupplierID(ctx context.Context, supplierID string) ([]purchaseSupplierEvidenceModule.Response, error) {
-	return s.repo.FindBySupplierID(ctx, supplierID)
+	return s.supplierEvidenceRepo.FindBySupplierID(ctx, supplierID)
 }

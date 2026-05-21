@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-func RegisterAll(r *gin.RouterGroup, cfg *config.Config, db *mongo.Database, grpcConn *grpc.ClientConn) {
+func RegisterAll(r *gin.RouterGroup, cfg *config.Config, db *mongo.Database, grpcConn *grpc.ClientConn, grpcStorageConn *grpc.ClientConn) {
 	AuthRouter(r, cfg, db)
 
 	r.GET("/health", func(c *gin.Context) {
@@ -29,4 +29,5 @@ func RegisterAll(r *gin.RouterGroup, cfg *config.Config, db *mongo.Database, grp
 	PricePreset(r, cfg, db)
 	PromotionRouter(r, cfg, db)
 	ShoppingRouter(r, cfg, db, grpcConn)
+	StorageRouter(r, cfg, grpcStorageConn)
 }

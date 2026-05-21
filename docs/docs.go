@@ -365,6 +365,192 @@ const docTemplate = `{
                 }
             }
         },
+        "/inventories/{id}/preset-price": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inventory"
+                ],
+                "summary": "Update Purchase Price by Preset ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "inventory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated preset price data",
+                        "name": "inventory",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_inventory.UpdatePresetPriceReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_inventory_Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/price-presets": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "price_preset"
+                ],
+                "summary": "Find Price Presets",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "fields",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "desc",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "createdAt",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_pricePreset_Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/price-presets/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "price_preset"
+                ],
+                "summary": "Find Price Preset by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "pricePresetID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_pricePreset_Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/promotions": {
             "get": {
                 "security": [
@@ -638,6 +824,296 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/purchases": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "purchase"
+                ],
+                "summary": "Find Purchases",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "fields",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "desc",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "createdAt",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_purchase_Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "purchase"
+                ],
+                "summary": "Create Purchase",
+                "parameters": [
+                    {
+                        "description": "Created purchase data",
+                        "name": "purchase",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_purchase.CreatePurchaseRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_purchase_CreatePurchaseRequest"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/purchases/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "purchase"
+                ],
+                "summary": "Find Purchase by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "purchase ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_purchase_Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "purchase"
+                ],
+                "summary": "Update Purchase by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "purchase ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated purchase data",
+                        "name": "purchase",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_purchase.CreatePurchaseRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_purchase_CreatePurchaseRequest"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "purchase"
+                ],
+                "summary": "Delete Purchase by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Purchase ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
                         }
                     },
                     "404": {
@@ -2455,6 +2931,61 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/uploads": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "storage"
+                ],
+                "summary": "Upload File",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "File to upload",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Service code",
+                        "name": "serviceCode",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-storageModule_UploadResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -2605,6 +3136,73 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_hifat_mallow-sale-api_internal_inventory.UpdatePresetPriceReq": {
+            "type": "object",
+            "required": [
+                "presetPriceID"
+            ],
+            "properties": {
+                "presetPriceID": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_paymentType.EnumPaymentTypeCode": {
+            "type": "string",
+            "enum": [
+                "CASH",
+                "E_PAYMENT",
+                "CREDIT_CARD"
+            ],
+            "x-enum-varnames": [
+                "EnumPaymentTypeCodeCash",
+                "EnumPaymentTypeCodeEPayment",
+                "EnumPaymentTypeCodeCreditCard"
+            ]
+        },
+        "github_com_hifat_mallow-sale-api_internal_pricePreset.PricePrototype": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "stockID": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_pricePreset.Response": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "inventory": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_inventory.Prototype"
+                },
+                "inventoryID": {
+                    "type": "string"
+                },
+                "prices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_pricePreset.PricePrototype"
+                    }
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_hifat_mallow-sale-api_internal_promotion.PromotionTypeRequest": {
             "type": "object",
             "required": [
@@ -2699,6 +3297,244 @@ const docTemplate = `{
                     "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_promotion.PromotionTypeResponse"
                 },
                 "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_purchase.CreatePurchaseRequest": {
+            "type": "object",
+            "required": [
+                "suppliers"
+            ],
+            "properties": {
+                "suppliers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_purchase_supplier.CreateSupplierRequest"
+                    }
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_purchase.Response": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "purchaseStatusCode": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_purchase_status.EnumPurchaseStatusCode"
+                },
+                "suppliers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_purchase_supplier.Response"
+                    }
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_purchase_status.EnumPurchaseStatusCode": {
+            "type": "string",
+            "enum": [
+                "PENDING",
+                "IN_PROGRESS",
+                "SUCCESS",
+                "CANCEL"
+            ],
+            "x-enum-varnames": [
+                "EnumPurchaseStatusCodePending",
+                "EnumPurchaseStatusCodeInProgress",
+                "EnumPurchaseStatusCodeSuccess",
+                "EnumPurchaseStatusCodeCancel"
+            ]
+        },
+        "github_com_hifat_mallow-sale-api_internal_purchase_supplier.CreateSupplierRequest": {
+            "type": "object",
+            "required": [
+                "orders",
+                "paymentType",
+                "statusCode",
+                "supplierId",
+                "supplierName"
+            ],
+            "properties": {
+                "orders": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_purchase_supplier_order.CreateOrderRequest"
+                    }
+                },
+                "paymentType": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_paymentType.EnumPaymentTypeCode"
+                },
+                "statusCode": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_purchase_status.EnumPurchaseStatusCode"
+                },
+                "supplierId": {
+                    "type": "string"
+                },
+                "supplierName": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_purchase_supplier.Response": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "evidences": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_purchase_supplier_evidence.Response"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "orders": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_purchase_supplier_order.Response"
+                    }
+                },
+                "paymentTypeCode": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_paymentType.EnumPaymentTypeCode"
+                },
+                "purchaseID": {
+                    "type": "string"
+                },
+                "statusCode": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_purchase_status.EnumPurchaseStatusCode"
+                },
+                "supplierID": {
+                    "type": "string"
+                },
+                "supplierName": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_purchase_supplier_evidence.Response": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "fileName": {
+                    "type": "string"
+                },
+                "fileRename": {
+                    "type": "string"
+                },
+                "fileStatusCode": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "purchaseSupplierEvidenceTypeCode": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_purchase_supplier_evidence_type.EnumPurchaseSupplierEvidenceTypeCode"
+                },
+                "purchaseSupplierID": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "uploadedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_purchase_supplier_evidence_type.EnumPurchaseSupplierEvidenceTypeCode": {
+            "type": "string",
+            "enum": [
+                "RECEIPT",
+                "SLIP",
+                "OTHER"
+            ],
+            "x-enum-varnames": [
+                "EnumPurchaseSupplierEvidenceTypeCodeReceipt",
+                "EnumPurchaseSupplierEvidenceTypeCodeSlip",
+                "EnumPurchaseSupplierEvidenceTypeCodeOther"
+            ]
+        },
+        "github_com_hifat_mallow-sale-api_internal_purchase_supplier_order.CreateOrderRequest": {
+            "type": "object",
+            "required": [
+                "inventoryID",
+                "inventoryName",
+                "quantity",
+                "statusCode",
+                "totalPrice",
+                "unitPrice",
+                "usageUnitCode"
+            ],
+            "properties": {
+                "inventoryID": {
+                    "type": "string"
+                },
+                "inventoryName": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "number"
+                },
+                "statusCode": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_purchase_status.EnumPurchaseStatusCode"
+                },
+                "totalPrice": {
+                    "type": "number"
+                },
+                "unitPrice": {
+                    "type": "number"
+                },
+                "usageUnitCode": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_internal_purchase_supplier_order.Response": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "inventoryID": {
+                    "type": "string"
+                },
+                "inventoryName": {
+                    "type": "string"
+                },
+                "purchaseSupplierID": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "number"
+                },
+                "statusCode": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_purchase_status.EnumPurchaseStatusCode"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "usageUnitCode": {
                     "type": "string"
                 }
             }
@@ -3390,6 +4226,12 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-any": {
+            "type": "object",
+            "properties": {
+                "item": {}
+            }
+        },
         "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_auth_Passport": {
             "type": "object",
             "properties": {
@@ -3414,6 +4256,14 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_pricePreset_Response": {
+            "type": "object",
+            "properties": {
+                "item": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_pricePreset.Response"
+                }
+            }
+        },
         "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_promotion_Request": {
             "type": "object",
             "properties": {
@@ -3427,6 +4277,22 @@ const docTemplate = `{
             "properties": {
                 "item": {
                     "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_promotion.Response"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_purchase_CreatePurchaseRequest": {
+            "type": "object",
+            "properties": {
+                "item": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_purchase.CreatePurchaseRequest"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_purchase_Response": {
+            "type": "object",
+            "properties": {
+                "item": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_purchase.Response"
                 }
             }
         },
@@ -3518,6 +4384,14 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-storageModule_UploadResponse": {
+            "type": "object",
+            "properties": {
+                "item": {
+                    "$ref": "#/definitions/storageModule.UploadResponse"
+                }
+            }
+        },
         "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_inventory_Response": {
             "type": "object",
             "properties": {
@@ -3532,6 +4406,20 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_pricePreset_Response": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_pricePreset.Response"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse"
+                }
+            }
+        },
         "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_promotion_Response": {
             "type": "object",
             "properties": {
@@ -3539,6 +4427,20 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_promotion.Response"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_purchase_Response": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_purchase.Response"
                     }
                 },
                 "meta": {
@@ -3669,6 +4571,14 @@ const docTemplate = `{
                 },
                 "size": {
                     "type": "integer"
+                }
+            }
+        },
+        "storageModule.UploadResponse": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": "string"
                 }
             }
         },
