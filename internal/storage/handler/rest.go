@@ -1,6 +1,8 @@
 package storageHandler
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	storageModule "github.com/hifat/mallow-sale-api/internal/storage"
 	"github.com/hifat/mallow-sale-api/pkg/handling"
@@ -28,20 +30,20 @@ func NewRest(storageService storageModule.IService) *Rest {
 func (r *Rest) Upload(c *gin.Context) {
 	header, err := c.FormFile("file")
 	if err != nil {
-		handling.ResponseErr(c, err)
+		handling.ResponseErr(c, fmt.Errorf("failed to get file: %w", err))
 		return
 	}
 
 	file, err := header.Open()
 	if err != nil {
-		handling.ResponseErr(c, err)
+		handling.ResponseErr(c, fmt.Errorf("failed to open file: %w", err))
 		return
 	}
 	defer file.Close()
 
 	fileBytes := make([]byte, header.Size)
 	if _, err := file.Read(fileBytes); err != nil {
-		handling.ResponseErr(c, err)
+		handling.ResponseErr(c, fmt.Errorf("failed to read file: %w", err))
 		return
 	}
 

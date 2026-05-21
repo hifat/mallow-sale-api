@@ -12,6 +12,7 @@ import (
 	"github.com/hifat/mallow-sale-api/internal/storage/repository"
 	"github.com/hifat/mallow-sale-api/internal/storage/service"
 	"github.com/hifat/mallow-sale-api/pkg/config"
+	"github.com/hifat/mallow-sale-api/pkg/logger"
 	"google.golang.org/grpc"
 )
 
@@ -20,9 +21,10 @@ import (
 //
 //go:generate wire ./wire.go
 func Init(cfg *config.Config, grpcConn *grpc.ClientConn) *storageHandler.Handler {
+	iLogger := logger.New()
 	iGrpcRepository := storagerepo.NewGrpcRepository(cfg, grpcConn)
 	iHelper := storageHelper.New(cfg)
-	iService := storagesvc.New(cfg, iGrpcRepository, iHelper)
+	iService := storagesvc.New(cfg, iLogger, iGrpcRepository, iHelper)
 	rest := storageHandler.NewRest(iService)
 	handler := storageHandler.New(rest)
 	return handler
