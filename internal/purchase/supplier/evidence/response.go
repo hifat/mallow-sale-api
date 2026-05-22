@@ -12,8 +12,7 @@ type Response struct {
 	PurchaseSupplierID               string                                                                  `json:"purchaseSupplierID"`
 	PurchaseSupplierEvidenceTypeCode purchaseSupplierEvidenceTypeModule.EnumPurchaseSupplierEvidenceTypeCode `json:"purchaseSupplierEvidenceTypeCode"`
 	FileName                         string                                                                  `json:"fileName"`
-	FileRename                       string                                                                  `json:"fileRename"`
-	Path                             string                                                                  `json:"path"`
+	ObjectKey                        string                                                                  `json:"objectKey"`
 	FileStatusCode                   fileStatusModule.EnumFileStatusCode                                     `json:"fileStatusCode"`
 	UploadedAt                       time.Time                                                               `json:"uploadedAt"`
 	CreatedAt                        time.Time                                                               `json:"createdAt"`

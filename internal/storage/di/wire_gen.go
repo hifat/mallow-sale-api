@@ -13,6 +13,7 @@ import (
 	"github.com/hifat/mallow-sale-api/internal/storage/service"
 	"github.com/hifat/mallow-sale-api/pkg/config"
 	"github.com/hifat/mallow-sale-api/pkg/logger"
+	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc"
 )
 
@@ -20,11 +21,12 @@ import (
 
 //
 //go:generate wire ./wire.go
-func Init(cfg *config.Config, grpcConn *grpc.ClientConn) *storageHandler.Handler {
+func Init(cfg *config.Config, db *mongo.Database, grpcConn *grpc.ClientConn) *storageHandler.Handler {
 	iLogger := logger.New()
-	iGrpcRepository := storagerepo.NewGrpcRepository(cfg, grpcConn)
 	iHelper := storageHelper.New(cfg)
-	iService := storagesvc.New(cfg, iLogger, iGrpcRepository, iHelper)
+	iGrpcRepository := storagerepo.NewGrpc(cfg, grpcConn)
+	iRepository := storagerepo.NewMongo(db)
+	iService := storagesvc.New(cfg, iLogger, iHelper, iGrpcRepository, iRepository)
 	rest := storageHandler.NewRest(iService)
 	handler := storageHandler.New(rest)
 	return handler

@@ -4,8 +4,9 @@ import (
 	"context"
 
 	"time"
-	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
+
 	purchaseSupplierEvidenceModule "github.com/hifat/mallow-sale-api/internal/purchase/supplier/evidence"
+	utilsModule "github.com/hifat/mallow-sale-api/internal/utils"
 	"github.com/hifat/mallow-sale-api/pkg/database"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -25,10 +26,7 @@ func (r *mongoRepository) Create(ctx context.Context, req *purchaseSupplierEvide
 		PurchaseSupplierID:               database.MustObjectIDFromHex(supplierID),
 		PurchaseSupplierEvidenceTypeCode: req.Type,
 		FileName:                         req.FileName,
-		FileRename:                       req.FileRename,
-		Path:                             req.Path,
-		FileStatusCode:                   req.FileStatusCode,
-		UploadedAt:                       req.UploadedAt,
+		ObjectKey:                        req.ObjectKey,
 		Base: utilsModule.Base{
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
@@ -71,9 +69,7 @@ func (r *mongoRepository) FindBySupplierID(ctx context.Context, supplierID strin
 			PurchaseSupplierID:               entity.PurchaseSupplierID.Hex(),
 			PurchaseSupplierEvidenceTypeCode: entity.PurchaseSupplierEvidenceTypeCode,
 			FileName:                         entity.FileName,
-			FileRename:                       entity.FileRename,
-			Path:                             entity.Path,
-			FileStatusCode:                   entity.FileStatusCode,
+			ObjectKey:                        entity.ObjectKey,
 			UploadedAt:                       entity.UploadedAt,
 			CreatedAt:                        entity.CreatedAt,
 			UpdatedAt:                        entity.UpdatedAt,

@@ -12,7 +12,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.7.0
 	github.com/hifat/billing-reader v0.0.0-20251103023851-4835461af793
-	github.com/hifat/kubo-storage-api v0.0.0-20260518045811-c4ced9990606
+	github.com/hifat/kubo-storage-api v0.0.0-20260522161319-73e0c4513191
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.11.1
 	github.com/swaggo/swag v1.16.4

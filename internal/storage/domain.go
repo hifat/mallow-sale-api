@@ -7,6 +7,10 @@ import (
 	"github.com/hifat/mallow-sale-api/pkg/handling"
 )
 
+type IRepository interface {
+	Create(ctx context.Context, req *CreateStorageRequest) (*UploadResponse, error)
+}
+
 type IGrpcRepository interface {
 	Upload(ctx context.Context, req *storageproto.UploadRequest) (*storageproto.UploadResponse, error)
 	GetPresignedURL(ctx context.Context, req *storageproto.GetPresignedURLRequest) (*storageproto.GetPresignedURLResponse, error)

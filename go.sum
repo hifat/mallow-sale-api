@@ -80,8 +80,10 @@ github.com/googleapis/gax-go/v2 v2.22.0 h1:PjIWBpgGIVKGoCXuiCoP64altEJCj3/Ei+kSU
 github.com/googleapis/gax-go/v2 v2.22.0/go.mod h1:irWBbALSr0Sk3qlqb9SyJ1h68WjgeFuiOzI4Rqw5+aY=
 github.com/hifat/billing-reader v0.0.0-20251103023851-4835461af793 h1:I71xWt6cdnoxtHmkjEMiE1FmQl6MGJvCm++Pdf8W7Ag=
 github.com/hifat/billing-reader v0.0.0-20251103023851-4835461af793/go.mod h1:utONq1YHoFZm+Ia8rtbuKuzIS/ZKbLC8rg5IsQLgaGY=
-github.com/hifat/kubo-storage-api v0.0.0-20260518045811-c4ced9990606 h1:640RpVugs5IW7XPAYJvphiAW3SCjCDr7/fIiwN7CsQ8=
-github.com/hifat/kubo-storage-api v0.0.0-20260518045811-c4ced9990606/go.mod h1:4hlqjNcbu/lsgCrJpXzGmttn6zTGO5CvOms8VLkPONc=
+github.com/hifat/kubo-storage-api v0.0.0-20260522143220-2194b46c2ea6 h1:iOhq0Y8z+P7n+yhLkx12MYhXVbfwDoUOBGn2jo9csoU=
+github.com/hifat/kubo-storage-api v0.0.0-20260522143220-2194b46c2ea6/go.mod h1:4hlqjNcbu/lsgCrJpXzGmttn6zTGO5CvOms8VLkPONc=
+github.com/hifat/kubo-storage-api v0.0.0-20260522161319-73e0c4513191 h1:7lwWY1VALaWXRKpJT9vXemI4t7g/qf+ay3W46UF/obE=
+github.com/hifat/kubo-storage-api v0.0.0-20260522161319-73e0c4513191/go.mod h1:4hlqjNcbu/lsgCrJpXzGmttn6zTGO5CvOms8VLkPONc=
 github.com/josharian/intern v1.0.0 h1:vlS4z54oSdjm0bgjRigI+G1HpF+tI+9rE5LLzOg8HmY=
 github.com/josharian/intern v1.0.0/go.mod h1:5DoeVV0s6jJacbCEi61lwdGj/aVlrQvzHFFd8Hwg//Y=
 github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnrnM=

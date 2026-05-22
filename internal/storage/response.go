@@ -1,5 +1,7 @@
 package storageModule
 
 type UploadResponse struct {
-	Url string `json:"url"`
+	Filename  string `json:"filename"`
+	ObjectKey string `json:"objectKey"`
+	Url       string `json:"url"`
 }

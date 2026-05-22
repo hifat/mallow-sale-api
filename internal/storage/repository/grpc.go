@@ -16,7 +16,7 @@ type grpcRepository struct {
 	grpcConn *grpc.ClientConn
 }
 
-func NewGrpcRepository(cfg *config.Config, grpcConn *grpc.ClientConn) storageModule.IGrpcRepository {
+func NewGrpc(cfg *config.Config, grpcConn *grpc.ClientConn) storageModule.IGrpcRepository {
 	return &grpcRepository{
 		cfg:      cfg,
 		grpcConn: grpcConn,

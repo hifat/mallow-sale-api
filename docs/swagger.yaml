@@ -41,6 +41,14 @@ definitions:
     required:
     - loginType
     type: object
+  github_com_hifat_mallow-sale-api_internal_fileStatus.EnumFileStatusCode:
+    enum:
+    - ACTIVE
+    - ORPHANED
+    type: string
+    x-enum-varnames:
+    - EnumFileStatusCodeActive
+    - EnumFileStatusCodeOrphaned
   github_com_hifat_mallow-sale-api_internal_inventory.Prototype:
     properties:
       createdAt:
@@ -297,13 +305,11 @@ definitions:
         type: string
       fileName:
         type: string
-      fileRename:
-        type: string
       fileStatusCode:
-        type: string
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_fileStatus.EnumFileStatusCode'
       id:
         type: string
-      path:
+      objectKey:
         type: string
       purchaseSupplierEvidenceTypeCode:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_purchase_supplier_evidence_type.EnumPurchaseSupplierEvidenceTypeCode'
@@ -748,6 +754,15 @@ definitions:
       updatedAt:
         type: string
     type: object
+  github_com_hifat_mallow-sale-api_internal_storage.UploadResponse:
+    properties:
+      filename:
+        type: string
+      objectKey:
+        type: string
+      url:
+        type: string
+    type: object
   github_com_hifat_mallow-sale-api_internal_supplier.Prototype:
     properties:
       createdAt:
@@ -920,6 +935,11 @@ definitions:
       item:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_stock.Response'
     type: object
+  github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_storage_UploadResponse:
+    properties:
+      item:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_storage.UploadResponse'
+    type: object
   github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_supplier_Request:
     properties:
       item:
@@ -929,11 +949,6 @@ definitions:
     properties:
       item:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_supplier.Response'
-    type: object
-  github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-storageModule_UploadResponse:
-    properties:
-      item:
-        $ref: '#/definitions/storageModule.UploadResponse'
     type: object
   github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_inventory_Response:
     properties:
@@ -1051,11 +1066,6 @@ definitions:
         $ref: '#/definitions/textproto.MIMEHeader'
       size:
         type: integer
-    type: object
-  storageModule.UploadResponse:
-    properties:
-      url:
-        type: string
     type: object
   textproto.MIMEHeader:
     additionalProperties:
@@ -2936,7 +2946,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-storageModule_UploadResponse'
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_storage_UploadResponse'
         "400":
           description: Bad Request
           schema:

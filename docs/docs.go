@@ -2969,7 +2969,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-storageModule_UploadResponse"
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_storage_UploadResponse"
                         }
                     },
                     "400": {
@@ -3050,6 +3050,17 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "github_com_hifat_mallow-sale-api_internal_fileStatus.EnumFileStatusCode": {
+            "type": "string",
+            "enum": [
+                "ACTIVE",
+                "ORPHANED"
+            ],
+            "x-enum-varnames": [
+                "EnumFileStatusCodeActive",
+                "EnumFileStatusCodeOrphaned"
+            ]
         },
         "github_com_hifat_mallow-sale-api_internal_inventory.Prototype": {
             "type": "object",
@@ -3433,16 +3444,13 @@ const docTemplate = `{
                 "fileName": {
                     "type": "string"
                 },
-                "fileRename": {
-                    "type": "string"
-                },
                 "fileStatusCode": {
-                    "type": "string"
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_fileStatus.EnumFileStatusCode"
                 },
                 "id": {
                     "type": "string"
                 },
-                "path": {
+                "objectKey": {
                     "type": "string"
                 },
                 "purchaseSupplierEvidenceTypeCode": {
@@ -4097,6 +4105,20 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_hifat_mallow-sale-api_internal_storage.UploadResponse": {
+            "type": "object",
+            "properties": {
+                "filename": {
+                    "type": "string"
+                },
+                "objectKey": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_hifat_mallow-sale-api_internal_supplier.Prototype": {
             "type": "object",
             "properties": {
@@ -4368,6 +4390,14 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_storage_UploadResponse": {
+            "type": "object",
+            "properties": {
+                "item": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_storage.UploadResponse"
+                }
+            }
+        },
         "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-github_com_hifat_mallow-sale-api_internal_supplier_Request": {
             "type": "object",
             "properties": {
@@ -4381,14 +4411,6 @@ const docTemplate = `{
             "properties": {
                 "item": {
                     "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_supplier.Response"
-                }
-            }
-        },
-        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-storageModule_UploadResponse": {
-            "type": "object",
-            "properties": {
-                "item": {
-                    "$ref": "#/definitions/storageModule.UploadResponse"
                 }
             }
         },
@@ -4571,14 +4593,6 @@ const docTemplate = `{
                 },
                 "size": {
                     "type": "integer"
-                }
-            }
-        },
-        "storageModule.UploadResponse": {
-            "type": "object",
-            "properties": {
-                "url": {
-                    "type": "string"
                 }
             }
         },

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	storageproto "github.com/hifat/kubo-storage-api/proto/storage"
+	fileStatusModule "github.com/hifat/mallow-sale-api/internal/fileStatus"
 	storageModule "github.com/hifat/mallow-sale-api/internal/storage"
 	"github.com/hifat/mallow-sale-api/pkg/config"
 	"github.com/hifat/mallow-sale-api/pkg/define"
@@ -14,16 +15,18 @@ import (
 type storageService struct {
 	cfg         *config.Config
 	log         logger.ILogger
-	grpcRepo    storageModule.IGrpcRepository
 	utilsHelper storageModule.IHelper
+	grpcRepo    storageModule.IGrpcRepository
+	repo        storageModule.IRepository
 }
 
-func New(cfg *config.Config, log logger.ILogger, grpcRepo storageModule.IGrpcRepository, utilsHelper storageModule.IHelper) storageModule.IService {
+func New(cfg *config.Config, log logger.ILogger, utilsHelper storageModule.IHelper, grpcRepo storageModule.IGrpcRepository, repo storageModule.IRepository) storageModule.IService {
 	return &storageService{
 		cfg:         cfg,
 		log:         log,
 		grpcRepo:    grpcRepo,
 		utilsHelper: utilsHelper,
+		repo:        repo,
 	}
 }
 
@@ -39,7 +42,7 @@ func (s *storageService) Upload(ctx context.Context, req *storageModule.UploadRe
 		return nil, handling.ThrowErrByCode(define.CodeFileTooLarge)
 	}
 
-	resp, err := s.grpcRepo.Upload(ctx, &storageproto.UploadRequest{
+	res, err := s.grpcRepo.Upload(ctx, &storageproto.UploadRequest{
 		File:        req.File,
 		Filename:    req.Filename,
 		ContentType: req.ContentType,
@@ -50,9 +53,21 @@ func (s *storageService) Upload(ctx context.Context, req *storageModule.UploadRe
 		return nil, handling.ThrowErr(err)
 	}
 
+	createReq := &storageModule.CreateStorageRequest{
+		Filename:   req.Filename,
+		ObjectKey:  res.ObjectKey,
+		StatusCode: fileStatusModule.EnumFileStatusCodeOrphaned,
+	}
+
+	createRes, err := s.repo.Create(ctx, createReq)
+	if err != nil {
+		s.log.Error(err)
+		return nil, handling.ThrowErr(err)
+	}
+
+	createRes.Url = res.Url
+
 	return &handling.ResponseItem[*storageModule.UploadResponse]{
-		Item: &storageModule.UploadResponse{
-			Url: resp.Url,
-		},
+		Item: createRes,
 	}, nil
 }
