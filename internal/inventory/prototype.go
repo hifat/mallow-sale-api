@@ -14,6 +14,7 @@ type Prototype struct {
 	PurchaseUnit     usageUnitModule.Prototype `json:"purchaseUnit"`
 	YieldPercentage  float32                   `fake:"{float32}" json:"yieldPercentage"`
 	Remark           string                    `fake:"{sentence}" json:"remark"`
+	SupplierID       string                    `json:"supplierID"`
 	CreatedAt        *time.Time                `json:"createdAt"`
 	UpdatedAt        *time.Time                `json:"updatedAt"`
 }

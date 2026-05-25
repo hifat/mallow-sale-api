@@ -14,4 +14,5 @@ type Entity struct {
 	PurchaseUnit     usageUnitModule.Entity `bson:"purchase_unit"`
 	YieldPercentage  float32                `fake:"{float32}" bson:"yield_percentage"`
 	Remark           string                 `fake:"{sentence}" bson:"remark"`
+	SupplierID       string                 `bson:"supplier_id"`
 }

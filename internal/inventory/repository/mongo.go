@@ -36,6 +36,7 @@ func (r *mongoRepository) Create(ctx context.Context, req *inventoryModule.Reque
 		},
 		YieldPercentage: req.YieldPercentage,
 		Remark:          req.Remark,
+		SupplierID:      req.SupplierID,
 		Base: utilsModule.Base{
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
@@ -74,6 +75,7 @@ func (r *mongoRepository) FindByID(ctx context.Context, id string) (*inventoryMo
 			},
 			YieldPercentage: inventory.YieldPercentage,
 			Remark:          inventory.Remark,
+			SupplierID:      inventory.SupplierID,
 			CreatedAt:       &inventory.CreatedAt,
 			UpdatedAt:       &inventory.UpdatedAt,
 		},
@@ -108,6 +110,7 @@ func (r *mongoRepository) FindByName(ctx context.Context, name string) (*invento
 			},
 			YieldPercentage: inventory.YieldPercentage,
 			Remark:          inventory.Remark,
+			SupplierID:      inventory.SupplierID,
 			CreatedAt:       &inventory.CreatedAt,
 			UpdatedAt:       &inventory.UpdatedAt,
 		},
@@ -172,6 +175,7 @@ func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq)
 				},
 				YieldPercentage: inventory.YieldPercentage,
 				Remark:          inventory.Remark,
+				SupplierID:      inventory.SupplierID,
 				CreatedAt:       &inventory.CreatedAt,
 				UpdatedAt:       &inventory.UpdatedAt,
 			},
@@ -224,6 +228,7 @@ func (r *mongoRepository) FindInIDs(ctx context.Context, ids []string) ([]invent
 				},
 				YieldPercentage: inventory.YieldPercentage,
 				Remark:          inventory.Remark,
+				SupplierID:      inventory.SupplierID,
 				CreatedAt:       &inventory.CreatedAt,
 				UpdatedAt:       &inventory.UpdatedAt,
 			},
@@ -241,6 +246,7 @@ func (r *mongoRepository) UpdateByID(ctx context.Context, id string, req *invent
 			"purchase_unit":    req.PurchaseUnit,
 			"yield_percentage": req.YieldPercentage,
 			"remark":           req.Remark,
+			"supplier_id":      req.SupplierID,
 			"updated_at":       time.Now(),
 		}})
 

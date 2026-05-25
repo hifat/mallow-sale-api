@@ -7,6 +7,7 @@ type Request struct {
 	PurchaseUnit    usageUnitModule.UsageUnitReq `json:"purchaseUnit"`
 	YieldPercentage float32                      `fake:"{float32}" validate:"required" json:"yieldPercentage"`
 	Remark          string                       `fake:"{sentence}" json:"remark"`
+	SupplierID      string                       `json:"supplierID"`
 }
 
 type UpdatePresetPriceReq struct {
