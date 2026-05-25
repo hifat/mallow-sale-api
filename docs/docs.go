@@ -2654,6 +2654,75 @@ const docTemplate = `{
                 }
             }
         },
+        "/supplier-inventories": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Supplier Inventory"
+                ],
+                "summary": "Find Inventories Grouped by SupplierID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "fields",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "desc",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "createdAt",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_supplier_inventory_GroupBySupplierResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/suppliers": {
             "get": {
                 "security": [
@@ -3086,6 +3155,9 @@ const docTemplate = `{
                 "remark": {
                     "type": "string"
                 },
+                "supplierID": {
+                    "type": "string"
+                },
                 "updatedAt": {
                     "type": "string"
                 },
@@ -3108,6 +3180,9 @@ const docTemplate = `{
                     "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.UsageUnitReq"
                 },
                 "remark": {
+                    "type": "string"
+                },
+                "supplierID": {
                     "type": "string"
                 },
                 "yieldPercentage": {
@@ -3137,6 +3212,9 @@ const docTemplate = `{
                     "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.Prototype"
                 },
                 "remark": {
+                    "type": "string"
+                },
+                "supplierID": {
                     "type": "string"
                 },
                 "updatedAt": {
@@ -4173,6 +4251,20 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_hifat_mallow-sale-api_internal_supplier_inventory.GroupBySupplierResponse": {
+            "type": "object",
+            "properties": {
+                "inventories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_inventory.Response"
+                    }
+                },
+                "supplier": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_supplier.Prototype"
+                }
+            }
+        },
         "github_com_hifat_mallow-sale-api_internal_usageUnit.Entity": {
             "type": "object",
             "properties": {
@@ -4575,6 +4667,20 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_supplier.Response"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_supplier_inventory_GroupBySupplierResponse": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_hifat_mallow-sale-api_internal_supplier_inventory.GroupBySupplierResponse"
                     }
                 },
                 "meta": {

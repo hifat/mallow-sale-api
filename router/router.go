@@ -24,6 +24,7 @@ func RegisterAll(r *gin.RouterGroup, cfg *config.Config, db *mongo.Database, grp
 	RecipeRouter(r, cfg, db)
 	SettingRouter(r, db)
 	SupplierRouter(r, cfg, db)
+	SupplierInventoryRouter(r, cfg, db)
 	StockRouter(r, cfg, db)
 	PurchaseRouter(r, cfg, db)
 	PricePreset(r, cfg, db)

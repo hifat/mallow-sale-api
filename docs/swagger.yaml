@@ -65,6 +65,8 @@ definitions:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.Prototype'
       remark:
         type: string
+      supplierID:
+        type: string
       updatedAt:
         type: string
       yieldPercentage:
@@ -77,6 +79,8 @@ definitions:
       purchaseUnit:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.UsageUnitReq'
       remark:
+        type: string
+      supplierID:
         type: string
       yieldPercentage:
         type: number
@@ -99,6 +103,8 @@ definitions:
       purchaseUnit:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_usageUnit.Prototype'
       remark:
+        type: string
+      supplierID:
         type: string
       updatedAt:
         type: string
@@ -798,6 +804,15 @@ definitions:
       updatedAt:
         type: string
     type: object
+  github_com_hifat_mallow-sale-api_internal_supplier_inventory.GroupBySupplierResponse:
+    properties:
+      inventories:
+        items:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_inventory.Response'
+        type: array
+      supplier:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_supplier.Prototype'
+    type: object
   github_com_hifat_mallow-sale-api_internal_usageUnit.Entity:
     properties:
       code:
@@ -1054,6 +1069,15 @@ definitions:
       items:
         items:
           $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_supplier.Response'
+        type: array
+      meta:
+        $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse'
+    type: object
+  ? github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_supplier_inventory_GroupBySupplierResponse
+  : properties:
+      items:
+        items:
+          $ref: '#/definitions/github_com_hifat_mallow-sale-api_internal_supplier_inventory.GroupBySupplierResponse'
         type: array
       meta:
         $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse'
@@ -2750,6 +2774,49 @@ paths:
       summary: Update Stock by ID
       tags:
       - stock
+  /supplier-inventories:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: fields
+        type: string
+      - default: 10
+        in: query
+        name: limit
+        type: integer
+      - default: desc
+        in: query
+        name: order
+        type: string
+      - default: 1
+        in: query
+        name: page
+        type: integer
+      - in: query
+        name: search
+        type: string
+      - default: createdAt
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_supplier_inventory_GroupBySupplierResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Find Inventories Grouped by SupplierID
+      tags:
+      - Supplier Inventory
   /suppliers:
     get:
       consumes:
