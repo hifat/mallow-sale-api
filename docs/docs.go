@@ -841,6 +841,296 @@ const docTemplate = `{
                 }
             }
         },
+        "/purchase-presets": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "purchase-preset"
+                ],
+                "summary": "Find Purchases",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "fields",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "desc",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "createdAt",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-purchasePresetModule_Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "purchase-preset"
+                ],
+                "summary": "Create Purchase Preset",
+                "parameters": [
+                    {
+                        "description": "Created purchase data",
+                        "name": "purchase",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/purchasePresetModule.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-purchasePresetModule_Request"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/purchase-presets/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "purchase-preset"
+                ],
+                "summary": "Find Purchase by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "purchase ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-purchasePresetModule_Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "purchase-preset"
+                ],
+                "summary": "Update Purchase by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "purchase ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated purchase data",
+                        "name": "purchase",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/purchasePresetModule.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-purchasePresetModule_Request"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "purchase-preset"
+                ],
+                "summary": "Delete Purchase by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Purchase ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/purchases": {
             "get": {
                 "security": [
@@ -4506,6 +4796,22 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-purchasePresetModule_Request": {
+            "type": "object",
+            "properties": {
+                "item": {
+                    "$ref": "#/definitions/purchasePresetModule.Request"
+                }
+            }
+        },
+        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItem-purchasePresetModule_Response": {
+            "type": "object",
+            "properties": {
+                "item": {
+                    "$ref": "#/definitions/purchasePresetModule.Response"
+                }
+            }
+        },
         "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-github_com_hifat_mallow-sale-api_internal_inventory_Response": {
             "type": "object",
             "properties": {
@@ -4688,6 +4994,20 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_hifat_mallow-sale-api_pkg_handling.ResponseItems-purchasePresetModule_Response": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/purchasePresetModule.Response"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/github_com_hifat_mallow-sale-api_pkg_handling.MetaResponse"
+                }
+            }
+        },
         "multipart.FileHeader": {
             "type": "object",
             "properties": {
@@ -4699,6 +5019,80 @@ const docTemplate = `{
                 },
                 "size": {
                     "type": "integer"
+                }
+            }
+        },
+        "purchasePresetModule.InventoryRequest": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "no": {
+                    "type": "integer"
+                },
+                "purchaseUnitCode": {
+                    "type": "string"
+                }
+            }
+        },
+        "purchasePresetModule.InventoryResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "no": {
+                    "type": "integer"
+                },
+                "purchaseUnitCode": {
+                    "type": "string"
+                }
+            }
+        },
+        "purchasePresetModule.Request": {
+            "type": "object",
+            "properties": {
+                "inventories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/purchasePresetModule.InventoryRequest"
+                    }
+                },
+                "supplierID": {
+                    "type": "string"
+                },
+                "supplierName": {
+                    "type": "string"
+                }
+            }
+        },
+        "purchasePresetModule.Response": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "inventories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/purchasePresetModule.InventoryResponse"
+                    }
+                },
+                "supplierID": {
+                    "type": "string"
+                },
+                "supplierName": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
                 }
             }
         },

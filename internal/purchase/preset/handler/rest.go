@@ -20,8 +20,8 @@ func NewRest(purchasePresetService purchasePresetModule.IService) *Rest {
 // @Tags 		purchase-preset
 // @Accept 		json
 // @Produce 	json
-// @Param 		purchase body purchasePresetModule.CreatePurchaseRequest true "Created purchase data"
-// @Success 	201 {object} handling.ResponseItem[purchasePresetModule.CreatePurchaseRequest]
+// @Param 		purchase body purchasePresetModule.Request true "Created purchase data"
+// @Success 	201 {object} handling.ResponseItem[purchasePresetModule.Request]
 // @Failure 	400 {object} handling.ErrorResponse
 // @Failure 	404 {object} handling.ErrorResponse
 // @Failure 	500 {object} handling.ErrorResponse

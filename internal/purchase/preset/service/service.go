@@ -28,7 +28,8 @@ func (s *service) Create(ctx context.Context, req *purchasePresetModule.Request)
 	}
 
 	res := &purchasePresetModule.Response{
-		ID: id,
+		ID:          id,
+		Inventories: []purchasePresetModule.InventoryResponse{},
 	}
 
 	return &handling.ResponseItem[*purchasePresetModule.Response]{
@@ -57,7 +58,7 @@ func (s *service) Find(ctx context.Context, query *utilsModule.QueryReq) (*handl
 			return err
 		}
 
-		items := make([]*purchasePresetModule.Response, len(res))
+		items = make([]*purchasePresetModule.Response, len(res))
 		for i := range res {
 			items[i] = &res[i]
 		}
@@ -66,7 +67,7 @@ func (s *service) Find(ctx context.Context, query *utilsModule.QueryReq) (*handl
 	})
 
 	if err := g.Wait(); err != nil {
-		s.log.Error("Error finding purchase presets", "error", err)
+		s.log.Error("Error finding purchase presets", "error: ", err)
 		return nil, handling.ThrowErr(err)
 	}
 

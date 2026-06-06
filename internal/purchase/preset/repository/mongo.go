@@ -3,6 +3,7 @@ package purchasePresetRepository
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -29,10 +30,15 @@ func (r *mongoRepository) Create(ctx context.Context, req *purchasePresetModule.
 		SupplierID:   database.MustObjectIDFromHex(req.SupplierID),
 		SupplierName: req.SupplierName,
 		Inventories:  make([]purchasePresetModule.InventoryEntity, len(req.Inventories)),
+		Base: utilsModule.Base{
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		},
 	}
 
 	for i, inv := range req.Inventories {
 		newPreset.Inventories[i] = purchasePresetModule.InventoryEntity{
+			ID:               database.MustObjectIDFromHex(inv.ID),
 			No:               inv.No,
 			Name:             inv.Name,
 			PurchaseUnitCode: inv.PurchaseUnitCode,
@@ -82,7 +88,7 @@ func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq)
 	cur, err := r.db.Collection("purchase_presets").
 		Find(ctx, filter, findOptions)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error finding purchase presets: %w", err)
 	}
 	defer cur.Close(ctx)
 
@@ -90,7 +96,7 @@ func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq)
 	for cur.Next(ctx) {
 		var preset purchasePresetModule.Entity
 		if err := cur.Decode(&preset); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("error decoding purchase preset: %w", err)
 		}
 		purchasePresets = append(purchasePresets, purchasePresetModule.Response{
 			ID:           preset.ID.Hex(),
@@ -102,7 +108,7 @@ func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq)
 				invResponses := make([]purchasePresetModule.InventoryResponse, len(preset.Inventories))
 				for i, inv := range preset.Inventories {
 					invResponses[i] = purchasePresetModule.InventoryResponse{
-						ID:               inv.ID,
+						ID:               inv.ID.Hex(),
 						No:               inv.No,
 						Name:             inv.Name,
 						PurchaseUnitCode: inv.PurchaseUnitCode,
@@ -113,7 +119,7 @@ func (r *mongoRepository) Find(ctx context.Context, query *utilsModule.QueryReq)
 		})
 	}
 	if err := cur.Err(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error cursor purchase presets: %w", err)
 	}
 
 	return purchasePresets, nil
@@ -147,7 +153,7 @@ func (r *mongoRepository) FindByID(ctx context.Context, id string) (*purchasePre
 			invResponses := make([]purchasePresetModule.InventoryResponse, len(preset.Inventories))
 			for i, inv := range preset.Inventories {
 				invResponses[i] = purchasePresetModule.InventoryResponse{
-					ID:               inv.ID,
+					ID:               inv.ID.Hex(),
 					No:               inv.No,
 					Name:             inv.Name,
 					PurchaseUnitCode: inv.PurchaseUnitCode,
@@ -174,6 +180,7 @@ func (r *mongoRepository) UpdateByID(ctx context.Context, id string, req *purcha
 				invEntities := make([]purchasePresetModule.InventoryEntity, len(req.Inventories))
 				for i, inv := range req.Inventories {
 					invEntities[i] = purchasePresetModule.InventoryEntity{
+						ID:               database.MustObjectIDFromHex(inv.ID),
 						No:               inv.No,
 						Name:             inv.Name,
 						PurchaseUnitCode: inv.PurchaseUnitCode,

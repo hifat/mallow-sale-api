@@ -1,9 +1,10 @@
 package purchasePresetModule
 
 type InventoryRequest struct {
-	No               uint   `bson:"no" json:"no"`
-	Name             string `bson:"name" json:"name"`
-	PurchaseUnitCode string `bson:"purchase_unit_code" json:"purchaseUnitCode"`
+	ID               string `json:"id"`
+	No               uint   `json:"no"`
+	Name             string `json:"name"`
+	PurchaseUnitCode string `json:"purchaseUnitCode"`
 }
 
 type Request struct {

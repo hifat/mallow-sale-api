@@ -6,10 +6,10 @@ import (
 )
 
 type InventoryEntity struct {
-	ID               string `json:"id"`
-	No               uint   `bson:"no" json:"no"`
-	Name             string `bson:"name" json:"name"`
-	PurchaseUnitCode string `bson:"purchase_unit_code" json:"purchaseUnitCode"`
+	ID               primitive.ObjectID `bson:"id" json:"id"`
+	No               uint               `bson:"no" json:"no"`
+	Name             string             `bson:"name" json:"name"`
+	PurchaseUnitCode string             `bson:"purchase_unit_code" json:"purchaseUnitCode"`
 }
 
 type Entity struct {
